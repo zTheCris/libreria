@@ -1,5 +1,6 @@
 package com.example.libreria.service;
 
+import com.example.libreria.dto.LibroDTO;
 import com.example.libreria.model.Genere;
 import com.example.libreria.model.Libro;
 import com.example.libreria.repository.GenereRepository;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 public class LibroService {
@@ -27,6 +29,12 @@ public class LibroService {
             e.printStackTrace();
             return null;
         }
+    }
+    public List<LibroDTO> getAll(){
+        return libroRepository.findAllBy();
+    }
+    public List<Libro> getAllLibro(){
+        return libroRepository.findAll();
     }
 
 }

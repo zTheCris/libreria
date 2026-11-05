@@ -16,19 +16,6 @@ public class Genere {
     
     @Column(name = "nome")
     private String nome;
-    // Mapped by deve specificare il campo all'interno della classe relazionata.
-    // In questo caso, Libri ha tra i vari attributi "Genere".
-    @OneToMany(mappedBy = "genere")
-    private Set<Libro> libri = new HashSet<>();
-
-    public Genere() {
-    }
-
-    public Genere(Integer idGenere, String nome, Set<Libro> libri) {
-        this.idGenere = idGenere;
-        this.nome = nome;
-        this.libri = libri;
-    }
 
     public Integer getIdGenere() {
         return idGenere;
@@ -46,12 +33,12 @@ public class Genere {
         this.nome = nome;
     }
 
-    public Set<Libro> getLibri() {
-        return libri;
+    public Genere() {
     }
 
-    public void setLibri(Set<Libro> libri) {
-        this.libri = libri;
+    public Genere(Integer idGenere, String nome) {
+        this.idGenere = idGenere;
+        this.nome = nome;
     }
 }
 
