@@ -23,7 +23,6 @@ public class Libro {
     /*
     Una foreign key dei generi spunta piu' volte nei record in Libri.
     Per le tabelle con foreign key, la relazione può essere ManyToMany o ManyToOne.
-
      */
     @ManyToOne
     @JoinColumn(name = "fk_genere")

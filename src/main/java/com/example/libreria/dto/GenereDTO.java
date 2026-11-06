@@ -4,6 +4,9 @@ public class GenereDTO {
     private Integer idGenere;
     private String nome;
 
+    public GenereDTO() {
+    }
+
     public Integer getIdGenere() {
         return idGenere;
     }

@@ -17,13 +17,16 @@ public class LibroController {
     @Autowired
     private LibroService libroService;
     @GetMapping("/addLibro")
-    public Libro addLibro(Integer isbn, String titolo, LocalDate anno, Integer prezzo, String genere){
+    public LibroDTO addLibro(Integer isbn, String titolo, LocalDate anno, Integer prezzo, String genere){
         return libroService.addLibro(isbn,titolo,anno,prezzo,genere);
     }
+    // TEMPORANEO
     @GetMapping("/allDTO")
     public List<LibroDTO> getAllDTO(){
         return libroService.getAll();
     }
+
+
     @GetMapping("/all")
     public List<Libro> getAll(){
         return libroService.getAllLibro();

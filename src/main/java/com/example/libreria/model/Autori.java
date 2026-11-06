@@ -14,7 +14,7 @@ public class Autori {
     @Column(name = "idAutore")
     private Integer idAutore;
 
-    @Column(name="nome")
+    @Column(name = "nome")
     private String nome;
     @Column(name = "cognome", nullable = false)
     private String cognome;
@@ -24,13 +24,11 @@ public class Autori {
 
     @ManyToMany
     @JoinTable(
-            name ="Libri_Autori",
+            name = "Libri_Autori",
             joinColumns = @JoinColumn(name = "fk_autore"),
             inverseJoinColumns = @JoinColumn(name = "fk_isbn")
     )
     private Set<Libro> libri = new HashSet<>();
-
-
 
     @ManyToOne
     @JoinColumn(name = "fk_nazionalita")
