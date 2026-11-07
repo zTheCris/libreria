@@ -1,14 +1,31 @@
 package com.example.libreria.dto;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 public class LibroDTO {
     private Integer isbn;
     private String titolo;
     private LocalDate anno;
     private GenereDTO genere;
+    /*
+    Quando voglio fare una getAll dei libri, ho bisogno di sapere quali autori hanno scritto ogni libro.
+    Dato che uno dei motivi per cui abbiamo creato il DTO è evitare la ricorsione infinita,
+    facciamo che SOLO i Libri possono sapere da chi sono stati scritti.
+    Per avere una relazione bilaterale, dovremmo usare il mappedBy a livello di Entity.
+     */
+    private Set<AutoreDTO> autoriDTO = new HashSet<>();
 
     public LibroDTO() {
+    }
+
+    public LibroDTO(Integer isbn, String titolo, LocalDate anno, GenereDTO genere, Set<AutoreDTO> autoriDTO) {
+        this.isbn = isbn;
+        this.titolo = titolo;
+        this.anno = anno;
+        this.genere = genere;
+        this.autoriDTO = autoriDTO;
     }
 
     public Integer getIsbn() {
@@ -43,10 +60,11 @@ public class LibroDTO {
         this.genere = genere;
     }
 
-    public LibroDTO(Integer isbn, String titolo, LocalDate anno, GenereDTO genere) {
-        this.isbn = isbn;
-        this.titolo = titolo;
-        this.anno = anno;
-        this.genere = genere;
+    public Set<AutoreDTO> getAutoriDTO() {
+        return autoriDTO;
+    }
+
+    public void setAutoriDTO(Set<AutoreDTO> autoriDTO) {
+        this.autoriDTO = autoriDTO;
     }
 }

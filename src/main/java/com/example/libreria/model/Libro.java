@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 
 import java.time.LocalDate;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -27,19 +26,24 @@ public class Libro {
     @ManyToOne
     @JoinColumn(name = "fk_genere")
     private Genere genere;
-
+    /*
+    Dato che tra Libri e Autori c'è una JOIN table, dobbiamo specificare:
+    - Quale è la tabella JOIN
+    - Dalla posizione attuale (quindi Libro), quale è la foreign key di riferimento.
+    - E un'altra opzionale che è "se arrivano dall'altro lato, a quale chiave fanno riferimento?"
+     */
     @ManyToMany
     @JoinTable(
             name="Libri_Autori",
             joinColumns = @JoinColumn(name = "fk_isbn"),
             inverseJoinColumns = @JoinColumn(name="fk_autore")
     )
-    private Set<Autori> autori;
-
-    @OneToMany(mappedBy = "libro")
-    private Set<Copie> copie = new HashSet<>();
+    private Set<Autore> autori = new HashSet<>();
 
 
+    public void setAutori(Set<Autore> autori) {
+        this.autori = autori;
+    }
 
     public Libro() {
     }
@@ -50,6 +54,9 @@ public class Libro {
         this.anno = anno;
         this.prezzo = prezzo;
         this.genere = genere;
+        // Ho rimosso l'inizializzazione degli autori poiché se ne occuperà il Service
+        // (Cercherà nel database tutti gli autori corrsipondente agli ID mandati dal Client
+        // E li setterà con il setter del Set<Autore>)
     }
 
     public Integer getIsbn() {
@@ -91,4 +98,10 @@ public class Libro {
     public void setGenere(Genere genere) {
         this.genere = genere;
     }
+
+    public Set<Autore> getAutori() {
+        return autori;
+    }
+
+
 }

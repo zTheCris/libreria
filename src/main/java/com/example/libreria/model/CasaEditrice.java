@@ -12,19 +12,16 @@ public class CasaEditrice {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_casaeditrice")
     private Integer id_casaeditrice;
-    // Nullable false indica che il campo è NOT NULL.
+    // Nullable =  false indica che il campo è NOT NULL.
     @Column(name="nome", nullable = false)
     private String nome;
-    @OneToMany(mappedBy = "casaEditrice")
-    private Set<Copie> copie = new HashSet<>();
 
     public CasaEditrice() {
     }
 
-    public CasaEditrice(Integer id_casaeditrice, String nome, Set<Copie> copie) {
+    public CasaEditrice(Integer id_casaeditrice, String nome) {
         this.id_casaeditrice = id_casaeditrice;
         this.nome = nome;
-        this.copie = copie;
     }
 
     public Integer getId_casaeditrice() {
@@ -43,11 +40,4 @@ public class CasaEditrice {
         this.nome = nome;
     }
 
-    public Set<Copie> getCopie() {
-        return copie;
-    }
-
-    public void setCopie(Set<Copie> copie) {
-        this.copie = copie;
-    }
 }

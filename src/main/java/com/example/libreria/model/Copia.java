@@ -6,7 +6,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name="Copie")
-public class Copie {
+public class Copia {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idCopia")
@@ -22,14 +22,14 @@ public class Copie {
     @Column(name = "numero_copie", nullable = false)
     private Integer numero_copie;
 
-    public Copie(Integer idCopia, Integer numero_copie, Libro libro, CasaEditrice casaEditrice) {
+    public Copia(Integer idCopia, Integer numero_copie, Libro libro, CasaEditrice casaEditrice) {
         this.idCopia = idCopia;
         this.numero_copie = numero_copie;
         this.libro = libro;
         this.casaEditrice = casaEditrice;
     }
 
-    public Copie() {
+    public Copia() {
 
     }
 

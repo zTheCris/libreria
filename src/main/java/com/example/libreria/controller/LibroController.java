@@ -4,31 +4,35 @@ import com.example.libreria.dto.LibroDTO;
 import com.example.libreria.model.Libro;
 import com.example.libreria.service.LibroService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/libri")
 public class LibroController {
-    @Autowired
-    private LibroService libroService;
-    @GetMapping("/addLibro")
-    public LibroDTO addLibro(Integer isbn, String titolo, LocalDate anno, Integer prezzo, String genere){
-        return libroService.addLibro(isbn,titolo,anno,prezzo,genere);
+
+    private final LibroService libroService;
+
+    public LibroController(LibroService libroService) {
+        this.libroService = libroService;
+    }
+
+    @PostMapping("/addLibro")
+    public LibroDTO addLibro(Integer isbn, String titolo, LocalDate data, Integer prezzo, String genere, @RequestBody Set<Integer> autoriIDs){
+        return libroService.addLibro(isbn,titolo,data,prezzo,genere,autoriIDs);
     }
     // TEMPORANEO
     @GetMapping("/allDTO")
     public List<LibroDTO> getAllDTO(){
         return libroService.getAll();
     }
+     // GetAll con ricorsione
+    //    @GetMapping("/all")
+    //    public List<Libro> getAll(){
+    //        return libroService.getAllLibro();
+    //    }
 
-
-    @GetMapping("/all")
-    public List<Libro> getAll(){
-        return libroService.getAllLibro();
-    }
 }

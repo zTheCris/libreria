@@ -1,22 +1,50 @@
 package com.example.libreria.dto;
 
-import com.example.libreria.model.Nazionalita;
-
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 public class AutoreDTO {
 
     private Integer idAutore;
     private String nome;
-    private LocalDate anno;
+    private String cognome;
+    private LocalDate data;
     private NazionalitaDTO nazionalitaDTO;
+
+
+    public String getCognome() {
+        return cognome;
+    }
+
+    public void setCognome(String cognome) {
+        this.cognome = cognome;
+    }
+
+    public LocalDate getData() {
+        return data;
+    }
+
+    public void setData(LocalDate data) {
+        this.data = data;
+    }
+
+    public NazionalitaDTO getNazionalitaDTO() {
+        return nazionalitaDTO;
+    }
+
+    public void setNazionalitaDTO(NazionalitaDTO nazionalitaDTO) {
+        this.nazionalitaDTO = nazionalitaDTO;
+    }
+
     public AutoreDTO() {
     }
 
-    public AutoreDTO(Integer idAutore, String nome, LocalDate anno) {
+    public AutoreDTO(Integer idAutore, String nome,String cognome, LocalDate data) {
         this.idAutore = idAutore;
         this.nome = nome;
-        this.anno = anno;
+        this.cognome = cognome;
+        this.data = data;
     }
 
     public Integer getIdAutore() {
@@ -36,10 +64,11 @@ public class AutoreDTO {
     }
 
     public LocalDate getAnno() {
-        return anno;
+        return data;
     }
 
-    public void setAnno(LocalDate anno) {
-        this.anno = anno;
+    public void setAnno(LocalDate data) {
+        this.data = data;
     }
+
 }

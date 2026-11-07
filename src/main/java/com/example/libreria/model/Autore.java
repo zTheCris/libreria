@@ -8,7 +8,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "Autori")
-public class Autori {
+public class Autore {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idAutore")
@@ -34,7 +34,7 @@ public class Autori {
     @JoinColumn(name = "fk_nazionalita")
     private Nazionalita nazionalita;
 
-    public Autori() {
+    public Autore() {
     }
 
     public String getCognome() {
@@ -61,12 +61,10 @@ public class Autori {
         this.nazionalita = nazionalita;
     }
 
-    public Autori(Integer idAutore, String nome, String cognome, LocalDate data, Set<Libro> libri, Nazionalita nazionalita) {
-        this.idAutore = idAutore;
+    public Autore(String nome, String cognome, LocalDate data, Nazionalita nazionalita) {
         this.nome = nome;
         this.cognome = cognome;
         this.data = data;
-        this.libri = libri;
         this.nazionalita = nazionalita;
     }
 

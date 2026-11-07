@@ -10,20 +10,18 @@ import java.util.Set;
 public class Nazionalita {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name= "id_nazionalita")
+    @Column(name = "id_nazionalita")
     private Integer id_nazionalita;
     @Column(name = "nome")
     private String nome;
-    @OneToMany(mappedBy = "nazionalita")
-    private Set<Autori> autori = new HashSet<>();
 
     public Nazionalita() {
     }
 
-    public Nazionalita(Integer id_nazionalita, String nome, Set<Autori> autori) {
+    public Nazionalita(Integer id_nazionalita, String nome) {
         this.id_nazionalita = id_nazionalita;
         this.nome = nome;
-        this.autori = autori;
+
     }
 
     public Integer getId_nazionalita() {
@@ -41,12 +39,5 @@ public class Nazionalita {
     public void setNome(String nome) {
         this.nome = nome;
     }
-
-    public Set<Autori> getAutori() {
-        return autori;
-    }
-
-    public void setAutori(Set<Autori> autori) {
-        this.autori = autori;
-    }
 }
+
