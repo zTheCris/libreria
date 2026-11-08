@@ -25,6 +25,7 @@ public class Mapper {
         libroDTOret.setTitolo(libroDaConv.getTitolo());
         libroDTOret.setAnno(libroDaConv.getAnno());
         libroDTOret.setGenere(convertGenereToGenereDTO(libroDaConv.getGenere()));
+        libroDTOret.setPrezzo(libroDaConv.getPrezzo());
         // Ho scelto di avere il Set di autori solamente in Libri, e non viceversa.
         // Guardare LibroDTO per la spiegazione.
         for (Autore autore : libroDaConv.getAutori())
@@ -67,7 +68,7 @@ public class Mapper {
         autoreDTOret.setNome(autore.getNome());
         autoreDTOret.setCognome(autore.getCognome());
         autoreDTOret.setData(autore.getData());
-        autoreDTOret.setNazionalitaDTO(convertNazionalitaToNazionalitaDTO(autore.getNazionalita()));
+        autoreDTOret.setNazionalita(convertNazionalitaToNazionalitaDTO(autore.getNazionalita()));
 
         return autoreDTOret;
     }
@@ -77,7 +78,7 @@ public class Mapper {
         autoreRet.setNome(autoreDTO.getNome());
         autoreRet.setCognome(autoreDTO.getCognome());
         autoreRet.setData(autoreDTO.getData());
-        autoreRet.setNazionalita(convertNazionalitaDTOToNazionalita(autoreDTO.getNazionalitaDTO()));
+        autoreRet.setNazionalita(convertNazionalitaDTOToNazionalita(autoreDTO.getNazionalita()));
         // PER L'INSERIMENTO DI LIBRI AUTORI, SE NE OCCUPA IL SERVICE.
         return autoreRet;
     }
@@ -93,7 +94,7 @@ public class Mapper {
 
     public NazionalitaDTO convertNazionalitaToNazionalitaDTO(Nazionalita nazionalita) {
         NazionalitaDTO nazionalitaDTOret = new NazionalitaDTO();
-        nazionalitaDTOret.setId_nazionalita(nazionalita.getId_nazionalita());
+        nazionalitaDTOret.setIdNazionalita(nazionalita.getIdNazionalita()   );
         nazionalitaDTOret.setNome(nazionalita.getNome());
         return nazionalitaDTOret;
     }
@@ -117,13 +118,13 @@ public class Mapper {
         CopiaDTO copiaDTOret = new CopiaDTO();
         copiaDTOret.setCasaEditrice(convertCasaEditriceToCasaEditriceDTO(copia.getCasaEditrice()));
         copiaDTOret.setIdCopia(copia.getIdCopia());
-        copiaDTOret.setLibroDTO(convertLibroToLibroDTO(copia.getLibro()));
+        copiaDTOret.setLibro(convertLibroToLibroDTO(copia.getLibro()));
         copiaDTOret.setNumeroCopie(copia.getNumeroCopie());
         return copiaDTOret;
     }
     public Copia convertCopiaDTOToCopia(CopiaDTO copiaDTO) {
        Copia copiaRet = new Copia();
-       copiaRet.setLibro(convertLibroDTOToLibro(copiaDTO.getLibroDTO()));
+       copiaRet.setLibro(convertLibroDTOToLibro(copiaDTO.getLibro()));
        copiaRet.setCasaEditrice(convertCasaEditriceDTOToCasaEditrice(copiaDTO.getCasaEditrice()));
        copiaRet.setNumeroCopie(copiaDTO.getNumeroCopie());
        return copiaRet;

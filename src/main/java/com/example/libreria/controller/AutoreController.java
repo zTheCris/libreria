@@ -1,11 +1,7 @@
 package com.example.libreria.controller;
 
 import com.example.libreria.dto.AutoreDTO;
-import com.example.libreria.model.Autore;
-import com.example.libreria.model.Nazionalita;
-import com.example.libreria.repository.NazionalitaRepository;
 import com.example.libreria.service.AutoreService;
-import com.example.libreria.utility.Mapper;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,7 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/autori")

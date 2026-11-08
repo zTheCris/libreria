@@ -24,11 +24,11 @@ public class CopiaDTO {
         this.idCopia = idCopia;
     }
 
-    public LibroDTO getLibroDTO() {
+    public LibroDTO getLibro() {
         return libro;
     }
 
-    public void setLibroDTO(LibroDTO libro) {
+    public void setLibro(LibroDTO libro) {
         this.libro = libro;
     }
 
@@ -48,13 +48,4 @@ public class CopiaDTO {
         this.numeroCopie = numeroCopie;
     }
 
-    @Override
-    public String toString() {
-        return "CopieDTO{" +
-                "idCopia=" + idCopia +
-                ", libro=" + libro +
-                ", casaEditriceDTO=" + casaEditrice +
-                ", numeroCopie=" + numeroCopie +
-                '}';
-    }
 }

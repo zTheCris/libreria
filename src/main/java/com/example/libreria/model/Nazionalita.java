@@ -11,25 +11,25 @@ public class Nazionalita {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_nazionalita")
-    private Integer id_nazionalita;
+    private Integer idNazionalita;
     @Column(name = "nome")
     private String nome;
 
     public Nazionalita() {
     }
 
-    public Nazionalita(Integer id_nazionalita, String nome) {
-        this.id_nazionalita = id_nazionalita;
+    public Nazionalita(Integer idNazionalita, String nome) {
+        this.idNazionalita = idNazionalita;
         this.nome = nome;
 
     }
 
-    public Integer getId_nazionalita() {
-        return id_nazionalita;
+    public Integer getIdNazionalita() {
+        return idNazionalita;
     }
 
-    public void setId_nazionalita(Integer id_nazionalita) {
-        this.id_nazionalita = id_nazionalita;
+    public void setIdNazionalita(Integer idNazionalita) {
+        this.idNazionalita = idNazionalita;
     }
 
     public String getNome() {

@@ -2,11 +2,9 @@ package com.example.libreria.model;
 
 import jakarta.persistence.*;
 
-
-
 @Entity
 @Table(name="Copie")
-public class Copia {
+public class    Copia {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idCopia")

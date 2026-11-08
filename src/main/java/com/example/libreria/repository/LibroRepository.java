@@ -2,10 +2,23 @@ package com.example.libreria.repository;
 
 import com.example.libreria.model.Libro;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
-public interface LibroRepository extends JpaRepository<Libro,Integer> {
+public interface LibroRepository extends JpaRepository<Libro, Integer> {
 
     List<Libro> findByTitoloContainsIgnoreCase(String titolo);
+
+    Optional<Libro> findByTitolo(String titolo);
+
+    // Si aggiunge la modifying quando si esegue una DELETE,INSERT o una UPDATE.
+    @Modifying
+    @Query(value = """
+                DELETE FROM Libri_Autori WHERE Libri_Autori.fk_isbn = :isbn
+            """, nativeQuery = true)
+    void deleteLibroFromLibriAutori(@Param ("isbn") Integer isbn);
 }
