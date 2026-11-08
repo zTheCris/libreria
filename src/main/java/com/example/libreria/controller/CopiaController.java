@@ -1,7 +1,6 @@
 package com.example.libreria.controller;
 
 import com.example.libreria.dto.CopiaDTO;
-import com.example.libreria.repository.CopiaRepository;
 import com.example.libreria.service.CopieService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,5 +25,12 @@ public class CopiaController {
     @GetMapping("/allbynumcopie/{num_copie}")
     public List<CopiaDTO> getAllByNumCopie(@PathVariable Integer num_copie){
         return copieService.getAllByNumeroCopie(num_copie);
+    }
+    /**
+     * D
+     */
+    @GetMapping("/allbycasaeditrice/{id}")
+    public List<CopiaDTO> getAllByCasaEditrice(@PathVariable Integer id){
+        return copieService.getAllByCasaEditrice(id);
     }
 }

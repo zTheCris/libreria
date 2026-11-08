@@ -1,8 +1,6 @@
 package com.example.libreria.dto;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
 
 public class AutoreDTO {
 
@@ -10,7 +8,7 @@ public class AutoreDTO {
     private String nome;
     private String cognome;
     private LocalDate data;
-    private NazionalitaDTO nazionalitaDTO;
+    private NazionalitaDTO nazionalita;
 
 
     public String getCognome() {
@@ -29,12 +27,12 @@ public class AutoreDTO {
         this.data = data;
     }
 
-    public NazionalitaDTO getNazionalitaDTO() {
-        return nazionalitaDTO;
+    public NazionalitaDTO getNazionalita() {
+        return nazionalita;
     }
 
-    public void setNazionalitaDTO(NazionalitaDTO nazionalitaDTO) {
-        this.nazionalitaDTO = nazionalitaDTO;
+    public void setNazionalita(NazionalitaDTO nazionalita) {
+        this.nazionalita = nazionalita;
     }
 
     public AutoreDTO() {

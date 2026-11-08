@@ -9,7 +9,21 @@ public class LibroDTO {
     private String titolo;
     private LocalDate anno;
     private GenereDTO genere;
-    /*
+    private Integer prezzo;
+
+    public Integer getPrezzo() {
+        return prezzo;
+    }
+
+    public void setPrezzo(Integer prezzo) {
+        this.prezzo = prezzo;
+    }
+
+    public void setAutori(Set<AutoreDTO> autori) {
+        this.autori = autori;
+    }
+
+    /**
     Quando voglio fare una getAll dei libri, ho bisogno di sapere quali autori hanno scritto ogni libro.
     Dato che uno dei motivi per cui abbiamo creato il DTO è evitare la ricorsione infinita,
     facciamo che SOLO i Libri possono sapere da chi sono stati scritti.
@@ -20,11 +34,12 @@ public class LibroDTO {
     public LibroDTO() {
     }
 
-    public LibroDTO(Integer isbn, String titolo, LocalDate anno, GenereDTO genere, Set<AutoreDTO> autori) {
+    public LibroDTO(Integer isbn, String titolo, LocalDate anno, GenereDTO genere, Integer prezzo, Set<AutoreDTO> autori) {
         this.isbn = isbn;
         this.titolo = titolo;
         this.anno = anno;
         this.genere = genere;
+        this.prezzo = prezzo;
         this.autori = autori;
     }
 
