@@ -2,18 +2,18 @@ package com.example.libreria.dto;
 
 public class CopiaDTO {
     private Integer idCopia;
-    private LibroDTO libroDTO;
-    private CasaEditriceDTO casaEditriceDTO;
-    private Integer numero_copie;
+    private LibroDTO libro;
+    private CasaEditriceDTO casaEditrice;
+    private Integer numeroCopie;
 
     public CopiaDTO() {
     }
 
-    public CopiaDTO(Integer idCopia, LibroDTO libroDTO, CasaEditriceDTO casaEditriceDTO, Integer numero_copie) {
+    public CopiaDTO(Integer idCopia, LibroDTO libro, CasaEditriceDTO casaEditrice, Integer numeroCopie) {
         this.idCopia = idCopia;
-        this.libroDTO = libroDTO;
-        this.casaEditriceDTO = casaEditriceDTO;
-        this.numero_copie = numero_copie;
+        this.libro = libro;
+        this.casaEditrice = casaEditrice;
+        this.numeroCopie = numeroCopie;
     }
 
     public Integer getIdCopia() {
@@ -25,36 +25,36 @@ public class CopiaDTO {
     }
 
     public LibroDTO getLibroDTO() {
-        return libroDTO;
+        return libro;
     }
 
-    public void setLibroDTO(LibroDTO libroDTO) {
-        this.libroDTO = libroDTO;
+    public void setLibroDTO(LibroDTO libro) {
+        this.libro = libro;
     }
 
-    public CasaEditriceDTO getCasaEditriceDTO() {
-        return casaEditriceDTO;
+    public CasaEditriceDTO getCasaEditrice() {
+        return casaEditrice;
     }
 
-    public void setCasaEditriceDTO(CasaEditriceDTO casaEditriceDTO) {
-        this.casaEditriceDTO = casaEditriceDTO;
+    public void setCasaEditrice(CasaEditriceDTO casaEditrice) {
+        this.casaEditrice = casaEditrice;
     }
 
-    public Integer getNumero_copie() {
-        return numero_copie;
+    public Integer getNumeroCopie() {
+        return numeroCopie;
     }
 
-    public void setNumero_copie(Integer numero_copie) {
-        this.numero_copie = numero_copie;
+    public void setNumeroCopie(Integer numeroCopie) {
+        this.numeroCopie = numeroCopie;
     }
 
     @Override
     public String toString() {
         return "CopieDTO{" +
                 "idCopia=" + idCopia +
-                ", libroDTO=" + libroDTO +
-                ", casaEditriceDTO=" + casaEditriceDTO +
-                ", numero_copie=" + numero_copie +
+                ", libro=" + libro +
+                ", casaEditriceDTO=" + casaEditrice +
+                ", numeroCopie=" + numeroCopie +
                 '}';
     }
 }

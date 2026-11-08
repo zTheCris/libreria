@@ -20,11 +20,11 @@ public class Copia {
     @JoinColumn(name="fk_casaeditrice", nullable = false)
     private CasaEditrice casaEditrice;
     @Column(name = "numero_copie", nullable = false)
-    private Integer numero_copie;
+    private Integer numeroCopie;
 
-    public Copia(Integer idCopia, Integer numero_copie, Libro libro, CasaEditrice casaEditrice) {
+    public Copia(Integer idCopia, Integer numeroCopie, Libro libro, CasaEditrice casaEditrice) {
         this.idCopia = idCopia;
-        this.numero_copie = numero_copie;
+        this.numeroCopie = numeroCopie;
         this.libro = libro;
         this.casaEditrice = casaEditrice;
     }
@@ -57,12 +57,12 @@ public class Copia {
         this.casaEditrice = casaEditrice;
     }
 
-    public Integer getNumero_copie() {
-        return numero_copie;
+    public Integer getNumeroCopie() {
+        return numeroCopie;
     }
 
-    public void setNumero_copie(Integer numero_copie) {
-        this.numero_copie = numero_copie;
+    public void setNumeroCopie(Integer numeroCopie) {
+        this.numeroCopie = numeroCopie;
     }
 
     @Override
@@ -71,7 +71,7 @@ public class Copia {
                 "idCopia=" + idCopia +
                 ", libro=" + libro +
                 ", casaEditrice=" + casaEditrice +
-                ", numero_copie=" + numero_copie +
+                ", numeroCopie=" + numeroCopie +
                 '}';
     }
 }

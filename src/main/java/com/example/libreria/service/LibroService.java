@@ -1,5 +1,6 @@
 package com.example.libreria.service;
 
+import com.example.libreria.dto.AutoreDTO;
 import com.example.libreria.dto.LibroDTO;
 import com.example.libreria.model.Autore;
 import com.example.libreria.model.Genere;
@@ -68,8 +69,16 @@ public class LibroService {
         return libriDTOres;
     }
 
-    public List<Libro> getAllLibro(){
-        return libroRepository.findAll();
-    }
+//    public List<Libro> getAllLibro(){
+//        return libroRepository.findAll();
+//    }
 
+    public List<LibroDTO> getByTitolo(String titolo){
+        List<Libro> rispostaDB = libroRepository.findByTitoloContainsIgnoreCase(titolo);
+        List<LibroDTO> libriDTOres = new ArrayList<>();
+        for (Libro libro:rispostaDB)
+            libriDTOres.add(mapper.convertLibroToLibroDTO(libro));
+        return libriDTOres;
+
+    }
 }

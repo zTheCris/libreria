@@ -63,12 +63,5 @@ public class AutoreDTO {
         this.nome = nome;
     }
 
-    public LocalDate getAnno() {
-        return data;
-    }
-
-    public void setAnno(LocalDate data) {
-        this.data = data;
-    }
 
 }

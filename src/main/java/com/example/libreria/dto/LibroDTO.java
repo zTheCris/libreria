@@ -15,17 +15,17 @@ public class LibroDTO {
     facciamo che SOLO i Libri possono sapere da chi sono stati scritti.
     Per avere una relazione bilaterale, dovremmo usare il mappedBy a livello di Entity.
      */
-    private Set<AutoreDTO> autoriDTO = new HashSet<>();
+    private Set<AutoreDTO> autori = new HashSet<>();
 
     public LibroDTO() {
     }
 
-    public LibroDTO(Integer isbn, String titolo, LocalDate anno, GenereDTO genere, Set<AutoreDTO> autoriDTO) {
+    public LibroDTO(Integer isbn, String titolo, LocalDate anno, GenereDTO genere, Set<AutoreDTO> autori) {
         this.isbn = isbn;
         this.titolo = titolo;
         this.anno = anno;
         this.genere = genere;
-        this.autoriDTO = autoriDTO;
+        this.autori = autori;
     }
 
     public Integer getIsbn() {
@@ -60,11 +60,11 @@ public class LibroDTO {
         this.genere = genere;
     }
 
-    public Set<AutoreDTO> getAutoriDTO() {
-        return autoriDTO;
+    public Set<AutoreDTO> getAutori() {
+        return autori;
     }
 
-    public void setAutoriDTO(Set<AutoreDTO> autoriDTO) {
-        this.autoriDTO = autoriDTO;
+    public void setAutoriDTO(Set<AutoreDTO> autori) {
+        this.autori = autori;
     }
 }
