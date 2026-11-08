@@ -11,7 +11,7 @@ import java.util.List;
 
 @Service
 public class CopieService {
-    private CopiaRepository copiaRepository;
+    private final CopiaRepository copiaRepository;
     private final Mapper mapper;
     // Constructor Injection
     public CopieService(CopiaRepository copiaRepository,Mapper mapper) {

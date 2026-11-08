@@ -2,9 +2,9 @@
 
 # Libreria
 
-Applicazione Spring Boot per la gestione di una biblioteca. Il progetto modella libri, autori, generi, nazionalità, copie e case editrici tramite JPA e mette a disposizione una piccola API REST per consultare e inserire autori e libri.
+Applicazione Spring Boot per la gestione di una biblioteca. Il progetto modella libri, autori, generi, nazionalità, copie e case editrici tramite JPA e mette a disposizione API REST per consultare autori, libri e copie e per inserire autori e libri.
 
-> Gli endpoint descritti in questo documento sono esclusivamente quelli implementati nei controller presenti nel progetto. Le funzionalità relative a copie, case editrici, prestiti, utenti e dipendenti sono rappresentate nel dump SQL, ma non hanno controller REST attivi.
+> Gli endpoint descritti in questo documento sono esclusivamente quelli implementati nei controller presenti nel progetto. Le copie sono consultabili tramite API; case editrici, prestiti, utenti e dipendenti sono rappresentati nel dump SQL, ma non hanno controller REST dedicati.
 
 ## Schema del database
 
@@ -31,6 +31,7 @@ com.example.libreria
 ├── LibreriaApplication.java
 ├── controller/
 │   ├── AutoreController.java
+│   ├── CopiaController.java
 │   └── LibroController.java
 ├── dto/
 ├── model/
@@ -47,7 +48,7 @@ com.example.libreria
 - **Repository**: interfacce Spring Data JPA basate su `JpaRepository`. Sono presenti repository per autori, libri, generi, nazionalità, case editrici e copie.
 - **Entity/Model**: classi annotate con `@Entity` che rappresentano le tabelle gestite dal mapping JPA.
 - **DTO**: oggetti usati per trasferire dati verso il client evitando di esporre direttamente le entity e impedendo ricorsioni nelle relazioni.
-- **Mapper**: `utility.Mapper` converte entity e DTO. !!! -> Nei DTO dei libri gli autori sono inclusi, mentre l’autore non include la collezione dei libri nella risposta.
+- **Mapper**: `utility.Mapper` converte entity e DTO. Nei DTO dei libri sono inclusi gli autori, mentre `AutoreDTO` non include la collezione dei libri.
 
 ## Modello applicativo e relazioni
 
@@ -179,7 +180,7 @@ Esempio di risposta:
     "idGenere": 3,
     "nome": "Romanzo"
   },
-  "autoriDTO": [
+  "autori": [
     {
       "idAutore": 7,
       "nome": "Italo",
@@ -216,7 +217,7 @@ Esempio di risposta:
       "idGenere": 1,
       "nome": "Fantasy"
     },
-    "autoriDTO": [
+    "autori": [
       {
         "idAutore": 1,
         "nome": "J.R.R.",
@@ -233,6 +234,31 @@ Esempio di risposta:
 ```
 
 L’endpoint `/libri/all` è presente solo come codice commentato e non è quindi disponibile.
+
+### Ricerca libri per titolo
+
+```http
+GET /libri/getbytitle/{titolo}
+```
+
+Restituisce una lista di `LibroDTO` con i titoli che contengono il valore specificato, senza distinguere tra maiuscole e minuscole. Non richiede body.
+
+Esempio:
+
+```bash
+curl "http://localhost:8080/libri/getbytitle/signore"
+```
+
+### Consultazione copie
+
+```http
+GET /copie/all
+GET /copie/allbynumcopie/{num_copie}
+```
+
+Il primo endpoint restituisce tutte le copie come lista di `CopiaDTO`; il secondo filtra per il valore esatto di `numero_copie` e restituisce la stessa struttura. Nessuno dei due richiede un body.
+
+La risposta di `CopiaDTO` contiene l’identificativo, il libro (`libroDTO`), la casa editrice e il numero di copie. Il libro annidato ha la struttura di `LibroDTO`, inclusa la lista `autori`.
 
 ## Database
 
