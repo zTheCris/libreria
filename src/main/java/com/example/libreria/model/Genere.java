@@ -37,6 +37,14 @@ public class Genere {
         this.idGenere = idGenere;
         this.nome = nome;
     }
+
+    @Override
+    public String toString() {
+        return "Genere{" +
+                "idGenere=" + idGenere +
+                ", nome='" + nome + '\'' +
+                '}';
+    }
 }
 
 

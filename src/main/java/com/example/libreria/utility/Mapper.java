@@ -56,6 +56,8 @@ public class Mapper {
     }
 
     public GenereDTO convertGenereToGenereDTO(Genere genere) {
+        if(genere==null)
+            throw new IllegalArgumentException("Il genere passato è vuoto.");
         GenereDTO genereDTOret = new GenereDTO();
         genereDTOret.setIdGenere(genere.getIdGenere());
         genereDTOret.setNome(genere.getNome());
