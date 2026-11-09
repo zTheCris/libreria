@@ -1,356 +1,303 @@
+### N.B. ✨ Documentazione generata con GitHub Copilot   
+
 # Libreria
 
-Applicazione REST sviluppata con Spring Boot per la gestione del catalogo di una biblioteca. Il progetto gestisce libri, autori, copie e generi attraverso API REST, Spring Data JPA e Hibernate.
+Applicazione Spring Boot per la gestione di una biblioteca. Il progetto modella libri, autori, generi, nazionalità, copie e case editrici tramite JPA e mette a disposizione API REST per consultare autori, libri e copie e per inserire autori e libri.
 
-Le tabelle di supporto, come \`Nazionalita\` e \`CasaEditrice\`, vengono utilizzate per mantenere i dati normalizzati e per associare valori già presenti alle entità principali. Non tutte le tabelle del database richiedono quindi un controller dedicato.
+> Gli endpoint descritti in questo documento sono esclusivamente quelli implementati nei controller presenti nel progetto. Le copie sono consultabili tramite API; case editrici, prestiti, utenti e dipendenti sono rappresentati nel dump SQL, ma non hanno controller REST dedicati.
 
-## Funzionalità implementate
+## Schema del database
 
-- Consultazione, inserimento, modifica ed eliminazione dei libri.
-- Ricerca dei libri tramite ISBN e titolo, sia esatta sia parziale.
-- Consultazione, inserimento, modifica ed eliminazione degli autori.
-- Associazione di uno o più autori a un libro.
-- Consultazione e inserimento delle copie di un libro.
-- Ricerca delle copie per quantità e casa editrice.
-- Consultazione delle copie disponibili e di quelle esaurite.
-- Consultazione e gestione dei generi tramite un controller dedicato.
-- Verifica dell'esistenza di generi, autori, nazionalità, libri e case editrici prima di creare le relative associazioni.
-
-> La documentazione descrive il comportamento del codice presente nel branch \`master\`. La sezione [Limitazioni e comportamenti da correggere](#limitazioni-e-comportamenti-da-correggere) segnala alcuni endpoint che sono presenti nel codice ma che non funzionano ancora come suggerisce il loro nome.
+![Schema del database](https://github.com/zTheCris/libreria/blob/master/sql/db_schema.png?raw=true)
 
 ## Tecnologie utilizzate
 
 - **Java 23**
 - **Spring Boot 4.1.2**
-- **Spring Web MVC**, per le API REST
-- **Spring Data JPA** e **Hibernate**, per l'accesso al database
+- **Spring Web MVC**, per gli endpoint REST
+- **Spring Data JPA**, per il mapping object-relational e i repository
+- **Hibernate**, come implementazione JPA
 - **MySQL**, database relazionale
 - **Maven**, gestione del progetto e delle dipendenze
-- **SpringDoc OpenAPI 3.2.0**, documentazione OpenAPI e Swagger UI
-- **Spring Boot DevTools**, strumenti per lo sviluppo
-- **Spring Boot Starter Validation**, dipendenza per la validazione
+- **SpringDoc OpenAPI 3.2.0**, documentazione OpenAPI e interfaccia Swagger UI
+- **Spring Boot DevTools**, disponibile a runtime per lo sviluppo
 
 ## Struttura del progetto
 
-Il codice applicativo si trova in \`src/main/java/com/example/libreria\`.
+Il codice applicativo si trova in `src/main/java/com/example/libreria`:
 
-\`\`\`text
+```text
 com.example.libreria
 ├── LibreriaApplication.java
 ├── controller/
 │   ├── AutoreController.java
 │   ├── CopiaController.java
-│   ├── GenereController.java
 │   └── LibroController.java
 ├── dto/
-│   ├── AutoreDTO.java
-│   ├── CasaEditriceDTO.java
-│   ├── CopiaDTO.java
-│   ├── GenereDTO.java
-│   ├── LibroDTO.java
-│   └── NazionalitaDTO.java
-├── exception/
-│   ├── AutoreNotFoundException.java
-│   ├── CasaEditriceNotFound.java
-│   ├── CopiaNotFoundException.java
-│   ├── GenereNotFoundException.java
-│   ├── LibroNotFoundException.java
-│   └── NazionalitaNotFoundException.java
 ├── model/
-│   ├── Autore.java
-│   ├── CasaEditrice.java
-│   ├── Copia.java
-│   ├── Genere.java
-│   ├── Libro.java
-│   └── Nazionalita.java
 ├── repository/
-│   ├── AutoreRepository.java
-│   ├── CasaEditriceRepository.java
-│   ├── CopiaRepository.java
-│   ├── GenereRepository.java
-│   ├── LibroRepository.java
-│   └── NazionalitaRepository.java
 ├── service/
-│   ├── AutoreService.java
-│   ├── CopiaService.java
-│   ├── GenereService.java
-│   └── LibroService.java
 └── utility/
     └── Mapper.java
-\`\`\`
+```
 
 ### Responsabilità dei componenti
 
-- **Controller**: ricevono le richieste HTTP, richiamano i service e costruiscono le risposte.
-- **Service**: contengono la logica applicativa, verificano l'esistenza dei dati collegati e coordinano le operazioni sui repository.
-- **Repository**: interfacce Spring Data JPA che consentono di interrogare e modificare il database.
-- **Model/Entity**: classi JPA che rappresentano le tabelle mappate dall'applicazione.
-- **DTO**: oggetti utilizzati nelle risposte per trasferire i dati senza esporre direttamente le entity.
-- **Mapper**: converte le entity nei rispettivi DTO e viceversa.
+- **Controller**: espongono gli endpoint HTTP e delegano le operazioni ai service.
+- **Service**: contengono la logica applicativa. Verificano le relazioni richieste, recuperano i dati associati tramite repository, salvano le entity e convertono il risultato in DTO.
+- **Repository**: interfacce Spring Data JPA basate su `JpaRepository`. Sono presenti repository per autori, libri, generi, nazionalità, case editrici e copie.
+- **Entity/Model**: classi annotate con `@Entity` che rappresentano le tabelle gestite dal mapping JPA.
+- **DTO**: oggetti usati per trasferire dati verso il client evitando di esporre direttamente le entity e impedendo ricorsioni nelle relazioni.
+- **Mapper**: `utility.Mapper` converte entity e DTO. Nei DTO dei libri sono inclusi gli autori, mentre `AutoreDTO` non include la collezione dei libri.
 
 ## Modello applicativo e relazioni
 
-### Entità mappate da JPA
+### Entità
 
-| Entità | Tabella | Relazioni e utilizzo |
-|---|---|---|
-| \`Libro\` | \`Libri\` | Appartiene a un genere e può essere associato a più autori. |
-| \`Autore\` | \`Autori\` | Appartiene a una nazionalità e può essere associato a più libri. |
-| \`Genere\` | \`Generi\` | Può essere associato a più libri. |
-| \`Nazionalita\` | \`Nazionalita\` | Può essere associata a più autori. |
-| \`Copia\` | \`Copie\` | Appartiene a un libro e a una casa editrice. |
-| \`CasaEditrice\` | \`CasaEditrice\` | Può essere associata a più copie. |
+| Entità | Tabella | Campi principali | Relazioni |
+|---|---|---|---|
+| `Libro` | `Libri` | `isbn`, `titolo`, `anno`, `prezzo` | appartiene a un `Genere`; può avere molti `Autore` |
+| `Autore` | `Autori` | `idAutore`, `nome`, `cognome`, `data` | appartiene a una `Nazionalita`; può scrivere molti `Libro` |
+| `Genere` | `Generi` | `idGenere`, `nome` | un genere può essere associato a molti libri |
+| `Nazionalita` | `Nazionalita` | `id_nazionalita`, `nome` | una nazionalità può essere associata a molti autori |
+| `Copia` | `Copie` | `idCopia`, `numero_copie` | appartiene a un `Libro` e a una `CasaEditrice` |
+| `CasaEditrice` | `CasaEditrice` | `id_casaeditrice`, `nome` | può essere associata a molte copie |
 
 ### Relazioni JPA
 
-- **Libro e Genere**: relazione \`ManyToOne\`, tramite \`Libri.fk_genere\`.
-- **Autore e Nazionalita**: relazione \`ManyToOne\`, tramite \`Autori.fk_nazionalita\`.
-- **Libro e Autore**: relazione \`ManyToMany\`, tramite la tabella ponte \`Libri_Autori\`, con le colonne \`fk_isbn\` e \`fk_autore\`.
-- **Copia e Libro**: relazione \`ManyToOne\`, tramite \`Copie.fk_isbn\`.
-- **Copia e CasaEditrice**: relazione \`ManyToOne\`, tramite \`Copie.fk_casaeditrice\`.
+- **`Libro` — `Genere`**: `ManyToOne`, tramite `Libri.fk_genere`.
+- **`Autore` — `Nazionalita`**: `ManyToOne`, tramite `Autori.fk_nazionalita`.
+- **`Libro` — `Autore`**: `ManyToMany`, tramite la tabella di collegamento `Libri_Autori`, con chiavi `fk_isbn` e `fk_autore`.
+- **`Copia` — `Libro`**: `ManyToOne`, tramite `Copie.fk_isbn`.
+- **`Copia` — `CasaEditrice`**: `ManyToOne`, tramite `Copie.fk_casaeditrice`.
 
-### Ruolo delle tabelle di supporto
+La relazione molti-a-molti tra libri e autori è utilizzata da entrambi i lati nelle entity. Nella rappresentazione DTO, invece, il mapper include gli autori dentro `LibroDTO` e non include i libri dentro `AutoreDTO`, così da evitare una ricorsione nella serializzazione JSON.
 
-\`Nazionalita\` e \`CasaEditrice\` vengono recuperate dai rispettivi repository quando si crea o modifica un autore o una copia. Non hanno un controller REST dedicato perché, nell'attuale logica applicativa, servono soprattutto a riutilizzare valori già presenti nel database.
+## API REST
 
-\`Genere\`, invece, dispone anche di \`GenereService\` e \`GenereController\`. Il service viene inoltre utilizzato da \`LibroService\` per verificare e associare il genere durante l'inserimento e la modifica di un libro.
+L’applicazione usa come base URL `http://localhost:8080`. La porta `9090` è presente solo come configurazione commentata in `application.properties`, quindi il valore attivo predefinito è quello di Spring Boot.
 
-### DTO e struttura delle risposte
+### Elenco autori
 
-Il mapper costruisce le risposte annidando i dati collegati:
+```http
+GET /autori/all
+```
 
-- \`LibroDTO\` contiene il genere e l'insieme degli autori.
-- \`AutoreDTO\` contiene la nazionalità, ma non la lista dei libri.
-- \`CopiaDTO\` contiene il libro e la casa editrice.
+Non richiede parametri né body. Restituisce una lista di `AutoreDTO`.
 
-Questa scelta evita di ripetere la relazione inversa nei DTO e riduce il rischio di ricorsione durante la serializzazione JSON.
+Esempio di risposta:
 
-Esempio indicativo della struttura di un \`LibroDTO\`:
+```json
+[
+  {
+    "idAutore": 7,
+    "nome": "Italo",
+    "cognome": "Calvino",
+    "data": "1923-10-15",
+    "nazionalitaDTO": {
+      "id_nazionalita": 1,
+      "nome": "Italiana"
+    }
+  }
+]
+```
 
-\`\`\`json
+### Inserimento autore
+
+```http
+POST /autori/addAutore
+```
+
+Parametri richiesti dal metodo del controller:
+
+| Parametro | Tipo | Descrizione |
+|---|---|---|
+| `nome` | `String` | nome dell’autore |
+| `cognome` | `String` | cognome dell’autore |
+| `data` | `LocalDate` | data associata all’autore, nel formato `yyyy-MM-dd` |
+| `nazionalita` | `String` | nome di una nazionalità già presente nel database |
+
+Il metodo non dichiara `@RequestParam` e non usa `@RequestBody`: i valori sono quindi passati come parametri della richiesta secondo il binding di Spring MVC.
+
+Esempio:
+
+```bash
+curl -X POST "http://localhost:8080/autori/addAutore?nome=Primo&cognome=Levi&data=1919-07-31&nazionalita=Italiana"
+```
+
+Esempio di risposta:
+
+```json
 {
-  "isbn": 100000001,
-  "titolo": "Il Signore degli Anelli",
-  "anno": "1954-07-29",
-  "prezzo": 25,
+  "idAutore": 11,
+  "nome": "Primo",
+  "cognome": "Levi",
+  "data": "1919-07-31",
+  "nazionalita": {
+    "id_nazionalita": 1,
+    "nome": "Italiana"
+  }
+}
+```
+
+La nazionalità deve esistere. In caso di errore nel service, l’implementazione attuale stampa lo stack trace e restituisce `null`.
+
+### Inserimento libro
+
+```http
+POST /libri/addLibro
+```
+
+Parametri del metodo:
+
+| Parametro | Tipo | Descrizione |
+|---|---|---|
+| `isbn` | `Integer` | identificativo ISBN del libro |
+| `titolo` | `String` | titolo del libro |
+| `data` | `LocalDate` | data/anno del libro, nel formato `yyyy-MM-dd` |
+| `prezzo` | `Integer` | prezzo del libro |
+| `genere` | `String` | nome di un genere già presente nel database |
+| body | `Set<Integer>` | insieme degli `idAutore` da associare al libro |
+
+Il body è l’unico parametro dichiarato con `@RequestBody`; gli altri valori sono parametri della richiesta.
+
+Esempio:
+
+```bash
+curl -X POST "http://localhost:8080/libri/addLibro?isbn=100000021&titolo=Nuovo%20libro&data=2026-01-15&prezzo=18&genere=Romanzo" ^
+  -H "Content-Type: application/json" ^
+  -d "[7,8]"
+```
+
+Esempio di risposta:
+
+```json
+{
+  "isbn": 100000021,
+  "titolo": "Nuovo libro",
+  "anno": "2026-01-15",
   "genere": {
-    "idGenere": 1,
-    "nome": "Fantasy"
+    "idGenere": 3,
+    "nome": "Romanzo"
   },
   "autori": [
     {
-      "idAutore": 1,
-      "nome": "J.R.R.",
-      "cognome": "Tolkien",
-      "data": "1892-01-03",
+      "idAutore": 7,
+      "nome": "Italo",
+      "cognome": "Calvino",
+      "data": "1923-10-15",
       "nazionalita": {
-        "idNazionalita": 2,
-        "nome": "Inglese"
+        "id_nazionalita": 1,
+        "nome": "Italiana"
       }
     }
   ]
 }
-\`\`\`
+```
 
-## API REST
+Il service verifica che tutti gli ID autore ricevuti esistano e che il genere indicato sia presente. Se una verifica fallisce, l’implementazione attuale stampa lo stack trace e restituisce `null`.
 
-La base URL locale è \`http://localhost:8080\`. Gli endpoint che ricevono parametri semplici non annotati esplicitamente con \`@RequestParam\` sono documentati come parametri della query, secondo il binding utilizzato da Spring MVC.
+### Elenco libri in formato DTO
 
-### Autori
+```http
+GET /libri/allDTO
+```
 
-| Metodo | Endpoint | Descrizione |
-|---|---|---|
-| GET | \`/autori/all\` | Restituisce tutti gli autori come lista di \`AutoreDTO\`. |
-| POST | \`/autori/addAutore\` | Inserisce un autore. |
-| PUT | \`/autori/{idAutore}\` | Modifica un autore esistente. |
-| DELETE | \`/autori/{idAutore}\` | Elimina un autore. |
+Non richiede parametri né body. Restituisce tutti i libri convertiti in `LibroDTO`.
 
-Per inserire un autore sono richiesti i parametri \`nome\`, \`cognome\`, \`data\` e \`nazionalita\`. La data deve rispettare il formato ISO \`yyyy-MM-dd\`. La nazionalità deve già esistere nel database.
+Esempio di risposta:
 
-Esempio:
+```json
+[
+  {
+    "isbn": 100000001,
+    "titolo": "Il Signore degli Anelli",
+    "anno": "1954-07-29",
+    "genere": {
+      "idGenere": 1,
+      "nome": "Fantasy"
+    },
+    "autori": [
+      {
+        "idAutore": 1,
+        "nome": "J.R.R.",
+        "cognome": "Tolkien",
+        "data": "1892-01-03",
+        "nazionalita": {
+          "id_nazionalita": 2,
+          "nome": "Inglese"
+        }
+      }
+    ]
+  }
+]
+```
 
-\`\`\`bash
-curl -X POST "http://localhost:8080/autori/addAutore?nome=Primo&cognome=Levi&data=1919-07-31&nazionalita=Italiana"
-\`\`\`
+L’endpoint `/libri/all` è presente solo come codice commentato e non è quindi disponibile.
 
-Per modificare un autore si passano gli stessi parametri insieme all'identificativo:
+### Ricerca libri per titolo
 
-\`\`\`bash
-curl -X PUT "http://localhost:8080/autori/11?nome=Primo&cognome=Levi&data=1919-07-31&nazionalita=Italiana"
-\`\`\`
+```http
+GET /libri/getbytitle/{titolo}
+```
 
-Il service verifica che l'autore da modificare e la nazionalità indicata esistano. Gli endpoint di scrittura restituiscono attualmente un messaggio testuale.
-
-Non è ancora presente un endpoint per recuperare un singolo autore tramite ID o per cercare gli autori tramite nome e cognome.
-
-### Generi
-
-| Metodo | Endpoint | Descrizione |
-|---|---|---|
-| GET | \`/generi/all\` | Restituisce la lista dei generi come \`GenereDTO\`. |
-| GET | \`/generi/{id}\` | Recupera un genere tramite ID. |
-| POST | \`/generi\` | Inserisce un genere. |
-| PUT | \`/generi/id\` | Mapping presente nel codice, ma aggiornamento da correggere. |
-
-Per inserire un genere si passa il parametro \`nome\`:
-
-\`\`\`bash
-curl -X POST "http://localhost:8080/generi?nome=Fantascienza"
-\`\`\`
-
-Il service controlla che il nome non sia vuoto. Non è attualmente presente un endpoint DELETE per i generi.
-
-**Nota:** l'endpoint PUT è definito con \`@PutMapping("/id")\`, mentre il metodo richiede un parametro \`@PathVariable Integer id\`. Il percorso non contiene quindi il segnaposto \`{id}\` necessario. Inoltre, il metodo \`getById\` del service lancia un'eccezione di tipo \`AutoreNotFoundException\` quando il genere non esiste, mentre il controller intercetta \`GenereNotFoundException\`. Questi due punti devono essere corretti.
-
-### Libri
-
-| Metodo | Endpoint | Descrizione |
-|---|---|---|
-| GET | \`/libri/all\` | Restituisce tutti i libri come lista di \`LibroDTO\`. |
-| GET | \`/libri/{isbn}\` | Recupera un libro tramite ISBN. |
-| GET | \`/libri/getallbytitle/{titolo}\` | Cerca i libri con titolo contenente il testo specificato, senza distinzione tra maiuscole e minuscole. |
-| GET | \`/libri/getbytitle/{titolo}\` | Cerca un libro con titolo esatto. |
-| POST | \`/libri/addLibro\` | Inserisce un libro e associa gli autori indicati. |
-| PUT | \`/libri/{isbn}\` | Modifica un libro esistente. |
-| DELETE | \`/libri/{isbn}\` | Elimina un libro. |
-
-Per l'inserimento sono richiesti i parametri \`isbn\`, \`titolo\`, \`data\`, \`prezzo\` e \`genere\`. Il body JSON contiene un array di ID autore. Il valore \`data\` viene utilizzato per il campo \`anno\` dell'entità \`Libro\`.
-
-Esempio di inserimento:
-
-\`\`\`bash
-curl -X POST "http://localhost:8080/libri/addLibro?isbn=100000021&titolo=Nuovo%20libro&data=2026-01-15&prezzo=18&genere=Romanzo" \
-  -H "Content-Type: application/json" \
-  -d "[7,8]"
-\`\`\`
-
-Il service verifica che tutti gli ID autore ricevuti esistano e recupera il genere tramite il nome. Se una delle associazioni richieste non è valida, viene sollevata la relativa eccezione.
-
-La modifica richiede l'ISBN del libro già presente. Il service verifica l'esistenza del libro, recupera il genere, verifica tutti gli autori e salva il libro con i nuovi dati e le nuove associazioni.
-
-L'eliminazione è gestita con una transazione \`@Transactional\`. Prima di eliminare il libro, il service rimuove i riferimenti dalla tabella \`Libri_Autori\` e i record associati in \`Copie\`; infine elimina il libro. In questo modo le operazioni previste dal service vengono eseguite nella stessa transazione.
-
-### Copie
-
-| Metodo | Endpoint | Descrizione |
-|---|---|---|
-| GET | \`/copie/all\` | Restituisce tutte le copie come lista di \`CopiaDTO\`. |
-| GET | \`/copie/allbynumcopie/{num_copie}\` | Cerca i record con un numero di copie esatto. |
-| GET | \`/copie/allbycasaeditrice/{id}\` | Cerca i record associati alla casa editrice indicata. |
-| GET | \`/copie/getbyisbn/{isbn}\` | Cerca il record di copia associato al libro indicato. |
-| GET | \`/copie/disponibili\` | Restituisce i record con \`numeroCopie > 0\`. |
-| GET | \`/copie/esaurite\` | Restituisce i record con \`numeroCopie = 0\`. |
-| POST | \`/copie\` | Inserisce un nuovo record di copia. |
-| PUT | \`/copie/{isbn}\` | Mapping presente, ma al momento richiama la logica di inserimento. |
-| DELETE | \`/copie/{isbn}\` | Elimina un record di copia; il valore ricevuto viene usato come ID della copia, non come ISBN. |
-
-Per inserire una copia sono richiesti i parametri \`isbn\`, \`idCasaEditrice\` e \`numeroCopie\`. Il service controlla che il libro e la casa editrice esistano prima di creare il record.
+Restituisce una lista di `LibroDTO` con i titoli che contengono il valore specificato, senza distinguere tra maiuscole e minuscole. Non richiede body.
 
 Esempio:
 
-\`\`\`bash
-curl -X POST "http://localhost:8080/copie?isbn=100000021&idCasaEditrice=1&numeroCopie=5"
-\`\`\`
+```bash
+curl "http://localhost:8080/libri/getbytitle/signore"
+```
 
-Il DTO di una copia contiene \`idCopia\`, \`libro\`, \`casaEditrice\` e \`numeroCopie\`. Il libro annidato è un \`LibroDTO\`, quindi include a sua volta genere e autori.
+### Consultazione copie
 
-### Esempi dei criteri di ricerca
+```http
+GET /copie/all
+GET /copie/allbynumcopie/{num_copie}
+```
 
-- \`GET /libri/getallbytitle/signore\`: ricerca parziale del titolo.
-- \`GET /libri/getbytitle/Il%20Signore%20degli%20Anelli\`: ricerca esatta del titolo.
-- \`GET /copie/allbynumcopie/5\`: record con esattamente cinque copie.
-- \`GET /copie/disponibili\`: record con almeno una copia.
-- \`GET /copie/esaurite\`: record senza copie disponibili.
+Il primo endpoint restituisce tutte le copie come lista di `CopiaDTO`; il secondo filtra per il valore esatto di `numero_copie` e restituisce la stessa struttura. Nessuno dei due richiede un body.
 
-## Logica applicativa rilevante
+La risposta di `CopiaDTO` contiene l’identificativo, il libro (`libroDTO`), la casa editrice e il numero di copie. Il libro annidato ha la struttura di `LibroDTO`, inclusa la lista `autori`.
 
-### Associazione dei dati esistenti
+## Database
 
-I service non creano nuove righe di nazionalità, case editrici o generi quando ricevono i rispettivi nomi o identificativi. Recuperano invece i record già presenti e li associano all'entità principale:
+La configurazione predefinita utilizza:
 
-1. Alla creazione o modifica di un autore, viene cercata la nazionalità tramite nome.
-2. Alla creazione o modifica di un libro, viene cercato il genere tramite nome e vengono recuperati tutti gli autori tramite i loro ID.
-3. Alla creazione di una copia, vengono recuperati il libro tramite ISBN e la casa editrice tramite ID.
+- database: `Biblioteca`
+- host: `localhost`
+- porta MySQL: `3306`
+- driver: `com.mysql.cj.jdbc.Driver`
+- utente configurato: `root`
+- schema JPA: `validate`
 
-Questo approccio evita di duplicare stringhe e record di riferimento.
+`spring.jpa.hibernate.ddl-auto=validate` indica che Hibernate verifica la compatibilità dello schema esistente senza crearlo o modificarlo automaticamente. Il file `sql/Dump20261104.sql` contiene lo schema e i dati di esempio del database.
 
-### Disponibilità delle copie
+### Tabelle principali del dump
 
-La disponibilità viene determinata dal campo \`numeroCopie\`:
+- `Libri`: catalogo dei libri, con riferimento a `Generi`.
+- `Autori`: autori, con riferimento a `Nazionalita`.
+- `Libri_Autori`: tabella ponte per la relazione molti-a-molti tra libri e autori.
+- `Generi`: elenco dei generi.
+- `Nazionalita`: elenco delle nazionalità.
+- `Copie`: quantità di copie per libro e casa editrice.
+- `CasaEditrice`: case editrici.
 
-- valore maggiore di zero: copie disponibili;
-- valore uguale a zero: copie esaurite.
+Il dump contiene inoltre `Condizione`, `Prestiti`, `Utenti`, `Dipendenti` e `Vendite`. Queste tabelle hanno relazioni SQL con il resto dello schema, ma non sono mappate da entity presenti nel codice Java e non sono esposte dagli endpoint attuali.
 
-Attualmente il filtro delle copie disponibili viene eseguito dal service dopo aver recuperato i record dal database.
+### Relazioni SQL
 
-### Eliminazione di un libro
+```text
+Nazionalita 1 ─── N Autori
+Generi      1 ─── N Libri
+Autori      N ─── N Libri       tramite Libri_Autori
+Libri       1 ─── N Copie
+CasaEditrice 1 ─ N Copie
+Libri       1 ─── N Prestiti
+Utenti      1 ─── N Prestiti
+Condizione  1 ─── N Prestiti
+Utenti      1 ─── N Vendite
+Dipendenti  1 ─── N Vendite
+```
 
-\`LibroService.deleteLibro\` è annotato con \`@Transactional\`. La sequenza attuale è:
-
-1. verifica dell'esistenza del libro;
-2. eliminazione dei collegamenti in \`Libri_Autori\`;
-3. eliminazione dei record in \`Copie\` associati all'ISBN;
-4. eliminazione del libro.
-
-Le query di eliminazione diretta nei repository sono annotate con \`@Modifying\`.
-
-## Database e avvio
-
-La configurazione predefinita si trova in \`src/main/resources/application.properties\`:
-
-- database: \`Biblioteca\`;
-- host: \`localhost\`;
-- porta MySQL: \`3306\`;
-- driver: \`com.mysql.cj.jdbc.Driver\`;
-- \`spring.jpa.hibernate.ddl-auto=validate\`.
-
-Con \`ddl-auto=validate\`, Hibernate verifica la compatibilità tra entity e schema esistente, senza creare o modificare automaticamente le tabelle. Il database deve quindi essere predisposto prima di avviare l'applicazione.
-
-Il dump SQL si trova in \`sql/Dump20261104.sql\`; lo schema grafico è disponibile in \`sql/db_schema.png\`.
-
-Per avviare l'applicazione con Maven:
-
-\`\`\`bash
-mvn spring-boot:run
-\`\`\`
-
-Con SpringDoc è disponibile la documentazione OpenAPI e l'interfaccia Swagger UI agli indirizzi:
-
-- \`http://localhost:8080/v3/api-docs\`
-- \`http://localhost:8080/swagger-ui/index.html\`
-
-## Tabelle presenti nel dump ma non ancora gestite da entity e API
-
-Il dump SQL contiene anche le tabelle \`Condizione\`, \`Prestiti\`, \`Utenti\`, \`Dipendenti\` e \`Vendite\`. Al momento non risultano implementate le corrispondenti entity, repository, service e controller Java.
-
-Le relazioni SQL presenti nel dump comprendono inoltre:
-
-\`\`\`text
-Nazionalita  1 ─── N Autori
-Generi       1 ─── N Libri
-Autori       N ─── N Libri       tramite Libri_Autori
-Libri        1 ─── N Copie
-CasaEditrice 1 ─── N Copie
-Libri        1 ─── N Prestiti
-Utenti       1 ─── N Prestiti
-Condizione   1 ─── N Prestiti
-Utenti       1 ─── N Vendite
-Dipendenti   1 ─── N Vendite
-\`\`\`
-
-Le ultime relazioni appartengono allo schema SQL, ma non sono ancora rappresentate dal modello JPA dell'applicazione.
-
-## Limitazioni e comportamenti da correggere
-
-Questa sezione distingue le funzionalità effettivamente implementate dai punti per cui il comportamento attuale non corrisponde ancora all'endpoint o al nome del metodo.
-
-1. **Modifica di una copia**: \`CopiaController.modificaCopia\` richiama \`addCopia\`, che crea una nuova entity \`Copia\` senza valorizzare \`idCopia\`. La chiamata PUT inserisce quindi un nuovo record invece di aggiornare quello esistente.
-2. **Eliminazione di una copia**: il percorso è dichiarato come \`/copie/{isbn}\`, ma il valore viene passato a \`deleteCopia(Integer idCopia)\`. Il parametro rappresenta quindi l'ID della copia e non l'ISBN del libro.
-3. **Ricerca delle copie tramite ISBN**: \`CopiaRepository.findAllByLibro\` restituisce una singola \`Copia\`, non una lista. La ricerca può essere ambigua se lo stesso libro è associato a più case editrici.
-4. **Modifica di un genere**: \`GenereController\` usa \`@PutMapping("/id")\` ma dichiara un parametro \`@PathVariable id\`. Il mapping dovrebbe includere il segnaposto, ad esempio \`@PutMapping("/{id}")\`.
-5. **Ricerca di un genere per ID**: se il genere non esiste, \`GenereService.getById\` solleva \`AutoreNotFoundException\` invece di \`GenereNotFoundException\`. Il controller intercetta soltanto quest'ultima.
-6. **Eliminazione di un autore associato a libri**: \`AutoreService\` elimina direttamente l'autore senza rimuovere prima eventuali collegamenti in \`Libri_Autori\`. Se sono presenti riferimenti, l'eliminazione può essere impedita dai vincoli del database.
-7. **Prestiti**: la cancellazione di un libro non gestisce record in \`Prestiti\`. Se esistono prestiti che fanno riferimento al libro e il vincolo SQL non consente la cancellazione, l'operazione può fallire.
-8. **Parametri delle richieste**: diversi metodi ricevono parametri semplici senza annotazioni esplicite e, per l'inserimento o la modifica di un libro, gli ID degli autori sono invece nel body JSON. La documentazione degli esempi riflette questa struttura attuale; in futuro si potrebbe uniformare il contratto usando DTO di request e \`@RequestBody\`.
-
-Questi punti non implicano che siano necessari controller CRUD per tutte le tabelle di supporto. È sufficiente esporre API dedicate quando esiste una vera operazione applicativa da rendere disponibile al client.
+Le ultime quattro relazioni appartengono allo schema SQL del dump, ma non sono gestite dal modello applicativo corrente.
