@@ -35,6 +35,15 @@ public class CopiaController {
         return copieService.getByIsbn(isbn);
     }
 
+    @GetMapping("/disponibili")
+    public List<CopiaDTO> getByNumeroCopieDisponibili(){
+        return copieService.getByNumeroCopieDisponibili();
+    }
+    @GetMapping("/esaurite")
+    public List<CopiaDTO> getByNumeroCopieEsaurite(){
+        return copieService.getByNumeroCopieEsaurite();
+    }
+
     // POST
     @PostMapping
     public CopiaDTO addCopia(Integer isbn,Integer idCasaEditrice,Integer numeroCopie){

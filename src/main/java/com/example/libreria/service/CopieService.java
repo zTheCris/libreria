@@ -75,6 +75,26 @@ public class CopieService {
     public void deleteCopia(Integer idCopia) {
         copiaRepository.deleteById(idCopia);
     }
+
+    public List<CopiaDTO> getByNumeroCopieDisponibili() {
+        List<Copia> rispostaDB = copiaRepository
+                .findAll()
+                .stream()
+                // Ora filtro per le copie maggiori di 0
+                .filter(copia->copia.getNumeroCopie()>0)
+                // Converto in lista
+                .toList();
+        List<CopiaDTO> copieDTOret = new ArrayList<>();
+        for (Copia copia:rispostaDB)
+            copieDTOret.add(mapper.convertCopieToCopieDTO(copia));
+        return copieDTOret;
+
+    }
+    public List<CopiaDTO> getByNumeroCopieEsaurite() {
+        // Posso direttamente usare il getAllByNumeroCopie cosi da non riutilizzare il codice.
+        return getAllByNumeroCopie(0);
+
+    }
     // Modifica copia
 
 }

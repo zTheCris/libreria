@@ -20,6 +20,7 @@ public class Mapper {
     // Libro
 
     public LibroDTO convertLibroToLibroDTO(Libro libroDaConv) {
+
         LibroDTO libroDTOret = new LibroDTO();
         libroDTOret.setIsbn(libroDaConv.getIsbn());
         libroDTOret.setTitolo(libroDaConv.getTitolo());

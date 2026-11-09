@@ -164,6 +164,11 @@ public class LibroService {
         // Finalmente, elimino il libro.
         libroRepository.deleteById(isbn);
     }
+    /*
+    Il modo per poterlo fare con una delete, è dire a Hibernate tutti i riferimenti in cui
+    Libro compare in altre tabelle, mappandoli con @OneToMany o @ManyToMany usando il mappedBy.
+
+     */
 
 
 
