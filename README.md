@@ -75,7 +75,7 @@ La relazione molti-a-molti tra libri e autori è utilizzata da entrambi i lati n
 
 ## API REST
 
-L’applicazione usa come base URL `http://localhost:8080`. La porta `9090` è presente solo come configurazione commentata in `application.properties`, quindi il valore attivo predefinito è quello di Spring Boot.
+L’applicazione usa come base URL `http://localhost:8080`.
 
 ### Elenco autori
 
