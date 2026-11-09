@@ -2,10 +2,7 @@ package com.example.libreria.controller;
 
 import com.example.libreria.dto.CopiaDTO;
 import com.example.libreria.service.CopieService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -27,10 +24,32 @@ public class CopiaController {
         return copieService.getAllByNumeroCopie(num_copie);
     }
     /**
-     * D
+     *
      */
     @GetMapping("/allbycasaeditrice/{id}")
     public List<CopiaDTO> getAllByCasaEditrice(@PathVariable Integer id){
         return copieService.getAllByCasaEditrice(id);
     }
+    @GetMapping("/getbyisbn/{isbn}")
+    public CopiaDTO getByLibro(@PathVariable Integer isbn){
+        return copieService.getByIsbn(isbn);
+    }
+
+    // POST
+    @PostMapping
+    public CopiaDTO addCopia(Integer isbn,Integer idCasaEditrice,Integer numeroCopie){
+        return copieService.addCopia(isbn,idCasaEditrice,numeroCopie);
+    }
+    // PUT
+    @PutMapping("/{isbn}")
+    public CopiaDTO modificaCopia(Integer isbn,Integer idCasaEditrice,Integer numeroCopie){
+        // Posso usare lo stesso servizio poichè la save quando vede che la copia già esiste nel DB ne fa una UPDATE.
+        return copieService.addCopia(isbn,idCasaEditrice,numeroCopie);
+    }
+    // DELETE
+    @DeleteMapping("/{isbn}")
+    public void deleteCopia(Integer isbn){
+        copieService.deleteCopia(isbn);
+    }
+
 }

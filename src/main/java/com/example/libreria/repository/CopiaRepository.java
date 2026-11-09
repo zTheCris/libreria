@@ -21,4 +21,6 @@ public interface CopiaRepository extends JpaRepository<Copia, Integer> {
                 DELETE FROM Copie WHERE Copie.fk_isbn = :isbn
             """, nativeQuery = true)
     void deleteLibroFromCopie(@Param("isbn") Integer isbn);
+
+    Copia findAllByLibro(Libro libro);
 }

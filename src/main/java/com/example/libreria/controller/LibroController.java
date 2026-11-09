@@ -60,11 +60,13 @@ public class LibroController {
     }
 
     // PUT
+    // modify by isbn
     @PutMapping("{isbn}")
     public LibroDTO modificaLibro(@PathVariable Integer isbn, String titolo, LocalDate data, Integer prezzo, String genere, @RequestBody Set<Integer> autoriIDs){
         return libroService.modificaLibro(isbn,titolo,data,prezzo,genere,autoriIDs);
     }
     // DELETE
+    // delete By Isbn
     @DeleteMapping("{isbn}")
     public void deleteLibro(@PathVariable Integer isbn){
         libroService.deleteLibro(isbn);

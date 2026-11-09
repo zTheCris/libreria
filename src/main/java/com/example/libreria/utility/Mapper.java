@@ -41,6 +41,7 @@ public class Mapper {
         libroRet.setTitolo(libroDTOdaConv.getTitolo());
         libroRet.setAnno(libroDTOdaConv.getAnno());
         libroRet.setGenere(convertGenereDTOToGenere(libroDTOdaConv.getGenere()));
+        libroRet.setPrezzo(libroDTOdaConv.getPrezzo());
         // PER L'INSERIMENTO DI LIBRI AUTORI, SE NE OCCUPA IL SERVICE.
         return libroRet;
     }

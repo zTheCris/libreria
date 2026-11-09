@@ -20,8 +20,7 @@ public class    Copia {
     @Column(name = "numero_copie", nullable = false)
     private Integer numeroCopie;
 
-    public Copia(Integer idCopia, Integer numeroCopie, Libro libro, CasaEditrice casaEditrice) {
-        this.idCopia = idCopia;
+    public Copia(Integer numeroCopie, Libro libro, CasaEditrice casaEditrice) {
         this.numeroCopie = numeroCopie;
         this.libro = libro;
         this.casaEditrice = casaEditrice;
