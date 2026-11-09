@@ -133,7 +133,7 @@ Esempio di risposta:
   "nome": "Primo",
   "cognome": "Levi",
   "data": "1919-07-31",
-  "nazionalitaDTO": {
+  "nazionalita": {
     "id_nazionalita": 1,
     "nome": "Italiana"
   }
@@ -186,7 +186,7 @@ Esempio di risposta:
       "nome": "Italo",
       "cognome": "Calvino",
       "data": "1923-10-15",
-      "nazionalitaDTO": {
+      "nazionalita": {
         "id_nazionalita": 1,
         "nome": "Italiana"
       }
@@ -223,7 +223,7 @@ Esempio di risposta:
         "nome": "J.R.R.",
         "cognome": "Tolkien",
         "data": "1892-01-03",
-        "nazionalitaDTO": {
+        "nazionalita": {
           "id_nazionalita": 2,
           "nome": "Inglese"
         }
