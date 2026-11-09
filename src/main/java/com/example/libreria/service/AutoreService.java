@@ -49,16 +49,20 @@ public class AutoreService {
     }
 
     public AutoreDTO modificaAutore(Integer idAutore, String nome, String cognome, LocalDate data, String nazionalita) {
-        autoreRepository.findById(idAutore).orElseThrow(() -> new AutoreNotFoundException("Autore non trovato."));
+        Autore autore = autoreRepository.findById(idAutore).orElseThrow(() -> new AutoreNotFoundException("Autore non trovato."));
         Nazionalita nazionalitaObj = nazionalitaRepository.findByNome(nazionalita).orElseThrow(() -> new
                 NazionalitaNotFoundException("Nazionalità non esistente."));
         // A questo punto,aggiorno l'autore
-        Autore autore = new Autore(nome, cognome, data, nazionalitaObj);
+        autore.setNome(nome);
+        autore.setCognome(cognome);
+        autore.setData(data);
+        autore.setNazionalita(nazionalitaObj);
         return mapper.convertAutoreToAutoreDTO(autoreRepository.save(autore));
     }
 
     public void deleteByIdAutore(Integer idAutore) {
-        autoreRepository.deleteById(idAutore);
+        Autore autore = autoreRepository.findById(idAutore).orElseThrow(()-> new AutoreNotFoundException("Autore non trovato"));
+        autoreRepository.delete(autore);
     }
 
     // Metodi

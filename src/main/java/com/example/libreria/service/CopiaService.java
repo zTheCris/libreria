@@ -2,6 +2,7 @@ package com.example.libreria.service;
 
 import com.example.libreria.dto.CopiaDTO;
 import com.example.libreria.exception.CasaEditriceNotFound;
+import com.example.libreria.exception.CopiaNotFoundException;
 import com.example.libreria.exception.LibroNotFoundException;
 import com.example.libreria.model.CasaEditrice;
 import com.example.libreria.model.Copia;
@@ -16,14 +17,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class CopieService {
+public class CopiaService {
     private final CopiaRepository copiaRepository;
     private final Mapper mapper;
     private final CasaEditriceRepository casaEditriceRepository;
     private final LibroRepository libroRepository;
 
     // Constructor Injection
-    public CopieService(CopiaRepository copiaRepository, Mapper mapper, CasaEditriceRepository casaEditriceRepository, LibroRepository libroRepository) {
+    public CopiaService(CopiaRepository copiaRepository, Mapper mapper, CasaEditriceRepository casaEditriceRepository, LibroRepository libroRepository) {
         this.copiaRepository = copiaRepository;
         this.mapper = mapper;
         this.casaEditriceRepository = casaEditriceRepository;
@@ -42,6 +43,7 @@ public class CopieService {
 
     public List<CopiaDTO> getAllByNumeroCopie(Integer numeroCopie){
         List<Copia> rispostaDB = copiaRepository.findByNumeroCopie(numeroCopie);
+        if(rispostaDB.isEmpty()) throw new CopiaNotFoundException("Non sono presenti Copie con numero di copie "+numeroCopie);
         List<CopiaDTO> copieDTOret = new ArrayList<>();
         for (Copia copia:rispostaDB)
             copieDTOret.add(mapper.convertCopieToCopieDTO(copia));
@@ -50,7 +52,7 @@ public class CopieService {
 
 
     public List<CopiaDTO> getAllByCasaEditrice(Integer id) {
-        CasaEditrice casaEditrice = casaEditriceRepository.findById(id).orElseThrow(()-> new RuntimeException("Casa editrice non trovata"));
+        CasaEditrice casaEditrice = casaEditriceRepository.findById(id).orElseThrow(()-> new CasaEditriceNotFound("Casa editrice non trovata"));
         List<Copia> rispostaDB = copiaRepository.findAllByCasaEditrice(casaEditrice);
         List<CopiaDTO> copieDTOret = new ArrayList<>();
         for (Copia copia:rispostaDB)
@@ -84,6 +86,7 @@ public class CopieService {
                 .filter(copia->copia.getNumeroCopie()>0)
                 // Converto in lista
                 .toList();
+        if(rispostaDB.isEmpty()) throw new CopiaNotFoundException("Non ci sono copie disponibili");
         List<CopiaDTO> copieDTOret = new ArrayList<>();
         for (Copia copia:rispostaDB)
             copieDTOret.add(mapper.convertCopieToCopieDTO(copia));

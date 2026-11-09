@@ -1,6 +1,5 @@
 package com.example.libreria.service;
 
-import com.example.libreria.dto.AutoreDTO;
 import com.example.libreria.dto.LibroDTO;
 import com.example.libreria.exception.AutoreNotFoundException;
 import com.example.libreria.exception.GenereNotFoundException;
@@ -61,6 +60,8 @@ public class LibroService {
 
     public List<LibroDTO> getByTitolo(String titolo) {
         List<Libro> rispostaDB = libroRepository.findByTitoloContainsIgnoreCase(titolo);
+        // Dato che questo metodo mi restituisce solo un array vuoto se il titolo non c'è nel db, la devo gestire io.
+        if (rispostaDB.isEmpty()) throw new LibroNotFoundException("Libro non trovato.");
         List<LibroDTO> libriDTOres = new ArrayList<>();
         for (Libro libro : rispostaDB)
             libriDTOres.add(mapper.convertLibroToLibroDTO(libro));
@@ -156,7 +157,7 @@ public class LibroService {
         In ordine: Libri_Autori, Copie.
         */
         // Controllo se il libro che mi ha passato esiste
-        libroRepository.findById(isbn).orElseThrow(()-> new LibroNotFoundException("Libro non trovato."));
+        libroRepository.findById(isbn).orElseThrow(() -> new LibroNotFoundException("Libro non trovato."));
         // Elimino da LibriAutori
         libroRepository.deleteLibroFromLibriAutori(isbn);
         // Elimino da copie
@@ -167,9 +168,9 @@ public class LibroService {
     /*
     Il modo per poterlo fare con una delete, è dire a Hibernate tutti i riferimenti in cui
     Libro compare in altre tabelle, mappandoli con @OneToMany o @ManyToMany usando il mappedBy.
-
+    Insieme al mappedBy, si può usare l'attributo cascade all'interno dei parametri delle Annotazioni
+    per dire a Hibernate che quando viene effettuata una DELETE, bisogna fare un eliminazione a cascata.
      */
-
 
 
 }

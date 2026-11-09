@@ -1,7 +1,12 @@
 package com.example.libreria.controller;
 
 import com.example.libreria.dto.LibroDTO;
+import com.example.libreria.exception.AutoreNotFoundException;
+import com.example.libreria.exception.GenereNotFoundException;
+import com.example.libreria.exception.LibroNotFoundException;
 import com.example.libreria.service.LibroService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -23,8 +28,13 @@ public class LibroController {
 
     // libro by isbn
     @GetMapping("/{isbn}")
-    public LibroDTO getByIsbn(@PathVariable Integer isbn){
-        return libroService.getByIsbn(isbn);
+    public ResponseEntity<LibroDTO> getByIsbn(@PathVariable Integer isbn){
+        try{
+            // Nel body di risposta, torno il risultato del service.
+            return ResponseEntity.ok(libroService.getByIsbn(isbn));
+        } catch(LibroNotFoundException e){
+            return ResponseEntity.notFound().build();
+        }
     }
     // all
     @GetMapping("/all")
@@ -41,34 +51,60 @@ public class LibroController {
     La ricerca per titolo è PARZIALE. Per la ricerca completa, usare il metodo getByTitoloEsatto
      */
     @GetMapping("/getallbytitle/{titolo}")
-    public List<LibroDTO> getByTitolo(@PathVariable String titolo) {
-        return libroService.getByTitolo(titolo);
+    public ResponseEntity<List<LibroDTO>> getByTitolo(@PathVariable String titolo) {
+        try {
+            return ResponseEntity.ok(libroService.getByTitolo(titolo));
+        } catch (LibroNotFoundException e){
+            return ResponseEntity.notFound().build();
+        }
     }
 
     // libro by title
     @GetMapping("/getbytitle/{titolo}")
-    public LibroDTO getByTitoloEsatto(@PathVariable String titolo){
-        return libroService.getByTitoloEsatto(titolo);
+    public ResponseEntity<LibroDTO> getByTitoloEsatto(@PathVariable String titolo){
+        try{
+            return ResponseEntity.ok(libroService.getByTitoloEsatto(titolo));
+        }catch (LibroNotFoundException e){
+            return ResponseEntity.notFound().build();
+        }
     }
 
 
     //POST
 
     @PostMapping("/addLibro")
-    public LibroDTO addLibro(Integer isbn, String titolo, LocalDate data, Integer prezzo, String genere, @RequestBody Set<Integer> autoriIDs) {
-        return libroService.addLibro(isbn, titolo, data, prezzo, genere, autoriIDs);
+    public ResponseEntity<String> addLibro(Integer isbn, String titolo, LocalDate data, Integer prezzo, String genere, @RequestBody Set<Integer> autoriIDs) {
+        try{
+            libroService.addLibro(isbn, titolo, data, prezzo, genere, autoriIDs);
+            return ResponseEntity.ok("Libro aggiunto correttamente.");
+        } catch (GenereNotFoundException | AutoreNotFoundException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 
     // PUT
     // modify by isbn
     @PutMapping("{isbn}")
-    public LibroDTO modificaLibro(@PathVariable Integer isbn, String titolo, LocalDate data, Integer prezzo, String genere, @RequestBody Set<Integer> autoriIDs){
-        return libroService.modificaLibro(isbn,titolo,data,prezzo,genere,autoriIDs);
+    public ResponseEntity<String> modificaLibro(@PathVariable Integer isbn, String titolo, LocalDate data, Integer prezzo, String genere, @RequestBody Set<Integer> autoriIDs) {
+        try {
+            libroService.modificaLibro(isbn, titolo, data, prezzo, genere, autoriIDs);
+            return ResponseEntity.ok("Libro aggiunto correttamente.");
+        } catch (GenereNotFoundException | AutoreNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
     // DELETE
     // delete By Isbn
     @DeleteMapping("{isbn}")
-    public void deleteLibro(@PathVariable Integer isbn){
-        libroService.deleteLibro(isbn);
+    public ResponseEntity<String> deleteLibro(@PathVariable Integer isbn){
+        try{
+            libroService.deleteLibro(isbn);
+            return ResponseEntity.ok("Libro modificato.");
+        } catch(LibroNotFoundException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+        catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
 }

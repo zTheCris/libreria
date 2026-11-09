@@ -1,7 +1,12 @@
 package com.example.libreria.controller;
 
 import com.example.libreria.dto.AutoreDTO;
+import com.example.libreria.exception.AutoreNotFoundException;
+import com.example.libreria.exception.NazionalitaNotFoundException;
 import com.example.libreria.service.AutoreService;
+import org.apache.coyote.Response;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -19,23 +24,41 @@ public class AutoreController {
 
     // GET
     @GetMapping("/all")
-    public List<AutoreDTO> getAll(){
+    public List<AutoreDTO> getAll() {
         return autoreService.getAll();
     }
 
     // POST
     @PostMapping("/addAutore")
-    public AutoreDTO addAutore(String nome, String cognome, LocalDate data, String nazionalita){
-        return autoreService.addAutore(nome,cognome,data,nazionalita);
+    public ResponseEntity<String> addAutore(String nome, String cognome, LocalDate data, String nazionalita) {
+        try {
+            autoreService.addAutore(nome, cognome, data, nazionalita);
+            return ResponseEntity.ok("Autore inserito correttamente.");
+        } catch (NazionalitaNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
+    }
+
     // PUT
     @PutMapping("/{idAutore}")
-    public AutoreDTO modificaAutore(@PathVariable Integer idAutore, String nome, String cognome, LocalDate data, String nazionalita){
-        return autoreService.modificaAutore(idAutore,nome,cognome,data,nazionalita);
+    public ResponseEntity<String> modificaAutore(@PathVariable Integer idAutore, String nome, String cognome, LocalDate data, String nazionalita) {
+        try{
+            autoreService.modificaAutore(idAutore, nome, cognome, data, nazionalita);
+           return ResponseEntity.ok("Autore modificato corretamente");
+        } catch (NazionalitaNotFoundException |AutoreNotFoundException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
+
     // DELETE
     @DeleteMapping("/{idAutore}")
-    public void deleteAutore(@PathVariable Integer idAutore){
-        autoreService.deleteByIdAutore(idAutore);
+    public ResponseEntity<String> deleteAutore(@PathVariable Integer idAutore) {
+        try{
+            autoreService.deleteByIdAutore(idAutore);
+            return ResponseEntity.ok("Autore rimosso correttamente.");
+        } catch (AutoreNotFoundException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 }
+
