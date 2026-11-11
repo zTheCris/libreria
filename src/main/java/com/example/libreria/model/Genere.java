@@ -37,6 +37,9 @@ public class Genere {
         this.idGenere = idGenere;
         this.nome = nome;
     }
+    public Genere(String nome){
+        this.nome = nome;
+    }
 
     @Override
     public String toString() {

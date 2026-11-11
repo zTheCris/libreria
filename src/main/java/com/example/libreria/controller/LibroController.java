@@ -1,8 +1,10 @@
 package com.example.libreria.controller;
 
 import com.example.libreria.dto.LibroDTO;
+import com.example.libreria.dto.request.LibroRequest;
 import com.example.libreria.exception.AutoreNotFoundException;
 import com.example.libreria.exception.GenereNotFoundException;
+import com.example.libreria.exception.LibroAlreadyExistsException;
 import com.example.libreria.exception.LibroNotFoundException;
 import com.example.libreria.model.Autore;
 import com.example.libreria.service.LibroService;
@@ -30,12 +32,13 @@ public class LibroController {
 
     // libro by isbn
     @GetMapping("/{isbn}")
-    public ResponseEntity<LibroDTO> getByIsbn(@PathVariable Integer isbn){
+    // Grazie al ?, posso evitare di specificare il tipo di body che vuole la ResponseEntity.
+    public ResponseEntity<?> getByIsbn(@PathVariable Integer isbn){
         try{
             // Nel body di risposta, torno il risultato del service.
             return ResponseEntity.ok(libroService.getByIsbn(isbn));
         } catch(LibroNotFoundException e){
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
     // all
@@ -53,17 +56,17 @@ public class LibroController {
     La ricerca per titolo è PARZIALE. Per la ricerca completa, usare il metodo getByTitoloEsatto
      */
     @GetMapping("/getallbytitle/{titolo}")
-    public ResponseEntity<List<LibroDTO>> getByTitolo(@PathVariable String titolo) {
+    public ResponseEntity<?> getByTitolo(@PathVariable String titolo) {
         try {
             return ResponseEntity.ok(libroService.getByTitolo(titolo));
         } catch (LibroNotFoundException e){
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
 
     // libro by title
     @GetMapping("/getbytitle/{titolo}")
-    public ResponseEntity<LibroDTO> getByTitoloEsatto(@PathVariable String titolo){
+    public ResponseEntity<?> getByTitoloEsatto(@PathVariable String titolo){
         try{
             return ResponseEntity.ok(libroService.getByTitoloEsatto(titolo));
         }catch (LibroNotFoundException e){
@@ -84,23 +87,26 @@ public class LibroController {
 
     //POST
 
-    @PostMapping("/addLibro")
-    public ResponseEntity<String> addLibro(Integer isbn, String titolo, LocalDate data, Integer prezzo, String genere, @RequestBody Set<Integer> autoriIDs) {
+    @PostMapping
+    // Grazie al ?, posso evitare di specificare il tipo di body che vuole la ResponseEntity.
+    public ResponseEntity<?> addLibro(@RequestBody LibroRequest libroRequest) {
         try{
-            libroService.addLibro(isbn, titolo, data, prezzo, genere, autoriIDs);
-            return ResponseEntity.ok("Libro aggiunto correttamente.");
-        } catch (GenereNotFoundException | AutoreNotFoundException e){
+            return ResponseEntity.ok(libroService.addLibro(libroRequest));
+        } catch (GenereNotFoundException | AutoreNotFoundException e ){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (LibroAlreadyExistsException e){
+            // Il codice HTTP che identifica un dato già esistente, è 409, CONFLICT
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
     }
 
     // PUT
     // modify by isbn
     @PutMapping("/{isbn}")
-    public ResponseEntity<String> modificaLibro(@PathVariable Integer isbn, String titolo, LocalDate data, Integer prezzo, String genere, @RequestBody Set<Integer> autoriIDs) {
+    public ResponseEntity<?> modificaLibro(@PathVariable Integer isbn,@RequestBody LibroRequest libroRequest) {
         try {
-            libroService.modificaLibro(isbn, titolo, data, prezzo, genere, autoriIDs);
-            return ResponseEntity.ok("Libro aggiunto correttamente.");
+
+            return ResponseEntity.ok(libroService.modificaLibro(isbn, libroRequest));
         } catch (GenereNotFoundException | AutoreNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
