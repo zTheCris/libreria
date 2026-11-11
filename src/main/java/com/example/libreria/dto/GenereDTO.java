@@ -1,7 +1,13 @@
 package com.example.libreria.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
 public class GenereDTO {
     private Integer idGenere;
+
+    @NotBlank(message = "Il nome del genere non può essere vuoto.")
+    @Size(max = 255 ,message = "Il nome del genere non può superare 255 caratteri."  )
     private String nome;
 
     public GenereDTO() {

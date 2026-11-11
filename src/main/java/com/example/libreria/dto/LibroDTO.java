@@ -1,13 +1,22 @@
 package com.example.libreria.dto;
 
+import jakarta.validation.constraints.Digits;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
 public class LibroDTO {
     private Integer isbn;
+    @NotBlank(message = "Il titolo del libro non può essere vuoto.")
+    @Size(max = 255 ,message = "Il titolo del libro non può superare 255 caratteri."  )
     private String titolo;
+    @NotNull(message =  "L'anno del libro non può essere vuoto.")
     private LocalDate anno;
+
     private GenereDTO genere;
     private Integer prezzo;
 

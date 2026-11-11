@@ -77,15 +77,36 @@ public class LibroService {
         // 5. Lo rimando indietro.
         return mapper.convertLibroToLibroDTO(libroRepository.findByTitolo(titolo).orElseThrow(() -> new LibroNotFoundException("Libro non trovato")));
     }
+    public List<LibroDTO> getByAutori(Set<Integer> autoriIDS){
+        Set<Autore> autoriDB = new HashSet<>(autoreRepository.findAllById(autoriIDS));
+        // Controllo se gli autori esistono, altrimenti eccezione
+        if (autoriIDS.size() != autoriDB.size())
+            // Qualche autore o nessun autore non è stato trovato.
+            throw new AutoreNotFoundException("Uno o più autori inseriti non sono nel Database. Riprovare");
 
+        /*
+        Il problema qui sta che nella entity io ho definito gli autori come Set.
+        Dato che una Set non permette duplicati, la query che devo fare per farmi restituire dal DB
+        Una lista di Autori senza duplicati, devo usare la method query con la DISTINCT.
+         */
+        List<Libro> rispostaDB = libroRepository.findDistinctByAutoriIn(autoriDB);
+
+        // Lo converto in DTO
+        List<LibroDTO> libriDTO = new ArrayList<>();
+
+        for (Libro libro:rispostaDB)
+            libriDTO.add(mapper.convertLibroToLibroDTO(libro));
+
+        return libriDTO;
+    }
     /*
     ========================================
                    POST
     ========================================
      */
     // AggiungiLibro
-    public LibroDTO addLibro(Integer isbn, String titolo, LocalDate anno, Integer prezzo, String genere, Set<Integer> autoriIDs) {
 
+    public LibroDTO addLibro(Integer isbn, String titolo, LocalDate anno, Integer prezzo, String genere, Set<Integer> autoriIDs) {
         // Per prima cosa, controllo se gli autori che mi sono stati mandati esistono davvero nel Database.
         List<Autore> autori = autoreRepository.findAllById(autoriIDs);
 

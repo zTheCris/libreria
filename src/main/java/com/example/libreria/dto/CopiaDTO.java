@@ -1,9 +1,15 @@
 package com.example.libreria.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
 public class CopiaDTO {
     private Integer idCopia;
     private LibroDTO libro;
     private CasaEditriceDTO casaEditrice;
+
+    @NotNull(message = "Il numero di copie non può essere vuoto.")
     private Integer numeroCopie;
 
     public CopiaDTO() {

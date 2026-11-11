@@ -4,12 +4,14 @@ import com.example.libreria.dto.LibroDTO;
 import com.example.libreria.exception.AutoreNotFoundException;
 import com.example.libreria.exception.GenereNotFoundException;
 import com.example.libreria.exception.LibroNotFoundException;
+import com.example.libreria.model.Autore;
 import com.example.libreria.service.LibroService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -68,7 +70,17 @@ public class LibroController {
             return ResponseEntity.notFound().build();
         }
     }
-
+    @GetMapping("/getbyautore/{id}")
+    public ResponseEntity<List<LibroDTO>> getByAutore(@PathVariable Integer id){
+        try{
+            Set<Integer> autoriIDs = new HashSet<>();
+            autoriIDs.add(id);
+            // Dato che è solo uno, passo un set a un parametro
+            return ResponseEntity.ok(libroService.getByAutori(autoriIDs));
+        } catch (AutoreNotFoundException e){
+            return ResponseEntity.notFound().build();
+        }
+    }
 
     //POST
 
@@ -84,7 +96,7 @@ public class LibroController {
 
     // PUT
     // modify by isbn
-    @PutMapping("{isbn}")
+    @PutMapping("/{isbn}")
     public ResponseEntity<String> modificaLibro(@PathVariable Integer isbn, String titolo, LocalDate data, Integer prezzo, String genere, @RequestBody Set<Integer> autoriIDs) {
         try {
             libroService.modificaLibro(isbn, titolo, data, prezzo, genere, autoriIDs);
@@ -93,9 +105,10 @@ public class LibroController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
+
     // DELETE
     // delete By Isbn
-    @DeleteMapping("{isbn}")
+    @DeleteMapping("/{isbn}")
     public ResponseEntity<String> deleteLibro(@PathVariable Integer isbn){
         try{
             libroService.deleteLibro(isbn);
