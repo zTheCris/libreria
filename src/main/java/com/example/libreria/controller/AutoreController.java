@@ -30,33 +30,21 @@ public class AutoreController {
 
     // POST
     @PostMapping("/addAutore")
-    public ResponseEntity<?> addAutore(@RequestBody AutoreRequest autoreRequest) {
-        try {
-            return ResponseEntity.ok(autoreService.addAutore(autoreRequest));
-        } catch (NazionalitaNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+    public ResponseEntity<AutoreDTO> addAutore(@RequestBody AutoreRequest autoreRequest) {
+        return ResponseEntity.ok(autoreService.addAutore(autoreRequest));
     }
 
     // PUT
     @PutMapping("/{idAutore}")
-    public ResponseEntity<?> modificaAutore(@PathVariable Integer idAutore, @RequestBody AutoreRequest autoreRequest) {
-        try{
-            return ResponseEntity.ok(autoreService.modificaAutore(idAutore, autoreRequest));
-        } catch (NazionalitaNotFoundException | AutoreNotFoundException e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+    public ResponseEntity<AutoreDTO> modificaAutore(@PathVariable Integer idAutore, @RequestBody AutoreRequest autoreRequest) {
+        return ResponseEntity.ok(autoreService.modificaAutore(idAutore, autoreRequest));
     }
 
     // DELETE
     @DeleteMapping("/{idAutore}")
     public ResponseEntity<?> deleteAutore(@PathVariable Integer idAutore) {
-        try{
-            autoreService.deleteByIdAutore(idAutore);
-            return ResponseEntity.ok("Autore rimosso correttamente.");
-        } catch (AutoreNotFoundException e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+        autoreService.deleteByIdAutore(idAutore);
+        return ResponseEntity.ok("Autore rimosso correttamente.");
     }
 }
 

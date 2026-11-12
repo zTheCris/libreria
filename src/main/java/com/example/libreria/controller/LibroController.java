@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @RestController
@@ -56,73 +57,43 @@ public class LibroController {
     La ricerca per titolo è PARZIALE. Per la ricerca completa, usare il metodo getByTitoloEsatto
      */
     @GetMapping("/getallbytitle/{titolo}")
-    public ResponseEntity<?> getByTitolo(@PathVariable String titolo) {
-        try {
-            return ResponseEntity.ok(libroService.getByTitolo(titolo));
-        } catch (LibroNotFoundException e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+    public ResponseEntity<List<LibroDTO>> getByTitolo(@PathVariable String titolo) {
+       return ResponseEntity.ok(libroService.getByTitolo(titolo));
     }
 
     // libro by title
     @GetMapping("/getbytitle/{titolo}")
-    public ResponseEntity<?> getByTitoloEsatto(@PathVariable String titolo){
-        try{
-            return ResponseEntity.ok(libroService.getByTitoloEsatto(titolo));
-        }catch (LibroNotFoundException e){
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<LibroDTO> getByTitoloEsatto(@PathVariable String titolo){
+        return ResponseEntity.ok(libroService.getByTitoloEsatto(titolo));
     }
     @GetMapping("/getbyautore/{id}")
     public ResponseEntity<List<LibroDTO>> getByAutore(@PathVariable Integer id){
-        try{
-            Set<Integer> autoriIDs = new HashSet<>();
-            autoriIDs.add(id);
-            // Dato che è solo uno, passo un set a un parametro
-            return ResponseEntity.ok(libroService.getByAutori(autoriIDs));
-        } catch (AutoreNotFoundException e){
-            return ResponseEntity.notFound().build();
-        }
+        // Per non creare lo stesso metodo due volte, uso il metodo getByAutori con un Set di un intero.
+        Set<Integer> autoriIDs = new HashSet<>();
+        autoriIDs.add(id);
+        // Dato che è solo uno, passo un set a un parametro
+        return ResponseEntity.ok(libroService.getByAutori(autoriIDs));
     }
 
     //POST
 
     @PostMapping
-    // Grazie al ?, posso evitare di specificare il tipo di body che vuole la ResponseEntity.
-    public ResponseEntity<?> addLibro(@RequestBody LibroRequest libroRequest) {
-        try{
-            return ResponseEntity.ok(libroService.addLibro(libroRequest));
-        } catch (GenereNotFoundException | AutoreNotFoundException e ){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (LibroAlreadyExistsException e){
-            // Il codice HTTP che identifica un dato già esistente, è 409, CONFLICT
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-        }
+    public ResponseEntity<LibroDTO> addLibro(@RequestBody LibroRequest libroRequest) {
+        return ResponseEntity.ok(libroService.addLibro(libroRequest));
     }
 
     // PUT
     // modify by isbn
     @PutMapping("/{isbn}")
-    public ResponseEntity<?> modificaLibro(@PathVariable Integer isbn,@RequestBody LibroRequest libroRequest) {
-        try {
-            return ResponseEntity.ok(libroService.modificaLibro(isbn, libroRequest));
-        } catch (GenereNotFoundException | AutoreNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+    public ResponseEntity<LibroDTO> modificaLibro(@PathVariable Integer isbn,@RequestBody LibroRequest libroRequest) {
+       return ResponseEntity.ok(libroService.modificaLibro(isbn,libroRequest));
     }
 
     // DELETE
     // delete By Isbn
     @DeleteMapping("/{isbn}")
     public ResponseEntity<String> deleteLibro(@PathVariable Integer isbn){
-        try{
-            libroService.deleteLibro(isbn);
-            return ResponseEntity.ok("Libro modificato.");
-        } catch(LibroNotFoundException e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
-        catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
+        libroService.deleteLibro(isbn);
+        return ResponseEntity.ok("Libro cancellato");
     }
 }

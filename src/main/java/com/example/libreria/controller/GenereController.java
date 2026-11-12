@@ -20,34 +20,24 @@ public class GenereController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<?> getAll(){
+    public ResponseEntity<List<GenereDTO>> getAll(){
         return ResponseEntity.ok(genereService.getAll());
     }
     @GetMapping("/{id}")
-    public ResponseEntity<?> getById(@PathVariable Integer id){
-        try{
-            return ResponseEntity.ok(genereService.getById(id));
-        } catch (GenereNotFoundException e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+    public ResponseEntity<GenereDTO> getById(@PathVariable Integer id){
+       return ResponseEntity.ok(genereService.getById(id));
     }
     @PostMapping
-    public ResponseEntity<String> addGenere(String nome){
-        try{
-            genereService.addGenere(nome);
-            return ResponseEntity.ok("Genere aggiunto correttamente.");
-
-        }catch(IllegalArgumentException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+    public ResponseEntity<GenereDTO> addGenere(String nome){
+       return ResponseEntity.ok(genereService.addGenere(nome));
     }
-    @PutMapping("/id")
-    public ResponseEntity<String> modificaGenere(@PathVariable Integer id, String nuovoNome){
-        try{
-            genereService.modificaGenere(id,nuovoNome);
-            return ResponseEntity.ok("Genere modificato correttamente");
-        } catch(GenereNotFoundException e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+    @PutMapping("/{id}")
+    public ResponseEntity<GenereDTO> modificaGenere(@PathVariable Integer id, String nuovoNome){
+        return ResponseEntity.ok(genereService.modificaGenere(id,nuovoNome));
+    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> eliminaGenere(@PathVariable Integer id){
+        genereService.deleteGenere(id);
+        return ResponseEntity.ok("Genere eliminato");
     }
 }

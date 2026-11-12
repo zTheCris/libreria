@@ -31,11 +31,8 @@ public class GenereService {
         return generiDTOret;
     }
 
-    public void addGenere(String nome){
-        if(nome.isEmpty()) throw new IllegalArgumentException("Hai passato un nome vuoto. Riprova");
-        Genere genere = new Genere();
-        genere.setNome(nome);
-        genereRepository.save(genere);
+    public GenereDTO addGenere(String nome){
+       return mapper.convertGenereToGenereDTO(genereRepository.save(new Genere(nome)));
     }
 
     public GenereDTO getById(Integer id) {
@@ -43,9 +40,15 @@ public class GenereService {
 
     }
 
-    public void modificaGenere(Integer id, String nuovoNome) {
+    public GenereDTO modificaGenere(Integer id, String nuovoNome) {
         Genere genere = genereRepository.findById(id).orElseThrow(()-> new GenereNotFoundException("Genere con id "+ id +" non trovato." ));
         genere.setNome(nuovoNome);
-        genereRepository.save(genere);
+        return mapper.convertGenereToGenereDTO(genereRepository.save(genere));
+    }
+
+    public void deleteGenere(Integer id) {
+        // Controllo in piu' se il genere esiste
+        Genere genere = genereRepository.findById(id).orElseThrow(()-> new GenereNotFoundException("Genere non trovato"));
+        genereRepository.delete(genere);
     }
 }

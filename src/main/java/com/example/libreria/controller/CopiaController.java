@@ -1,6 +1,7 @@
 package com.example.libreria.controller;
 
 import com.example.libreria.dto.CopiaDTO;
+import com.example.libreria.dto.LibroDTO;
 import com.example.libreria.dto.request.CopiaRequest;
 import com.example.libreria.exception.CasaEditriceNotFound;
 import com.example.libreria.exception.CopiaNotFoundException;
@@ -28,59 +29,34 @@ public class CopiaController {
         return copiaService.getAll();
     }
     @GetMapping("/allbynumcopie/{num_copie}")
-    public ResponseEntity<?> getAllByNumCopie(@PathVariable Integer num_copie){
-        try{
-            return ResponseEntity.ok(copiaService.getAllByNumeroCopie(num_copie));
-        } catch (CopiaNotFoundException e){
-            // Dato che il metodo
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("La copia non esiste.");
-        }
+    public ResponseEntity<List<CopiaDTO>> getAllByNumCopie(@PathVariable Integer num_copie){
+        return ResponseEntity.ok(copiaService.getAllByNumeroCopie(num_copie));
     }
     /**
      *
      */
     @GetMapping("/allbycasaeditrice/{id}")
-    public ResponseEntity<?> getAllByCasaEditrice(@PathVariable Integer id){
-        try{
-            return ResponseEntity.ok(copiaService.getAllByCasaEditrice(id));
-        } catch (CasaEditriceNotFound | CopiaNotFoundException e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+    public ResponseEntity<List<CopiaDTO>> getAllByCasaEditrice(@PathVariable Integer id){
+        return ResponseEntity.ok(copiaService.getAllByCasaEditrice(id));
     }
     @GetMapping("/getbyisbn/{isbn}")
-    public ResponseEntity<?> getByLibro(@PathVariable Integer isbn){
-        try{
-            return ResponseEntity.ok(copiaService.getByIsbn(isbn));
-        } catch(CopiaNotFoundException e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+    public ResponseEntity<CopiaDTO> getByLibro(@PathVariable Integer isbn){
+        return ResponseEntity.ok(copiaService.getByIsbn(isbn));
     }
 
     @GetMapping("/disponibili")
-    public ResponseEntity<?> getByNumeroCopieDisponibili(){
-        try{
-            return ResponseEntity.ok(copiaService.getByNumeroCopieDisponibili());
-        } catch (CopiaNotFoundException e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+    public ResponseEntity<List<CopiaDTO>> getByNumeroCopieDisponibili(){
+        return ResponseEntity.ok(copiaService.getByNumeroCopieDisponibili());
     }
     @GetMapping("/esaurite")
-    public ResponseEntity<?> getByNumeroCopieEsaurite(){
-        try {
-            return ResponseEntity.ok(copiaService.getByNumeroCopieEsaurite());
-        } catch (CopiaNotFoundException e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+    public ResponseEntity<List<CopiaDTO>> getByNumeroCopieEsaurite(){
+       return ResponseEntity.ok(copiaService.getByNumeroCopieEsaurite());
     }
 
     // POST
     @PostMapping
     public ResponseEntity<?> addCopia(@RequestBody CopiaRequest copiaRequest){
-        try{
-            return ResponseEntity.ok(copiaService.addCopia(copiaRequest));
-        } catch(LibroNotFoundException | CasaEditriceNotFound e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+      return ResponseEntity.ok(copiaService.addCopia(copiaRequest));
     }
     // PUT
     @PutMapping("/{isbn}")
@@ -90,8 +66,9 @@ public class CopiaController {
 //    }
     // DELETE
     @DeleteMapping("/{isbn}")
-    public void deleteCopia(@PathVariable Integer isbn){
+    public ResponseEntity<String> deleteCopia(@PathVariable Integer isbn){
         copiaService.deleteCopia(isbn);
+        return ResponseEntity.ok("Copia eliminata correttamente.");
     }
 
 }
