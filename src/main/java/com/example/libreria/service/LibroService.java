@@ -146,15 +146,15 @@ public class LibroService {
     ========================================
      */
 
-    public LibroDTO modificaLibro(Integer isbn,LibroRequest libroRequest) {
+    public LibroDTO modificaLibro(LibroRequest libroRequest) {
         // Vedo se trovo il libro.
-        libroRepository.findById(isbn).orElseThrow(() -> new LibroNotFoundException("Libro non trovato."));
+        libroRepository.findById(libroRequest.getIsbn()).orElseThrow(() -> new LibroNotFoundException("Libro non trovato."));
 
         // Vedo se trovo il genere che mi ha passato il Client
         Genere genereObj = genereRepository.findByNomeIgnoreCase(libroRequest.getGenere()).orElseThrow(() -> new GenereNotFoundException("Genere non trovato"));
 
         // Ho tutto, posso creare l'oggetto.
-        Libro libro = new Libro(isbn, libroRequest.getTitolo(), libroRequest.getData(), libroRequest.getPrezzo(), genereObj);
+        Libro libro = new Libro(libroRequest.getIsbn(), libroRequest.getTitolo(), libroRequest.getData(), libroRequest.getPrezzo(), genereObj);
 
         // Setto gli autori
         List<Autore> autori = autoreRepository.findAllById(libroRequest.getAutoriIDs());

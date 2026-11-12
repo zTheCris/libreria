@@ -1,12 +1,16 @@
 package com.example.libreria.service;
 
 import com.example.libreria.dto.GenereDTO;
+import com.example.libreria.dto.request.GenereRequest;
 import com.example.libreria.exception.AutoreNotFoundException;
 import com.example.libreria.exception.GenereNotFoundException;
 import com.example.libreria.model.Genere;
+import com.example.libreria.model.Libro;
 import com.example.libreria.repository.GenereRepository;
+import com.example.libreria.repository.LibroRepository;
 import com.example.libreria.utility.Mapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,10 +19,12 @@ import java.util.List;
 public class GenereService {
     private final GenereRepository genereRepository;
     private final Mapper mapper;
+    private final LibroRepository libroRepository;
 
-    public GenereService(GenereRepository genereRepository, Mapper mapper) {
+    public GenereService(GenereRepository genereRepository, Mapper mapper, LibroRepository libroRepository) {
         this.genereRepository = genereRepository;
         this.mapper = mapper;
+        this.libroRepository = libroRepository;
     }
 
     public List<GenereDTO> getAll(){
@@ -31,8 +37,8 @@ public class GenereService {
         return generiDTOret;
     }
 
-    public GenereDTO addGenere(String nome){
-       return mapper.convertGenereToGenereDTO(genereRepository.save(new Genere(nome)));
+    public GenereDTO addGenere(GenereRequest genereRequest){
+       return mapper.convertGenereToGenereDTO(genereRepository.save(new Genere(genereRequest.getNome())));
     }
 
     public GenereDTO getById(Integer id) {
@@ -46,9 +52,12 @@ public class GenereService {
         return mapper.convertGenereToGenereDTO(genereRepository.save(genere));
     }
 
+    @Transactional
     public void deleteGenere(Integer id) {
-        // Controllo in piu' se il genere esiste
+        // Il genere spunta piu volte in Libro, quindi devo eliminare prima il Genere in Libro.
         Genere genere = genereRepository.findById(id).orElseThrow(()-> new GenereNotFoundException("Genere non trovato"));
+        libroRepository.deleteByGenere(genere);
+        // Ora cancello il Genere.
         genereRepository.delete(genere);
     }
 }

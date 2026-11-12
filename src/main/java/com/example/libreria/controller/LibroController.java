@@ -84,9 +84,9 @@ public class LibroController {
 
     // PUT
     // modify by isbn
-    @PutMapping("/{isbn}")
-    public ResponseEntity<LibroDTO> modificaLibro(@PathVariable Integer isbn,@RequestBody LibroRequest libroRequest) {
-       return ResponseEntity.ok(libroService.modificaLibro(isbn,libroRequest));
+    @PutMapping()
+    public ResponseEntity<LibroDTO> modificaLibro(@RequestBody LibroRequest libroRequest) {
+       return ResponseEntity.ok(libroService.modificaLibro(libroRequest));
     }
 
     // DELETE

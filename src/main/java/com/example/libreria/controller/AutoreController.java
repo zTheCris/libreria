@@ -39,7 +39,7 @@ public class AutoreController {
 
 
     // POST
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<AutoreDTO> addAutore(@RequestBody AutoreRequest autoreRequest) {
         return ResponseEntity.ok(autoreService.addAutore(autoreRequest));
     }

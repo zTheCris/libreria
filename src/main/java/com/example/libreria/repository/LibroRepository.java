@@ -1,6 +1,7 @@
 package com.example.libreria.repository;
 
 import com.example.libreria.model.Autore;
+import com.example.libreria.model.Genere;
 import com.example.libreria.model.Libro;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -25,4 +26,6 @@ public interface LibroRepository extends JpaRepository<Libro, Integer> {
     void deleteLibroFromLibriAutori(@Param ("isbn") Integer isbn);
 
     List<Libro> findDistinctByAutoriIn(Set<Autore> autori);
+
+    void deleteByGenere(Genere genere);
 }

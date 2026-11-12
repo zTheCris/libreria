@@ -1,6 +1,7 @@
 package com.example.libreria.controller;
 
 import com.example.libreria.dto.GenereDTO;
+import com.example.libreria.dto.request.GenereRequest;
 import com.example.libreria.exception.GenereNotFoundException;
 import com.example.libreria.service.GenereService;
 import org.apache.coyote.Response;
@@ -28,8 +29,8 @@ public class GenereController {
        return ResponseEntity.ok(genereService.getById(id));
     }
     @PostMapping
-    public ResponseEntity<GenereDTO> addGenere(String nome){
-       return ResponseEntity.ok(genereService.addGenere(nome));
+    public ResponseEntity<GenereDTO> addGenere(@RequestBody GenereRequest genereRequest){
+       return ResponseEntity.ok(genereService.addGenere(genereRequest));
     }
     @PutMapping("/{id}")
     public ResponseEntity<GenereDTO> modificaGenere(@PathVariable Integer id, String nuovoNome){

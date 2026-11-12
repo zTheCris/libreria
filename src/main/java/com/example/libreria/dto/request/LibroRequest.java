@@ -1,20 +1,30 @@
 package com.example.libreria.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
 public class LibroRequest {
-    @NotBlank(message = "L'isbn non è stato inserito. Riprovare")
+    @NotNull(message = "L'ISBN non è stato inserito. Riprovare ")
+    @NotBlank(message = "L'ISBN non è stato inserito. Riprovare")
     private Integer isbn;
+
     @NotBlank(message = "Il prezzo non è stato inserito. Riprovare ")
+    @NotNull(message = "Il prezzo non è stato inserito. Riprovare ")
     private Integer prezzo;
+
+    @NotNull(message = "Il titolo non è stato inserito. Riprovare ")
     @NotBlank(message = "Il titolo non è stato inserito. Riprovare ")
     private String titolo;
+
+    @NotNull(message = "Il genere non è stato inserito. Riprovare ")
     @NotBlank(message = "Il genere non è stato inserito. Riprovare ")
     private String genere;
+
+    @NotNull(message = "La data non è stata inserita. Riprovare ")
     @NotBlank(message = "La data non è stata inserita. Riprovare ")
     private LocalDate data;
     @NotBlank(message = "Gli ID degli autori non sono stati inseriti. Riprovare ")
