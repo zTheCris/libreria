@@ -105,7 +105,6 @@ public class LibroController {
     @PutMapping("/{isbn}")
     public ResponseEntity<?> modificaLibro(@PathVariable Integer isbn,@RequestBody LibroRequest libroRequest) {
         try {
-
             return ResponseEntity.ok(libroService.modificaLibro(isbn, libroRequest));
         } catch (GenereNotFoundException | AutoreNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());

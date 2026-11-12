@@ -1,6 +1,7 @@
 package com.example.libreria.controller;
 
 import com.example.libreria.dto.CopiaDTO;
+import com.example.libreria.dto.request.CopiaRequest;
 import com.example.libreria.exception.CasaEditriceNotFound;
 import com.example.libreria.exception.CopiaNotFoundException;
 import com.example.libreria.exception.LibroNotFoundException;
@@ -25,71 +26,68 @@ public class CopiaController {
     @GetMapping("/all")
     public List<CopiaDTO> getAll(){
         return copiaService.getAll();
-
-
     }
     @GetMapping("/allbynumcopie/{num_copie}")
-    public ResponseEntity<List<CopiaDTO>> getAllByNumCopie(@PathVariable Integer num_copie){
+    public ResponseEntity<?> getAllByNumCopie(@PathVariable Integer num_copie){
         try{
             return ResponseEntity.ok(copiaService.getAllByNumeroCopie(num_copie));
         } catch (CopiaNotFoundException e){
             // Dato che il metodo
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("La copia non esiste.");
         }
     }
     /**
      *
      */
     @GetMapping("/allbycasaeditrice/{id}")
-    public ResponseEntity<List<CopiaDTO>> getAllByCasaEditrice(@PathVariable Integer id){
+    public ResponseEntity<?> getAllByCasaEditrice(@PathVariable Integer id){
         try{
             return ResponseEntity.ok(copiaService.getAllByCasaEditrice(id));
         } catch (CasaEditriceNotFound | CopiaNotFoundException e){
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
     @GetMapping("/getbyisbn/{isbn}")
-    public ResponseEntity<CopiaDTO> getByLibro(@PathVariable Integer isbn){
+    public ResponseEntity<?> getByLibro(@PathVariable Integer isbn){
         try{
             return ResponseEntity.ok(copiaService.getByIsbn(isbn));
         } catch(CopiaNotFoundException e){
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
 
     @GetMapping("/disponibili")
-    public ResponseEntity<List<CopiaDTO>> getByNumeroCopieDisponibili(){
+    public ResponseEntity<?> getByNumeroCopieDisponibili(){
         try{
             return ResponseEntity.ok(copiaService.getByNumeroCopieDisponibili());
         } catch (CopiaNotFoundException e){
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
     @GetMapping("/esaurite")
-    public ResponseEntity<List<CopiaDTO>> getByNumeroCopieEsaurite(){
+    public ResponseEntity<?> getByNumeroCopieEsaurite(){
         try {
             return ResponseEntity.ok(copiaService.getByNumeroCopieEsaurite());
         } catch (CopiaNotFoundException e){
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
 
     // POST
     @PostMapping
-    public ResponseEntity<String> addCopia(Integer isbn,Integer idCasaEditrice,Integer numeroCopie){
+    public ResponseEntity<?> addCopia(@RequestBody CopiaRequest copiaRequest){
         try{
-            copiaService.addCopia(isbn,idCasaEditrice,numeroCopie);
-            return ResponseEntity.ok("Copia salvata correttamente.");
+            return ResponseEntity.ok(copiaService.addCopia(copiaRequest));
         } catch(LibroNotFoundException | CasaEditriceNotFound e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
     // PUT
     @PutMapping("/{isbn}")
-    public ResponseEntity<String> modificaCopia(@PathVariable Integer isbn,Integer idCasaEditrice,Integer numeroCopie){
-        // Posso usare lo stesso servizio poichè la save quando vede che la copia già esiste nel DB ne fa una UPDATE.
-        return addCopia(isbn,idCasaEditrice,numeroCopie);
-    }
+//    public ResponseEntity<String> modificaCopia(@PathVariable Integer isbn,Integer idCasaEditrice,Integer numeroCopie){
+//        // Posso usare lo stesso servizio poichè la save quando vede che la copia già esiste nel DB ne fa una UPDATE.
+//
+//    }
     // DELETE
     @DeleteMapping("/{isbn}")
     public void deleteCopia(@PathVariable Integer isbn){

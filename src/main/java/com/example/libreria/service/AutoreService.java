@@ -1,6 +1,7 @@
 package com.example.libreria.service;
 
 import com.example.libreria.dto.AutoreDTO;
+import com.example.libreria.dto.request.AutoreRequest;
 import com.example.libreria.exception.AutoreNotFoundException;
 import com.example.libreria.exception.NazionalitaNotFoundException;
 import com.example.libreria.model.Autore;
@@ -37,28 +38,30 @@ public class AutoreService {
         return autoriDTO;
     }
 
-    public AutoreDTO addAutore(String nome, String cognome, LocalDate data, String nazionalita) {
+    public AutoreDTO addAutore(AutoreRequest autoreRequest) {
         // Prima di tutto devo cercare se la nazionalità che il Client mi ha mandato esite.
-        Nazionalita nazionalitaObj = nazionalitaRepository.findByNome(nazionalita).orElseThrow(() -> new
-                NazionalitaNotFoundException("Nazionalità non esistente."));
+        Nazionalita nazionalitaObj = nazionalitaRepository.findByNome(autoreRequest.getNazionalita())
+                .orElseGet(()->addNazionalita(autoreRequest.getNazionalita()));
         // A questo punto,creo l'autore
-        Autore autore = new Autore(nome, cognome, data, nazionalitaObj);
+        Autore autore = new Autore(autoreRequest.getNome(), autoreRequest.getCognome(), autoreRequest.getData(), nazionalitaObj);
         // La scelta che ho intrapreso in Libri, prevede che solo il Libro sappia da che autori è stato scritto. Quindi salvo.
         return mapper.convertAutoreToAutoreDTO(autoreRepository.save(autore));
 
     }
 
-    public AutoreDTO modificaAutore(Integer idAutore, String nome, String cognome, LocalDate data, String nazionalita) {
+    public AutoreDTO modificaAutore(Integer idAutore, AutoreRequest autoreRequest) {
         Autore autore = autoreRepository.findById(idAutore).orElseThrow(() -> new AutoreNotFoundException("Autore non trovato."));
-        Nazionalita nazionalitaObj = nazionalitaRepository.findByNome(nazionalita).orElseThrow(() -> new
-                NazionalitaNotFoundException("Nazionalità non esistente."));
+        Nazionalita nazionalitaObj = addNazionalita(autoreRequest.getNazionalita());
+
         // A questo punto,aggiorno l'autore
-        autore.setNome(nome);
-        autore.setCognome(cognome);
-        autore.setData(data);
+        autore.setNome(autoreRequest.getNome());
+        autore.setCognome(autoreRequest.getCognome());
+        autore.setData(autoreRequest.getData());
         autore.setNazionalita(nazionalitaObj);
         return mapper.convertAutoreToAutoreDTO(autoreRepository.save(autore));
     }
+
+
 
     public void deleteByIdAutore(Integer idAutore) {
         Autore autore = autoreRepository.findById(idAutore).orElseThrow(()-> new AutoreNotFoundException("Autore non trovato"));
@@ -67,5 +70,14 @@ public class AutoreService {
 
     // Metodi
 
+    /**
+     * Nel caso in cui la nazionalità non esisite nel DB, lo aggiungo al database.
+     * @param nazionalita la stringa contenente il nome della nazionalita
+     * @return l'oggetto Nazionalita che ha salvato il database.
+     */
+    private Nazionalita addNazionalita(String nazionalita) {
+        return nazionalitaRepository.save(new Nazionalita(nazionalita));
+
+    }
 
 }

@@ -118,7 +118,7 @@ public class Mapper {
     }
 
     // Copie
-    public CopiaDTO convertCopieToCopieDTO(Copia copia) {
+    public CopiaDTO convertCopiaToCopieDTO(Copia copia) {
         CopiaDTO copiaDTOret = new CopiaDTO();
         copiaDTOret.setCasaEditrice(convertCasaEditriceToCasaEditriceDTO(copia.getCasaEditrice()));
         copiaDTOret.setIdCopia(copia.getIdCopia());

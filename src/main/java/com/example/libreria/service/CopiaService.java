@@ -1,6 +1,7 @@
 package com.example.libreria.service;
 
 import com.example.libreria.dto.CopiaDTO;
+import com.example.libreria.dto.request.CopiaRequest;
 import com.example.libreria.exception.CasaEditriceNotFound;
 import com.example.libreria.exception.CopiaNotFoundException;
 import com.example.libreria.exception.LibroNotFoundException;
@@ -37,7 +38,7 @@ public class CopiaService {
         List<Copia> rispostaDB = copiaRepository.findAll();
         List<CopiaDTO> copieDTOret = new ArrayList<>();
         for (Copia copia:rispostaDB)
-            copieDTOret.add(mapper.convertCopieToCopieDTO(copia));
+            copieDTOret.add(mapper.convertCopiaToCopieDTO(copia));
         return copieDTOret;
     }
 
@@ -46,7 +47,7 @@ public class CopiaService {
         if(rispostaDB.isEmpty()) throw new CopiaNotFoundException("Non sono presenti Copie con numero di copie "+numeroCopie);
         List<CopiaDTO> copieDTOret = new ArrayList<>();
         for (Copia copia:rispostaDB)
-            copieDTOret.add(mapper.convertCopieToCopieDTO(copia));
+            copieDTOret.add(mapper.convertCopiaToCopieDTO(copia));
         return copieDTOret;
     }
 
@@ -56,22 +57,46 @@ public class CopiaService {
         List<Copia> rispostaDB = copiaRepository.findAllByCasaEditrice(casaEditrice);
         List<CopiaDTO> copieDTOret = new ArrayList<>();
         for (Copia copia:rispostaDB)
-            copieDTOret.add(mapper.convertCopieToCopieDTO(copia));
+            copieDTOret.add(mapper.convertCopiaToCopieDTO(copia));
         return copieDTOret;
     }
 
     public CopiaDTO getByIsbn(Integer isbn) {
         Libro libro = libroRepository.findById(isbn).orElseThrow(()-> new LibroNotFoundException("Libro non trovato."));
-        return mapper.convertCopieToCopieDTO(copiaRepository.findAllByLibro(libro));
+        return mapper.convertCopiaToCopieDTO(copiaRepository.findAllByLibro(libro));
     }
     // Aggiungi copia
-    public CopiaDTO addCopia(Integer isbn, Integer idCasaEditrice, Integer numeroCopie) {
-        // Devo controllare se il libro e la casa editrice esistono
-        Libro libro = libroRepository.findById(isbn).orElseThrow(()-> new LibroNotFoundException("Libro non trovato"));
-        CasaEditrice casaEditrice = casaEditriceRepository.findById(idCasaEditrice).orElseThrow(()-> new CasaEditriceNotFound("Casa editrice non trovata."));
-        Copia copiaDaSalvare = new Copia(numeroCopie,libro,casaEditrice);
-        return mapper.convertCopieToCopieDTO(copiaRepository.save(copiaDaSalvare));
-    }
+    public CopiaDTO addCopia(CopiaRequest copiaRequest) {
+        // Controllo se il libro esiste
+        Libro libro = libroRepository.findById(copiaRequest.getIsbn()).orElseThrow(()-> new LibroNotFoundException("Libro non trovato."));
+        // Per la casa editrice, se non esiste nel DB la inserisco.
+
+        CasaEditrice casaEditrice = casaEditriceRepository.findByNome(copiaRequest.getCasaEditrice())
+                .orElseGet(
+                        ()->addCasaEditrice(copiaRequest.getCasaEditrice())
+                );
+        // Ora creo la copia
+        Copia copia = new Copia(copiaRequest.getNumeroCopie(),libro,casaEditrice);
+        return mapper.convertCopiaToCopieDTO(copiaRepository.save(copia));
+     }
+     public CopiaDTO modificaCopia(Integer idCopia, CopiaRequest copiaRequest){
+        // Controllo se la copia esiste
+         Copia copia = copiaRepository.findById(idCopia).orElseThrow(()-> new CopiaNotFoundException("Copia non trovata."));
+
+         // Controllo se il libro esiste
+         Libro libro = libroRepository.findById(copiaRequest.getIsbn()).orElseThrow(()-> new LibroNotFoundException("Libro non trovato."));
+
+         // Controllo se la nuova casa editrice esiste.
+         CasaEditrice casaEditrice = casaEditriceRepository.findByNome(copiaRequest.getCasaEditrice())
+                 .orElseGet(
+                         ()->addCasaEditrice(copiaRequest.getCasaEditrice())
+                 );
+         // Ora creo la copia
+         copia.setNumeroCopie(copiaRequest.getNumeroCopie());
+         copia.setLibro(libro);
+         copia.setCasaEditrice(casaEditrice);
+         return mapper.convertCopiaToCopieDTO(copiaRepository.save(copia));
+     }
         
 
     public void deleteCopia(Integer idCopia) {
@@ -89,7 +114,7 @@ public class CopiaService {
         if(rispostaDB.isEmpty()) throw new CopiaNotFoundException("Non ci sono copie disponibili");
         List<CopiaDTO> copieDTOret = new ArrayList<>();
         for (Copia copia:rispostaDB)
-            copieDTOret.add(mapper.convertCopieToCopieDTO(copia));
+            copieDTOret.add(mapper.convertCopiaToCopieDTO(copia));
         return copieDTOret;
 
     }
@@ -98,6 +123,9 @@ public class CopiaService {
         return getAllByNumeroCopie(0);
 
     }
-    // Modifica copia
+    //Metodi
+    private CasaEditrice addCasaEditrice(String casaEditrice){
+        return casaEditriceRepository.save(new CasaEditrice(casaEditrice));
+    }
 
 }

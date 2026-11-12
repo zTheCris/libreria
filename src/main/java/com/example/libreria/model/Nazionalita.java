@@ -23,6 +23,10 @@ public class Nazionalita {
         this.nome = nome;
 
     }
+    public Nazionalita(String nome) {
+        this.nome = nome;
+
+    }
 
     public Integer getIdNazionalita() {
         return idNazionalita;

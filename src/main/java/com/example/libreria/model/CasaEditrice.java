@@ -15,6 +15,10 @@ public class CasaEditrice {
 
     public CasaEditrice() {
     }
+    public CasaEditrice(String nome) {
+        this.nome = nome;
+    }
+
 
     public CasaEditrice(Integer id_casaeditrice, String nome) {
         this.id_casaeditrice = id_casaeditrice;

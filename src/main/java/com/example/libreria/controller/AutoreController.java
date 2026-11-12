@@ -1,6 +1,7 @@
 package com.example.libreria.controller;
 
 import com.example.libreria.dto.AutoreDTO;
+import com.example.libreria.dto.request.AutoreRequest;
 import com.example.libreria.exception.AutoreNotFoundException;
 import com.example.libreria.exception.NazionalitaNotFoundException;
 import com.example.libreria.service.AutoreService;
@@ -19,7 +20,6 @@ public class AutoreController {
 
     public AutoreController(AutoreService autoreService) {
         this.autoreService = autoreService;
-
     }
 
     // GET
@@ -30,10 +30,9 @@ public class AutoreController {
 
     // POST
     @PostMapping("/addAutore")
-    public ResponseEntity<String> addAutore(String nome, String cognome, LocalDate data, String nazionalita) {
+    public ResponseEntity<?> addAutore(@RequestBody AutoreRequest autoreRequest) {
         try {
-            autoreService.addAutore(nome, cognome, data, nazionalita);
-            return ResponseEntity.ok("Autore inserito correttamente.");
+            return ResponseEntity.ok(autoreService.addAutore(autoreRequest));
         } catch (NazionalitaNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
@@ -41,18 +40,17 @@ public class AutoreController {
 
     // PUT
     @PutMapping("/{idAutore}")
-    public ResponseEntity<String> modificaAutore(@PathVariable Integer idAutore, String nome, String cognome, LocalDate data, String nazionalita) {
+    public ResponseEntity<?> modificaAutore(@PathVariable Integer idAutore, @RequestBody AutoreRequest autoreRequest) {
         try{
-            autoreService.modificaAutore(idAutore, nome, cognome, data, nazionalita);
-           return ResponseEntity.ok("Autore modificato corretamente");
-        } catch (NazionalitaNotFoundException |AutoreNotFoundException e){
+            return ResponseEntity.ok(autoreService.modificaAutore(idAutore, autoreRequest));
+        } catch (NazionalitaNotFoundException | AutoreNotFoundException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
 
     // DELETE
     @DeleteMapping("/{idAutore}")
-    public ResponseEntity<String> deleteAutore(@PathVariable Integer idAutore) {
+    public ResponseEntity<?> deleteAutore(@PathVariable Integer idAutore) {
         try{
             autoreService.deleteByIdAutore(idAutore);
             return ResponseEntity.ok("Autore rimosso correttamente.");

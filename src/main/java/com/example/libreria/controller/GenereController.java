@@ -20,15 +20,15 @@ public class GenereController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<GenereDTO>> getAll(){
+    public ResponseEntity<?> getAll(){
         return ResponseEntity.ok(genereService.getAll());
     }
     @GetMapping("/{id}")
-    public ResponseEntity<GenereDTO> getById(@PathVariable Integer id){
+    public ResponseEntity<?> getById(@PathVariable Integer id){
         try{
             return ResponseEntity.ok(genereService.getById(id));
         } catch (GenereNotFoundException e){
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
     @PostMapping
