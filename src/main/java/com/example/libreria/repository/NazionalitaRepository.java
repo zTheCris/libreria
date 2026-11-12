@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface NazionalitaRepository extends JpaRepository<Nazionalita,Integer> {
-    Optional<Nazionalita> findByNome(String nome);
+    Optional<Nazionalita> findByNomeIgnoreCase(String nome);
 }

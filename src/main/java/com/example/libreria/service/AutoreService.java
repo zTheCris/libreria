@@ -3,7 +3,6 @@ package com.example.libreria.service;
 import com.example.libreria.dto.AutoreDTO;
 import com.example.libreria.dto.request.AutoreRequest;
 import com.example.libreria.exception.AutoreNotFoundException;
-import com.example.libreria.exception.NazionalitaNotFoundException;
 import com.example.libreria.model.Autore;
 import com.example.libreria.model.Nazionalita;
 import com.example.libreria.repository.AutoreRepository;
@@ -11,10 +10,8 @@ import com.example.libreria.repository.NazionalitaRepository;
 import com.example.libreria.utility.Mapper;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @Service
 public class AutoreService {
@@ -38,10 +35,27 @@ public class AutoreService {
         return autoriDTO;
     }
 
+    public List<AutoreDTO> getByNomeCognome(String nome, String cognome) {
+        List<Autore> autoriDB = autoreRepository.findAllByNomeAndCognomeIgnoreCase(nome, cognome);
+        List<AutoreDTO> autoriDTO = new ArrayList<>();
+        for (Autore autore : autoriDB)
+            autoriDTO.add(mapper.convertAutoreToAutoreDTO(autore));
+        return autoriDTO;
+    }
+
+    public AutoreDTO getById(Integer id) {
+        return mapper.convertAutoreToAutoreDTO(
+                autoreRepository.findById(id)
+                        .orElseThrow(()-> new AutoreNotFoundException("Autore non trovato."))
+        );
+    }
+
+
+
     public AutoreDTO addAutore(AutoreRequest autoreRequest) {
         // Prima di tutto devo cercare se la nazionalità che il Client mi ha mandato esite.
-        Nazionalita nazionalitaObj = nazionalitaRepository.findByNome(autoreRequest.getNazionalita())
-                .orElseGet(()->addNazionalita(autoreRequest.getNazionalita()));
+        Nazionalita nazionalitaObj = nazionalitaRepository.findByNomeIgnoreCase(autoreRequest.getNazionalita())
+                .orElseGet(() -> addNazionalita(autoreRequest.getNazionalita()));
         // A questo punto,creo l'autore
         Autore autore = new Autore(autoreRequest.getNome(), autoreRequest.getCognome(), autoreRequest.getData(), nazionalitaObj);
         // La scelta che ho intrapreso in Libri, prevede che solo il Libro sappia da che autori è stato scritto. Quindi salvo.
@@ -62,9 +76,8 @@ public class AutoreService {
     }
 
 
-
     public void deleteByIdAutore(Integer idAutore) {
-        Autore autore = autoreRepository.findById(idAutore).orElseThrow(()-> new AutoreNotFoundException("Autore non trovato"));
+        Autore autore = autoreRepository.findById(idAutore).orElseThrow(() -> new AutoreNotFoundException("Autore non trovato"));
         autoreRepository.delete(autore);
     }
 
@@ -72,6 +85,7 @@ public class AutoreService {
 
     /**
      * Nel caso in cui la nazionalità non esisite nel DB, lo aggiungo al database.
+     *
      * @param nazionalita la stringa contenente il nome della nazionalita
      * @return l'oggetto Nazionalita che ha salvato il database.
      */
@@ -80,4 +94,8 @@ public class AutoreService {
 
     }
 
+
 }
+
+
+

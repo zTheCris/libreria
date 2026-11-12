@@ -7,5 +7,5 @@ import java.util.Optional;
 
 public interface GenereRepository extends JpaRepository<Genere,Integer> {
     // Devo trovare l'id in base al genere
-    Optional<Genere> findByNome (String nome);
+    Optional<Genere> findByNomeIgnoreCase(String nome);
 }

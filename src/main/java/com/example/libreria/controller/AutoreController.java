@@ -23,13 +23,23 @@ public class AutoreController {
     }
 
     // GET
-    @GetMapping("/all")
-    public List<AutoreDTO> getAll() {
-        return autoreService.getAll();
+    @GetMapping()
+    public ResponseEntity<List<AutoreDTO>> getAll() {
+        return ResponseEntity.ok(autoreService.getAll());
     }
 
+    @GetMapping("/{nome}/{cognome}")
+    public ResponseEntity<List<AutoreDTO>> getAllByNomeCognome(@PathVariable String nome,@PathVariable String cognome){
+        return ResponseEntity.ok(autoreService.getByNomeCognome(nome,cognome));
+    }
+    @GetMapping("/{id}")
+    public ResponseEntity<AutoreDTO> getById(@PathVariable Integer id){
+        return ResponseEntity.ok(autoreService.getById(id));
+    }
+
+
     // POST
-    @PostMapping("/addAutore")
+    @PostMapping()
     public ResponseEntity<AutoreDTO> addAutore(@RequestBody AutoreRequest autoreRequest) {
         return ResponseEntity.ok(autoreService.addAutore(autoreRequest));
     }
@@ -42,7 +52,7 @@ public class AutoreController {
 
     // DELETE
     @DeleteMapping("/{idAutore}")
-    public ResponseEntity<?> deleteAutore(@PathVariable Integer idAutore) {
+    public ResponseEntity<String> deleteAutore(@PathVariable Integer idAutore) {
         autoreService.deleteByIdAutore(idAutore);
         return ResponseEntity.ok("Autore rimosso correttamente.");
     }

@@ -71,7 +71,7 @@ public class CopiaService {
         Libro libro = libroRepository.findById(copiaRequest.getIsbn()).orElseThrow(()-> new LibroNotFoundException("Libro non trovato."));
         // Per la casa editrice, se non esiste nel DB la inserisco.
 
-        CasaEditrice casaEditrice = casaEditriceRepository.findByNome(copiaRequest.getCasaEditrice())
+        CasaEditrice casaEditrice = casaEditriceRepository.findByNomeIgnoreCase(copiaRequest.getCasaEditrice())
                 .orElseGet(
                         ()->addCasaEditrice(copiaRequest.getCasaEditrice())
                 );
@@ -87,7 +87,7 @@ public class CopiaService {
          Libro libro = libroRepository.findById(copiaRequest.getIsbn()).orElseThrow(()-> new LibroNotFoundException("Libro non trovato."));
 
          // Controllo se la nuova casa editrice esiste.
-         CasaEditrice casaEditrice = casaEditriceRepository.findByNome(copiaRequest.getCasaEditrice())
+         CasaEditrice casaEditrice = casaEditriceRepository.findByNomeIgnoreCase(copiaRequest.getCasaEditrice())
                  .orElseGet(
                          ()->addCasaEditrice(copiaRequest.getCasaEditrice())
                  );

@@ -15,7 +15,7 @@ public interface LibroRepository extends JpaRepository<Libro, Integer> {
 
     List<Libro> findByTitoloContainsIgnoreCase(String titolo);
 
-    Optional<Libro> findByTitolo(String titolo);
+    Optional<Libro> findByTitoloIgnoreCase(String titolo);
 
     // Si aggiunge la modifying quando si esegue una DELETE,INSERT o una UPDATE.
     @Modifying
