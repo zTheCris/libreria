@@ -22,5 +22,5 @@ public interface CopiaRepository extends JpaRepository<Copia, Integer> {
             """, nativeQuery = true)
     void deleteLibroFromCopie(@Param("isbn") Integer isbn);
 
-    Copia findAllByLibro(Libro libro);
+    List<Copia> findAllByLibro(Libro libro);
 }

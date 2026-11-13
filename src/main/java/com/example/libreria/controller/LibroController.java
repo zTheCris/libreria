@@ -8,6 +8,7 @@ import com.example.libreria.exception.LibroAlreadyExistsException;
 import com.example.libreria.exception.LibroNotFoundException;
 import com.example.libreria.model.Autore;
 import com.example.libreria.service.LibroService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -43,7 +44,7 @@ public class LibroController {
         }
     }
     // all
-    @GetMapping("/all")
+    @GetMapping
     public List<LibroDTO> getAllDTO() {
         return libroService.getAll();
     }
@@ -78,14 +79,14 @@ public class LibroController {
     //POST
 
     @PostMapping
-    public ResponseEntity<LibroDTO> addLibro(@RequestBody LibroRequest libroRequest) {
+    public ResponseEntity<LibroDTO> addLibro(@Valid @RequestBody LibroRequest libroRequest) {
         return ResponseEntity.ok(libroService.addLibro(libroRequest));
     }
 
     // PUT
     // modify by isbn
     @PutMapping()
-    public ResponseEntity<LibroDTO> modificaLibro(@RequestBody LibroRequest libroRequest) {
+    public ResponseEntity<LibroDTO> modificaLibro(@Valid @RequestBody LibroRequest libroRequest) {
        return ResponseEntity.ok(libroService.modificaLibro(libroRequest));
     }
 

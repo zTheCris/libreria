@@ -39,7 +39,7 @@ public class CopiaController {
     }
 
     @GetMapping("/getbyisbn/{isbn}")
-    public ResponseEntity<CopiaDTO> getByLibro(@PathVariable Integer isbn){
+    public ResponseEntity<List<CopiaDTO>> getByLibro(@PathVariable Integer isbn){
         return ResponseEntity.ok(copiaService.getByIsbn(isbn));
     }
 

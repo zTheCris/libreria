@@ -13,7 +13,7 @@ import java.util.Optional;
 import java.util.Set;
 
 public interface LibroRepository extends JpaRepository<Libro, Integer> {
-
+    // Titolo è questa variabile
     List<Libro> findByTitoloContainsIgnoreCase(String titolo);
 
     Optional<Libro> findByTitoloIgnoreCase(String titolo);

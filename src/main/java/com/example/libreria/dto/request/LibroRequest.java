@@ -27,6 +27,7 @@ public class LibroRequest {
     @NotNull(message = "La data non è stata inserita. Riprovare ")
     @NotBlank(message = "La data non è stata inserita. Riprovare ")
     private LocalDate data;
+
     @NotBlank(message = "Gli ID degli autori non sono stati inseriti. Riprovare ")
     private Set<Integer> autoriIDs = new HashSet<>();
 
