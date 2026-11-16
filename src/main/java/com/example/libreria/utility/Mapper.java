@@ -155,9 +155,9 @@ public class Mapper {
      * che accetta un elemento di tipo E e restituisce un elemento di tipo D.
      * <br>
      * Il valore restituito dalla funzione viene aggiunto alla lista
-     * di ritorno listaDTO.
+     * di ritorno {@code listaDTO}.
      * <br>
-     * Il tipo E indica la classe Entity, mentre D indica la classe DTO.
+     * Il tipo E indica la classe {@code Entity}, mentre D indica la classe {@code DTO}.
      *
      * @param listaEntity lista delle Entity da convertire
      * @param converter funzione che converte una Entity in un DTO

@@ -3,7 +3,6 @@ package com.example.libreria.service;
 import com.example.libreria.dto.LibroDTO;
 import com.example.libreria.dto.request.LibroRequest;
 import com.example.libreria.exception.AutoreNotFoundException;
-import com.example.libreria.exception.GenereNotFoundException;
 import com.example.libreria.exception.LibroAlreadyExistsException;
 import com.example.libreria.exception.LibroNotFoundException;
 import com.example.libreria.model.Autore;
@@ -15,9 +14,11 @@ import com.example.libreria.repository.GenereRepository;
 import com.example.libreria.repository.LibroRepository;
 
 import com.example.libreria.utility.Mapper;
+import org.hibernate.tool.schema.internal.exec.ScriptTargetOutputToFile;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -49,6 +50,7 @@ public class LibroService {
 
     /**
      * Restituisce tutti i libri del Database attraverso {@code libroRepository.}
+     *
      * @return la lista di tutti i libri, lista vuota se non presenti.
      */
     public List<LibroDTO> getAll() {
@@ -62,6 +64,7 @@ public class LibroService {
 
     /**
      * Restituisce il Libro dato l'ISBN.
+     *
      * @param isbn il codice ISBN del Libro.
      * @return l'oggetto Libro trovato nel Database.
      * @throws LibroNotFoundException se l'ISBN non esiste nel Database.
@@ -75,13 +78,15 @@ public class LibroService {
 //    public List<Libro> getAllLibro(){
 //        return libroRepository.findAll();
 //    }
+
     /**
      * Restituisce tutti i libri nel Database se la Stringa ({@code titolo}) è in uno o più record.
+     *
      * @return la lista di tutti i libri che contengono la Stringa titolo nel campo {@code titolo}, lista vuota se non presenti.
      * @throws LibroNotFoundException se il Libro con il titolo non è stato trovato nel Database.
      */
     public List<LibroDTO> getByTitolo(String titolo) {
-        List<Libro> rispostaDB = libroRepository.findByTitoloContainsIgnoreCase(titolo);
+        List<Libro> rispostaDB = libroRepository.findByTitoloContainingIgnoreCase(titolo);
         // Dato che questo metodo mi restituisce solo un array vuoto se il titolo non c'è nel db, la devo gestire io.
         if (rispostaDB.isEmpty()) throw new LibroNotFoundException("Libro non trovato.");
         List<LibroDTO> libriDTOres = new ArrayList<>();
@@ -93,6 +98,7 @@ public class LibroService {
 
     /**
      * Restituisce tutti i libri nel Database in base al titolo ESATTO.
+     *
      * @return la lista di tutti i libri filtrati per titolo, lista vuota se non presenti.
      * @throws LibroNotFoundException se il Libro con il titolo ESATTO non è stato trovato nel Database.
      */
@@ -106,13 +112,18 @@ public class LibroService {
     }
 
     /**
-     * Restituisce tutti i libri nel Database che sono stati scritti da N autori, dove N è il numero deegli elementi di {@code autoriIDS.}
+     * Restituisce tutti i libri nel Database che sono stati scritti da ALMENO uno degli autori inseriti.
+     *
      * @return la lista di tutti i libri filtrati per titolo, lista vuota se non presenti.
      * @throws AutoreNotFoundException se l'autore non esiste nel Database.
      */
 
-    public List<LibroDTO> getByAutori(Set<Integer> autoriIDS){
+    public List<LibroDTO> getByAutori(Set<Integer> autoriIDS) {
+
+        if (autoriIDS.isEmpty()) throw new IllegalArgumentException("Non sono stati passati autori. Riprovare");
+
         Set<Autore> autoriDB = new HashSet<>(autoreRepository.findAllById(autoriIDS));
+
         // Controllo se gli autori esistono, altrimenti eccezione
         if (autoriIDS.size() != autoriDB.size())
             // Qualche autore o nessun autore non è stato trovato.
@@ -128,11 +139,60 @@ public class LibroService {
         // Lo converto in DTO
         List<LibroDTO> libriDTO = new ArrayList<>();
 
-        for (Libro libro:rispostaDB)
+        for (Libro libro : rispostaDB)
             libriDTO.add(mapper.convertLibroToLibroDTO(libro));
 
         return libriDTO;
     }
+
+    public List<LibroDTO> getByGenere(String genere) {
+        // Ricavo i libri.
+        List<Libro> rispostaDB = libroRepository.findByGenere_Nome(genere);
+
+        List<LibroDTO> libriDTO = new ArrayList<>();
+
+        for (Libro libro : rispostaDB)
+            libriDTO.add(mapper.convertLibroToLibroDTO(libro));
+
+        return libriDTO;
+
+    }
+
+    /**
+     * Restituisce tutti i libri nel Database in base al titolo ESATTO.
+     *
+     * @return la lista di tutti i libri filtrati per titolo, lista vuota se non presenti.
+     * @throws LibroNotFoundException se il Libro con il titolo ESATTO non è stato trovato nel Database.
+     */
+
+    public List<LibroDTO> getByAnno(Integer anno) {
+        // Dato che non ho il controllo sulla validità del dato tramite Validation lo faccio qui.
+        if (anno <= 0) throw new IllegalArgumentException("Anno inserito non valido");
+        List<Libro> rispostaDB = libroRepository.findByAnnoLessThanEqualOrderByAnnoDesc((LocalDate.of(anno, 12, 31)));
+        List<LibroDTO> libriDTOret = new ArrayList<>();
+        for (Libro libro : rispostaDB)
+            libriDTOret.add(mapper.convertLibroToLibroDTO(libro));
+        return libriDTOret;
+
+    }
+
+    public List<LibroDTO> getByPrezzo(Integer prezzo) {
+        List<Libro> rispostaDB = libroRepository.findAllByPrezzo(prezzo);
+        List<LibroDTO> libroDTOret = new ArrayList<>();
+        for (Libro libro : rispostaDB)
+            libroDTOret.add(mapper.convertLibroToLibroDTO(libro));
+        return libroDTOret;
+    }
+
+    public List<LibroDTO> getByPrezzoMaggiore(Integer prezzo) {
+        List<Libro> rispostaDB = libroRepository.findAllByPrezzoGreaterThanEqual(prezzo);
+        List<LibroDTO> libroDTOret = new ArrayList<>();
+        for (Libro libro : rispostaDB)
+            libroDTOret.add(mapper.convertLibroToLibroDTO(libro));
+        return libroDTOret;
+    }
+
+
     /*
     ========================================
                    POST
@@ -144,24 +204,25 @@ public class LibroService {
      * Aggiunge un Libro al Database, inserendo anche il Genere se non esiste. Il {@code libroRequest} che arriva in ingresso viene poi
      * controllato. Se il libro già esiste, è più opportuno passare per il metodo modificaLibro.
      * E' OBBLIGATORIO per l'inserimento di un Libro, che prima si inserisca l'Autore attraverso {@code AutoreService}.
+     *
      * @param libroRequest il libro che il Client vuole salvare nel Database.
      * @return il Libro salvato, convertito in DTO.
      * @throws LibroAlreadyExistsException se il libro già esiste nel database.
-     * @throws AutoreNotFoundException se gli autori nel database dati dalla lista {@code autoriIDs} non sono stati trovati.
+     * @throws AutoreNotFoundException     se gli autori nel database dati dalla lista {@code autoriIDs} non sono stati trovati.
      */
     public LibroDTO addLibro(LibroRequest libroRequest) {
         // Prima di tutto, poichè nel database ISBN non è auto increment, devo vedere se quel libro esiste.
-        if(libroRepository.findById(libroRequest.getIsbn()).isPresent())
+        if (libroRepository.findById(libroRequest.getIsbn()).isPresent())
             // Se esiste, sarebbe piu' opportuno passare dal metodo modificaLibro
             throw new LibroAlreadyExistsException("Libro già esistente. Modificare attraverso metodo PUT.");
 
         // Se il genere che mi ha mandato non lo trovo, lo inserisco nel DB.
         Genere genereObj = genereRepository.findByNomeIgnoreCase(libroRequest.getGenere())
                 // Optional ha un metodo oltre alla orElseThrow che invece di lanciare un eccezione, esegue qualcosa.
-                .orElseGet(()-> genereRepository.save(new Genere(libroRequest.getGenere())));
+                .orElseGet(() -> genereRepository.save(new Genere(libroRequest.getGenere())));
         // Ora controllo se gli autori che mi sono stati mandati esistono davvero nel Database.
         List<Autore> autori = autoreRepository.findAllById(libroRequest.getAutoriIDs());
-        if(autori.size() !=libroRequest.getAutoriIDs().size())
+        if (autori.size() != libroRequest.getAutoriIDs().size())
             // Dato che nell'oggetto di richiesta gli mando solo gli id, non ho le informazioni per crearne uno nuovo.
             // Devo mandare un eccezione
             throw new AutoreNotFoundException("Uno o più autori inseriti non sono nel database.");
@@ -186,9 +247,10 @@ public class LibroService {
     /**
      * Modifica un Libro nel database. Esegue gli stessi passaggi della {@code addLibro()}, ma con la differenza che prima controlla se il Libro
      * esiste nel Database.
+     *
      * @param libroRequest il libro che il Client vuole modificare.
      * @return il libro modificato nel Database.
-     * @throws LibroNotFoundException se il {@code Libro} non è stato trovato nel Database.
+     * @throws LibroNotFoundException  se il {@code Libro} non è stato trovato nel Database.
      * @throws AutoreNotFoundException se uno o più autori non sono stati trovati nel Database.
      */
     public LibroDTO modificaLibro(LibroRequest libroRequest) {
@@ -198,7 +260,7 @@ public class LibroService {
         // Vedo se trovo il genere che mi ha passato il Client
         Genere genereObj = genereRepository.findByNomeIgnoreCase(libroRequest.getGenere())
                 // Optional ha un metodo oltre alla orElseThrow che invece di lanciare un eccezione, esegue qualcosa.
-                .orElseGet(()-> genereRepository.save(new Genere(libroRequest.getGenere())));
+                .orElseGet(() -> genereRepository.save(new Genere(libroRequest.getGenere())));
         // Ho tutto, posso creare l'oggetto.
         Libro libro = new Libro(libroRequest.getIsbn(), libroRequest.getTitolo(), libroRequest.getData(), libroRequest.getPrezzo(), genereObj);
 
@@ -228,6 +290,7 @@ public class LibroService {
      * cosi da rispettare la coerenza del database.
      * Il metodo prevede l'utilizzi di {@code @Transactional} poiché si stanno eseguendo query su più tabelle, cosi da evitare
      * incongruenza tra le varie tabelle.
+     *
      * @param isbn l'ISBN del Libro da eliminare
      */
     // Poichè è un operazione che comprende piu' entità, è meglio usare la transazione.
@@ -247,12 +310,14 @@ public class LibroService {
         // Finalmente, elimino il libro.
         libroRepository.delete(libro);
     }
+
     /*
+
     Il modo per poterlo fare con una delete, è dire a Hibernate tutti i riferimenti in cui
     Libro compare in altre tabelle, mappandoli con @OneToMany o @ManyToMany usando il mappedBy.
     Insieme al mappedBy, si può usare l'attributo cascade all'interno dei parametri delle Annotazioni
     per dire a Hibernate che quando viene effettuata una DELETE, bisogna fare un eliminazione a cascata.
-     */
 
+     */
 
 }

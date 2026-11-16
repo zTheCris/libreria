@@ -8,13 +8,14 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 public interface LibroRepository extends JpaRepository<Libro, Integer> {
     // Titolo è questa variabile
-    List<Libro> findByTitoloContainsIgnoreCase(String titolo);
+    List<Libro> findByTitoloContainingIgnoreCase(String titolo);
 
     Optional<Libro> findByTitoloIgnoreCase(String titolo);
 
@@ -28,4 +29,12 @@ public interface LibroRepository extends JpaRepository<Libro, Integer> {
     List<Libro> findDistinctByAutoriIn(Set<Autore> autori);
 
     void deleteByGenere(Genere genere);
+    
+    List<Libro> findByAnnoLessThanEqualOrderByAnnoDesc(LocalDate localDate);
+    
+    List<Libro> findByGenere_Nome(String genereNome);
+
+    List<Libro> findAllByPrezzo(Integer prezzo);
+
+    List<Libro> findAllByPrezzoGreaterThanEqual(Integer prezzo);
 }

@@ -14,10 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @RestController
 @RequestMapping("/libri")
@@ -74,6 +71,36 @@ public class LibroController {
         autoriIDs.add(id);
         // Dato che è solo uno, passo un set a un parametro
         return ResponseEntity.ok(libroService.getByAutori(autoriIDs));
+    }
+
+    @GetMapping("/getbyprezzo/{prezzo}")
+    public ResponseEntity<List<LibroDTO>> getByPrezzo(@PathVariable Integer prezzo){
+        return ResponseEntity.ok(libroService.getByPrezzo(prezzo));
+    }
+    @GetMapping("/getbyprezzomaggiore/{prezzo}")
+    public ResponseEntity<List<LibroDTO>> getByPrezzoMaggiore(@PathVariable Integer prezzo){
+        return ResponseEntity.ok(libroService.getByPrezzoMaggiore(prezzo));
+    }
+
+    /**
+     * Per poter usare il metodo, usare i query params in Postman. Chiamarli tutti con lo stesso nome
+     * @param ids gli id passati tramite query parameters.
+     */
+    @GetMapping("/getbyautori")
+    public ResponseEntity<List<LibroDTO>> getByAutori(@RequestParam Set<Integer> ids){
+        // Dato che è solo uno, passo un set a un parametro
+        return ResponseEntity.ok(libroService.getByAutori(ids));
+    }
+
+    @GetMapping("/getbygenere/{genere}")
+    public ResponseEntity<List<LibroDTO>> getByGenere (@PathVariable String genere){
+        return ResponseEntity.ok(libroService.getByGenere(genere));
+    }
+
+
+    @GetMapping("/getbyanno/{anno}")
+    public ResponseEntity<List<LibroDTO>> getByAnno(@PathVariable Integer anno){
+        return ResponseEntity.ok(libroService.getByAnno(anno));
     }
 
     //POST

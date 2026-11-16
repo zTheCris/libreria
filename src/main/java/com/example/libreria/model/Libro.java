@@ -103,5 +103,15 @@ public class Libro {
         return autori;
     }
 
-
+    @Override
+    public String toString() {
+        return "Libro{" +
+                "isbn=" + isbn +
+                ", titolo='" + titolo + '\'' +
+                ", anno=" + anno +
+                ", prezzo=" + prezzo +
+                ", genere=" + genere +
+                ", autori=" + autori +
+                '}';
+    }
 }

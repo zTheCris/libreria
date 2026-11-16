@@ -1,8 +1,5 @@
 package com.example.libreria.exception;
 
-import com.example.libreria.model.Autore;
-import com.example.libreria.model.Copia;
-import com.example.libreria.model.Genere;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
