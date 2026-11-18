@@ -1,0 +1,91 @@
+
+/* SEZIONE AZIONI RAPIDE */
+.azioni-rapide {
+  width: 100%;
+  margin-top: 35px;
+}
+
+.azioni-rapide h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 20px;
+}
+
+/* GRIGLIA CARD */
+.azioni-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 18px;
+  width: 100%;
+}
+
+/* SINGOLA CARD */
+.azioni-grid .card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  min-height: 155px;
+  padding: 18px 15px;
+
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 3px 10px rgba(15, 23, 42, 0.05);
+
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease,
+              border-color 0.2s ease;
+}
+
+/* TITOLO CARD */
+.azioni-grid .card h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1e40af;
+  margin-bottom: 10px;
+}
+
+/* ICONE */
+.azioni-grid .card img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  margin-bottom: 10px;
+}
+
+/* DESCRIZIONE */
+.azioni-grid .card p {
+  font-size: 12px;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+/* EFFETTO HOVER */
+.azioni-grid .card:hover {
+  transform: translateY(-4px);
+  border-color: #93c5fd;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.10);
+}
+
+/* RESPONSIVE */
+@media (max-width: 700px) {
+  .azioni-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .azioni-grid .card {
+    min-height: 145px;
+    padding: 14px 10px;
+  }
+}
+
+@media (max-width: 420px) {
+  .azioni-grid {
+    grid-template-columns: 1fr;
+  }
+}

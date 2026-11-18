@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/generi")
 public class GenereController {
@@ -20,9 +20,14 @@ public class GenereController {
         this.genereService = genereService;
     }
 
-    @GetMapping("/all")
+    @GetMapping
     public ResponseEntity<List<GenereDTO>> getAll(){
         return ResponseEntity.ok(genereService.getAll());
+    }
+
+    @GetMapping("/num")
+    public ResponseEntity<Long> getNumGeneri() {
+        return ResponseEntity.ok(genereService.getNumGeneri());
     }
     @GetMapping("/{id}")
     public ResponseEntity<GenereDTO> getById(@PathVariable Integer id){

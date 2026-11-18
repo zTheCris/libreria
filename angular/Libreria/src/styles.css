@@ -1,0 +1,32 @@
+/* FONT GLOBALE */
+* {
+  font-family: 'Inter', sans-serif;
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  font-family: 'Inter', sans-serif;
+  color: #1e293b;
+  background-color: #f4f6fa;
+}
+
+/* TITOLI */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+}
+
+/* TESTI */
+p, span, a, li, label {
+  font-family: 'Inter', sans-serif;
+}
+
+/* CAMPI DI INPUT E PULSANTI */
+input, button, select, textarea {
+  font-family: 'Inter', sans-serif;
+  font-size: inherit;
+}

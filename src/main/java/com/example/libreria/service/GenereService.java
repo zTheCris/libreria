@@ -128,4 +128,8 @@ public class GenereService {
         // Ora cancello il Genere.
         genereRepository.delete(genere);
     }
+
+    public Long getNumGeneri() {
+        return genereRepository.count();
+    }
 }

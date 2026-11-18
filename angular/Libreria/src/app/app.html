@@ -1,0 +1,24 @@
+
+<!-- QUI SARA LA LANDING PAGE -->
+<!-- <p>app root funge!</p> -->
+<header>
+  <a href="/">
+     <img
+        src="/logo.png"
+        alt="Logo biblioteca"
+    >
+    </a>
+  <h1>Gestionale libreria</h1>
+</header>
+<!-- CONTENITORE SOTTO L'HEADER -->
+<section class="layout">
+  <!-- SIDEBAR -->
+    <app-sidebar/>
+    <!-- CONTENUTO DEL COMPONENT SCELTO, ALLA ROOT: INFORMAZIONI -->
+    <main class="content">
+      <!-- COMPONENTE DINAMICO CHE CAMBIA IN BASE ALL'URL -->
+       <router-outlet/>
+    </main>
+
+</section>
+

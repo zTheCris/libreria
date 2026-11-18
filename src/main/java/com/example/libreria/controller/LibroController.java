@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.*;
-
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/libri")
 public class LibroController {
@@ -44,6 +44,10 @@ public class LibroController {
     @GetMapping
     public List<LibroDTO> getAllDTO() {
         return libroService.getAll();
+    }
+    @GetMapping("/num")
+    public ResponseEntity<Long> getNumLibri(){
+        return ResponseEntity.ok(libroService.getNumLibri());
     }
 
     // GetAll con ricorsione

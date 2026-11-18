@@ -1,0 +1,26 @@
+<!-- Chiamata ai vari endpoint per recuperare le informazioni dal database. -->
+<h2>Informazioni database</h2>
+<section class="dashboard">
+  <article class="card">
+    <h2>Libri</h2>
+    <p>{{ informazioniDatabaseService.libriNumero() }}</p>
+  </article>
+    <article class="card">
+    <h2>Autori</h2>
+    <p>{{ informazioniDatabaseService.autoriNumero() }}</p>
+  </article>
+  <article class="card">
+    <h2>Copie</h2>
+    <p>{{informazioniDatabaseService.copieNumero() }}</p>
+  </article>
+    <article class="card">
+    <h2>Generi</h2>
+    <p>{{informazioniDatabaseService.generiNumero() }}</p>
+  </article>
+
+    <article class="card">
+    <h2>Case Editrici</h2>
+    <p>{{informazioniDatabaseService.caseEditriciNumero() }}</p>
+  </article>
+</section>
+

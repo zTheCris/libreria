@@ -168,4 +168,8 @@ public class AutoreService {
     private Nazionalita addNazionalita(String nazionalita) {
         return nazionalitaRepository.save(new Nazionalita(nazionalita));
     }
+
+    public Long getNumAutori() {
+        return autoreRepository.count();
+    }
 }

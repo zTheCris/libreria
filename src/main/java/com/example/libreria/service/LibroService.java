@@ -62,6 +62,10 @@ public class LibroService {
         return libriDTOres;
     }
 
+    public Long getNumLibri(){
+        return libroRepository.count();
+    }
+
     /**
      * Restituisce il Libro dato l'ISBN.
      *

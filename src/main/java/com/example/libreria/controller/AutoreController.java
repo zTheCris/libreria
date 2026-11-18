@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
-
+@CrossOrigin(origins = "http://localhost:4200") 
 @RestController
 @RequestMapping("/autori")
 public class AutoreController {
@@ -28,6 +28,10 @@ public class AutoreController {
         return ResponseEntity.ok(autoreService.getAll());
     }
 
+    @GetMapping("/num")
+    public ResponseEntity<Long> getNumLibri(){
+        return ResponseEntity.ok(autoreService.getNumAutori());
+    }
     @GetMapping("/{nome}/{cognome}")
     public ResponseEntity<List<AutoreDTO>> getAllByNomeCognome(@PathVariable String nome,@PathVariable String cognome){
         return ResponseEntity.ok(autoreService.getByNomeCognome(nome,cognome));

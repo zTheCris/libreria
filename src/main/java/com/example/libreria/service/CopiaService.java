@@ -185,4 +185,7 @@ public class CopiaService {
         return casaEditriceRepository.save(new CasaEditrice(casaEditrice));
     }
 
+    public Long getNumCopie() {
+        return copiaRepository.count();
+    }
 }

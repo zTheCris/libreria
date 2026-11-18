@@ -14,7 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/copie")
 public class CopiaController {
@@ -29,6 +29,12 @@ public class CopiaController {
     public ResponseEntity<List<CopiaDTO>> getAll(){
         return ResponseEntity.ok(copiaService.getAll());
     }
+
+    @GetMapping("/num")
+    public ResponseEntity<Long> getNumLibri(){
+        return ResponseEntity.ok(copiaService.getNumCopie());
+    }
+
     @GetMapping("/allbynumcopie/{num_copie}")
     public ResponseEntity<List<CopiaDTO>> getAllByNumCopie(@PathVariable Integer num_copie){
         return ResponseEntity.ok(copiaService.getAllByNumeroCopie(num_copie));
