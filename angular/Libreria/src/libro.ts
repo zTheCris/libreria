@@ -5,7 +5,7 @@ export interface Libro {
   isbn: number;
   titolo:string;
   anno:string;
-  genere: Genere;
+  genere: Genere | undefined;
   prezzo: number;
-  autori: Autore[];
+  autori: Autore[] | undefined;
 }

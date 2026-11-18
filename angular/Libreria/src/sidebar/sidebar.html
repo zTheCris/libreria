@@ -1,20 +1,54 @@
 <nav>
   <!-- Esempio elemento singolo in HTML puro:<a href="/html/">HTML</a> | -->
   <ul>
+    <li class="home">
+      <!-- Per mostrare quale opzione è selezionata usiamo routerLinkActive.  -->
+      <!-- Per quanto riguarda la root, dobbiamo specificare che il path deve essere ESATTAMENTE la root, invece che contenuta in.  -->
+      <a
+        [routerLink]="['/']"
+        [routerLinkActive]="['active']"
+        [routerLinkActiveOptions]="{ exact: true }"
+        >Home</a
+      >
+    </li>
     <li class="libri">
-      <a [routerLink]="['/libri']">Libri</a>
+      <!-- Per mostrare la pagina  -->
+      <a
+        [routerLink]="['/libri']"
+        [routerLinkActive]="['active']"
+        (click)="selezionaElemento('libri')"
+        >Libri
+      </a>
+      @if (elementoSelected() === 'libri') {
+        <!-- Sottomenu -->
+        <ul class="sottomenu">
+          <li class="visualizza_catalogo">
+            <a [routerLink]="['/libri/mostracatalogo']">Mostra catalogo</a>
+          </li>
+          <li class="aggiungi_libro">
+            <a [routerLink]="['/libri/addLibro']" [routerLinkActive]="['active']">Aggiungi libro</a>
+
+          </li>
+          <li class="modifica_libro">
+            <a>Modifica libro</a>
+          </li>
+          <li class="elimina_libro">
+            <a>Elimina libro</a>
+          </li>
+        </ul>
+      }
     </li>
     <li class="autori">
-      <a [routerLink]="['/autori']">Autori</a>
+      <a [routerLink]="['/autori']" [routerLinkActive]="['active']">Autori</a>
     </li>
     <li class="copie">
-      <a [routerLink]="['/copie']">Copie</a>
+      <a [routerLink]="['/copie']" [routerLinkActive]="['active']">Copie</a>
     </li>
     <li class="generi">
-      <a [routerLink]="['/generi']">Generi</a>
+      <a [routerLink]="['/generi']" [routerLinkActive]="['active']">Generi</a>
     </li>
     <li class="case">
-      <a [routerLink]="['/case']">Case Editrici</a>
+      <a [routerLink]="['/case']" [routerLinkActive]="['active']">Case Editrici</a>
     </li>
   </ul>
 </nav>

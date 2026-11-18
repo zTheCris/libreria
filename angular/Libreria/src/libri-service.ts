@@ -1,6 +1,22 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
+import { Observable } from 'rxjs';
+import { Libro } from './libro';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
 })
-export class LibriService {}
+export class LibriService {
+  // I vari endpoint di spring
+  http = inject(HttpClient);
+  listaLibri = signal<Libro[] | null>(null);
+
+  getAll(): Observable<Libro[]>{
+    return this.http.get<Libro[]>("http://localhost:8080/libri")
+  }
+  getByIsbn(isbn:number): Observable<Libro> {
+    // Devo verificare che isbn sia valido!!
+    return this.http.get<Libro>("http://localhost:8080/libri/"+isbn)
+  }
+
+}

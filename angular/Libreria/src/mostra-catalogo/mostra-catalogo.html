@@ -1,0 +1,35 @@
+<table>
+  <thead>
+    <tr>
+      <th>ISBN</th>
+      <th>Titolo</th>
+      <th>Anno</th>
+      <th>Genere</th>
+      <th>Prezzo</th>
+      <th>Autori</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (libro of libriService.listaLibri(); track libro.isbn) {
+      <tr>
+        <td>{{ libro?.isbn }}</td>
+        <td>{{ libro?.titolo }}</td>
+        <td>{{ libro?.anno }}</td>
+        <td>{{ libro?.genere?.nome }}</td>
+        <td>{{ libro?.prezzo }}</td>
+        <!-- Autori richiede a sua volta un for, poichè è una lista di Autore -->
+
+        <td> <!-- Relativa a autori.-->
+          <div class="autori">
+            @for (autore of libro.autori; track $index) {
+              <div class="autore">
+                {{ autore.nome }}
+                {{ autore.cognome }}
+              </div>
+            }
+          </div>
+        </td>
+      </tr>
+    }
+  </tbody>
+</table>
