@@ -1,1 +1,39 @@
-<p>aggiungi-libro works!</p>
+
+<section>
+  <!-- Login form per prendere il token Jwt -->
+   <!-- RICORDA: IMPORTARE REACTIVEFORMSMODULE NELLE IMPORTS DEL COMPONENT, PER POTER PRENDERE formGroup. -->
+   <form [formGroup]="libroForm" (submit)="aggiungiLibro()">
+  <h1>Inserimento Libro</h1>
+      <label for="isbn">Isbn</label>
+      <input type="text" formControlName="isbn">
+
+      <label for="titolo">Titolo</label>
+      <input type="text" formControlName="titolo">
+
+      <label for="anno">Anno</label>
+      <input type="date" formControlName="isbn">
+
+
+      <label for="genere">Genere</label>
+      <input type="text" formControlName="genere">
+
+
+      <label for="prezzo">Prezzo</label>
+      <input type="number" formControlName="prezzo">
+
+
+      <label for="isbn">Autori</label>
+      <select formControlName =autori>
+        <!-- Da finire -->
+         @for (autore of autoriService.listaAutori(); track $index) {
+          <option value="">
+            {{autore.nome}} {{autore.cognome}}
+          </option>
+         }
+      </select>
+
+      <button type="submit">Invio</button>
+
+   </form>
+</section>
+

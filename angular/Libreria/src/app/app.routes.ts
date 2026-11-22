@@ -8,16 +8,20 @@ import { Routes } from '@angular/router';
 import { GeneriComponent } from '../generi-component/generi-component';
 import { InformazioniDatabase } from '../informazioni-database/informazioni-database';
 import { AggiungiLibro } from '../aggiungi-libro/aggiungi-libro';
+import { LoginComponent } from '../login-component/login-component';
+import { authGuard } from '../auth-guard';
 
 export const routes: Routes = [
   {
     path: '',
+    canActivate: [authGuard],
     component: Home
   },
 
   {
     path: 'libri',
     component: LibriComponent,
+    canActivate: [authGuard],
     children: [
       {
         path: '',
@@ -36,21 +40,30 @@ export const routes: Routes = [
       }
     ]
   },
+
   {
     path: "autori",
     component: AutoriComponent
   },
+
   {
     path: "generi",
     component: GeneriComponent
   },
+
   {
     path: "copie",
     component: CopieComponent
   },
+
   {
     path: "case",
     component:CaseEditriciComponent
+  },
+
+  {
+    path: "login",
+    component: LoginComponent
   }
 
 ];

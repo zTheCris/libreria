@@ -1,5 +1,6 @@
 package com.example.libreria.exception;
 
+import com.example.libreria.model.Utente;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -47,9 +48,19 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String,Object>> NazionalitaNotFound(NazionalitaNotFoundException e){
         return buildResponse(HttpStatus.NOT_FOUND,e.getMessage());
     }
-    // Status code per entià già esistenti
+    @ExceptionHandler(UtenteNotFoundException.class)
+    public ResponseEntity<Map<String,Object>> utenteNotFound(UtenteNotFoundException e){
+        return buildResponse(HttpStatus.NOT_FOUND,e.getMessage());
+    }
+
+    // Handler per entià già esistenti
     @ExceptionHandler(LibroAlreadyExistsException.class)
     public ResponseEntity<Map<String,Object>> LibroAlreayExists(LibroAlreadyExistsException e){
         return buildResponse(HttpStatus.CONFLICT,e.getMessage());
     }
+    @ExceptionHandler(UtenteAlreadyExistsException.class)
+    public ResponseEntity<Map<String,Object>> utenteAlreadyExists(UtenteAlreadyExistsException e){
+        return buildResponse(HttpStatus.CONFLICT,e.getMessage());
+    }
+
 }

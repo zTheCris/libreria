@@ -1,6 +1,8 @@
 import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { InformazioniDatabaseService } from '../informazioni-database-service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { HttpErrorResponse } from '@angular/common/http';
+import Swal from 'sweetalert2';
 @Component({
   selector: 'app-informazioni-database',
   templateUrl: './informazioni-database.html',
@@ -13,42 +15,80 @@ export class InformazioniDatabase {
 
   constructor() {
     // Recupero con il service il numero di libri, autori e copie dal database, sottoscrivendomi all'Observable (che sarebbe la risposta Promise)
-    this.informazioniDatabaseService.getLibriNum()
-    // Se la pagina cambia mentre aspetto, lo distruggo
-    .pipe(takeUntilDestroyed(this.destroyRef))
-    // Altrimenti, mi iscrivo all'observable.
-    .subscribe((num) => {
-      // console.log("Numero di libri: " + num);
-      this.informazioniDatabaseService.libriNumero.set(num);
-    });
+    this.informazioniDatabaseService
+      .getLibriNum()
+      // Se la pagina cambia mentre aspetto, lo distruggo
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      // Altrimenti, mi iscrivo all'observable.
+      .subscribe(
+        {
+          next: (risposta: number) => {
+            this.informazioniDatabaseService.libriNumero.set(risposta);
+          },
+          error: (err: HttpErrorResponse) => {
+            // Tramite Sweetalert mando un errore visivo sulla pagina.
+            Swal.fire({ title: err.message, icon: 'error' });
+          }
+        }
+    );
 
-    this.informazioniDatabaseService.getAutoriNum()
-    .pipe(takeUntilDestroyed(this.destroyRef))
-    .subscribe((num) => {
-      // console.log("Numero di autori: " + num);
-      this.informazioniDatabaseService.autoriNumero.set(num);
-    });
+    this.informazioniDatabaseService
+      .getAutoriNum()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(
+        {
+          next: (risposta: number) => {
+            this.informazioniDatabaseService.autoriNumero.set(risposta);
+          },
+          error: (err: HttpErrorResponse) => {
+            Swal.fire({ title: err.message, icon: 'error' });
+          }
+        }
+      );
 
-    this.informazioniDatabaseService.getCopieNum()
-    .pipe(takeUntilDestroyed(this.destroyRef))
-    .subscribe((num) => {
-      // console.log("Numero di copie: " + num);
-      this.informazioniDatabaseService.copieNumero.set(num);
-    });
+    // Setto il numero delle copie
+    this.informazioniDatabaseService
+      .getCopieNum()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(
+        {
+          next: (risposta: number) => {
+            this.informazioniDatabaseService.copieNumero.set(risposta);
+          },
+          error: (err: HttpErrorResponse) => {
+            Swal.fire({ title: err.message, icon: 'error' });
+          }
+        }
+      );
 
-    this.informazioniDatabaseService.getGeneriNum()
-    .pipe(takeUntilDestroyed(this.destroyRef))
-    .subscribe((num) => {
-      // console.log("Numero di generi: " + num);
-      this.informazioniDatabaseService.generiNumero.set(num);
-    });
+    // Setto il numero dei generi
+    this.informazioniDatabaseService
+      .getGeneriNum()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(
+        {
+          next: (risposta: number) => {
+            this.informazioniDatabaseService.generiNumero.set(risposta);
+          },
+          error: (err: HttpErrorResponse) => {
+            Swal.fire({ title: err.message, icon: 'error' });
+          }
+        }
+    );
 
-    this.informazioniDatabaseService.getCaseEditriciNum()
-    .pipe(takeUntilDestroyed(this.destroyRef))
-    .subscribe((num) => {
-      // console.log("Numero di case editrici: " + num);
-      this.informazioniDatabaseService.caseEditriciNumero.set(num);
-    });
-
+    // Setto il numero delle case editrici
+    this.informazioniDatabaseService
+      .getCaseEditriciNum()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(
+        {
+          next: (risposta: number) => {
+            this.informazioniDatabaseService.caseEditriciNumero.set(risposta);
+          },
+          error: (err: HttpErrorResponse) => {
+            Swal.fire({ title: err.message, icon: 'error' });
+          }
+        }
+      );
   }
 }

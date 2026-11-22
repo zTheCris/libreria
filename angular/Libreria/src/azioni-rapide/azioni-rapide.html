@@ -3,29 +3,35 @@
   <h2>Azioni fatte di frequente</h2>
 
   <div class="azioni-grid">
+    <a [routerLink]="['/libri/addLibro']">
     <article class="card">
       <h3>Aggiungi libro</h3>
       <img src="https://cdn-icons-png.flaticon.com/512/7170/7170178.png" alt="Immagine bottone +">
       <p>Aggiunge un nuovo libro al database.</p>
     </article>
+    </a>
 
+    <a [routerLink]="['/libri/mostracatalogo']">
     <article class="card">
       <h3>Visualizza catalogo</h3>
       <img src="https://www.iconpacks.net/icons/2/free-search-icon-2907-thumb.png" alt="">
       <p>Mostra tutti i libri presenti nella biblioteca.</p>
     </article>
-
+    </a>
+    <a [routerLink]="['/libri/addCopia']">
     <article class="card">
       <h3>Aggiungi copia</h3>
       <img src="https://cdn-icons-png.flaticon.com/512/7170/7170178.png" alt="Immagine bottone +">
       <p>Aggiunge una copia di un libro già presente nel database.</p>
     </article>
-
+    </a>
+    <a [routerLink]="['/libri/addGenere']">
     <article class="card">
       <h3>Aggiungi genere</h3>
       <img src="https://cdn-icons-png.flaticon.com/512/7170/7170178.png" alt="Immagine bottone +">
       <p>Registra un nuovo genere letterario.</p>
     </article>
+    </a>
 
     <article class="card">
       <h3>Aggiungi casa editrice</h3>
