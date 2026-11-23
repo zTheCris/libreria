@@ -16,6 +16,19 @@ header {
   box-shadow: 0 3px 12px rgba(0, 0, 0, .15);
   z-index: 10;
 }
+.loginButton {
+  margin-left: auto;
+
+  background-color: #477ef5;
+  color: white;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
 
 header img {
   width: 180px;

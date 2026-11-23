@@ -26,11 +26,11 @@
             <a [routerLink]="['/libri/mostracatalogo']">Mostra catalogo</a>
           </li>
           <li class="aggiungi_libro">
-            <a [routerLink]="['/libri/addLibro']" [routerLinkActive]="['active']">Aggiungi libro</a>
-
+            <a [routerLink]="['/libri/addLibro']">Aggiungi Libro</a>
           </li>
           <li class="modifica_libro">
-            <a>Modifica libro</a>
+            <a [routerLink]="['/libri/modificalibro']" [routerLinkActive]="['active']">Modifica libro</a>
+
           </li>
           <li class="elimina_libro">
             <a>Elimina libro</a>

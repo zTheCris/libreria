@@ -9,7 +9,7 @@ import { LibriService } from '../libri-service';
   styleUrl: './mostra-catalogo.css',
 })
 export class MostraCatalogo {
-    libriService = inject(LibriService);
+  libriService = inject(LibriService);
   destroyRef = inject(DestroyRef);
   constructor(){
     // Per default, mi prendo tutti i libri.

@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface AutoreRepository extends JpaRepository<Autore,Integer> {
     List<Autore> findAllByNomeAndCognomeIgnoreCase(String nome, String cognome);
+    
 }

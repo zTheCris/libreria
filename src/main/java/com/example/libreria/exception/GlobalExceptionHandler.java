@@ -3,6 +3,7 @@ package com.example.libreria.exception;
 import com.example.libreria.model.Utente;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -24,6 +25,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(statoHTTP).body(corpoRet);
 
     }
+    // Gestisco anche le Validation tramite l'eccezione MethodArgumentNotValidException
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String,Object>> Validazione(MethodArgumentNotValidException e){
+        return buildResponse(HttpStatus.BAD_REQUEST,e.getMessage());
+    }
+
     @ExceptionHandler(LibroNotFoundException.class)
     public ResponseEntity<Map<String,Object>> LibroNotFound(LibroNotFoundException e){
         return buildResponse(HttpStatus.NOT_FOUND,e.getMessage());

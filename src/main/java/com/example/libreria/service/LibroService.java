@@ -214,11 +214,12 @@ public class LibroService {
      * @throws LibroAlreadyExistsException se il libro già esiste nel database.
      * @throws AutoreNotFoundException     se gli autori nel database dati dalla lista {@code autoriIDs} non sono stati trovati.
      */
+    @Transactional
     public LibroDTO addLibro(LibroRequest libroRequest) {
         // Prima di tutto, poichè nel database ISBN non è auto increment, devo vedere se quel libro esiste.
         if (libroRepository.findById(libroRequest.getIsbn()).isPresent())
             // Se esiste, sarebbe piu' opportuno passare dal metodo modificaLibro
-            throw new LibroAlreadyExistsException("Libro già esistente. Modificare attraverso metodo PUT.");
+            throw new LibroAlreadyExistsException("Libro già esistente. Utilizzare la funzione di modifica.");
 
         // Se il genere che mi ha mandato non lo trovo, lo inserisco nel DB.
         Genere genereObj = genereRepository.findByNomeIgnoreCase(libroRequest.getGenere())
@@ -257,6 +258,7 @@ public class LibroService {
      * @throws LibroNotFoundException  se il {@code Libro} non è stato trovato nel Database.
      * @throws AutoreNotFoundException se uno o più autori non sono stati trovati nel Database.
      */
+    @Transactional
     public LibroDTO modificaLibro(LibroRequest libroRequest) {
         // Vedo se trovo il libro.
         libroRepository.findById(libroRequest.getIsbn()).orElseThrow(() -> new LibroNotFoundException("Libro non trovato."));

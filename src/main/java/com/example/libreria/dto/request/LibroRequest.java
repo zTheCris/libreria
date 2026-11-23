@@ -9,10 +9,8 @@ import java.util.Set;
 
 public class LibroRequest {
     @NotNull(message = "L'ISBN non è stato inserito. Riprovare ")
-    @NotBlank(message = "L'ISBN non è stato inserito. Riprovare")
     private Integer isbn;
-
-    @NotBlank(message = "Il prezzo non è stato inserito. Riprovare ")
+    
     @NotNull(message = "Il prezzo non è stato inserito. Riprovare ")
     private Integer prezzo;
 
@@ -25,10 +23,10 @@ public class LibroRequest {
     private String genere;
 
     @NotNull(message = "La data non è stata inserita. Riprovare ")
-    @NotBlank(message = "La data non è stata inserita. Riprovare ")
+
     private LocalDate data;
 
-    @NotBlank(message = "Gli ID degli autori non sono stati inseriti. Riprovare ")
+
     private Set<Integer> autoriIDs = new HashSet<>();
 
     public LibroRequest(Integer isbn, Integer prezzo, String titolo, String genere, LocalDate data, Set<Integer> autoriIDs) {

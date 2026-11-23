@@ -13,6 +13,7 @@ import com.example.libreria.repository.CopiaRepository;
 import com.example.libreria.repository.LibroRepository;
 import com.example.libreria.utility.Mapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -131,6 +132,7 @@ public class CopiaService {
      * @param copiaRequest l'oggetto CopiaRequest mandato dal Client
      * @return l'oggetto Copia salvato nel Database, convertito in DTO.
      */
+    @Transactional
     public CopiaDTO addCopia(CopiaRequest copiaRequest) {
         // Controllo se il libro esiste
         Libro libro = libroRepository.findById(copiaRequest.getIsbn()).orElseThrow(() -> new LibroNotFoundException("Libro non trovato."));
@@ -152,6 +154,7 @@ public class CopiaService {
      * @param copiaRequest l'oggetto Copia modificato.
      * @return l'oggetto Copia mdoificato nel Database, convertito in DTO.
      */
+    @Transactional
     public CopiaDTO modificaCopia(Integer idCopia, CopiaRequest copiaRequest) {
         // Controllo se la copia esiste
         Copia copia = copiaRepository.findById(idCopia).orElseThrow(() -> new CopiaNotFoundException("Copia non trovata."));
@@ -159,7 +162,7 @@ public class CopiaService {
         // Controllo se il libro esiste
         Libro libro = libroRepository.findById(copiaRequest.getIsbn()).orElseThrow(() -> new LibroNotFoundException("Libro non trovato."));
 
-        // Controllo se la nuova casa editrice esiste.
+        // Controllo se la nuova casa editrice esiste. Se non esiste, la creo.
         CasaEditrice casaEditrice = casaEditriceRepository.findByNomeIgnoreCase(copiaRequest.getCasaEditrice())
                 .orElseGet(
                         () -> addCasaEditrice(copiaRequest.getCasaEditrice())
@@ -176,6 +179,7 @@ public class CopiaService {
      *
      * @param idCopia l'id della Copia.
      */
+
     public void deleteCopia(Integer idCopia) {
         copiaRepository.deleteById(idCopia);
     }

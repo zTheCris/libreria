@@ -7,9 +7,10 @@ import { LibriComponent } from './../libri-component/libri-component';
 import { Routes } from '@angular/router';
 import { GeneriComponent } from '../generi-component/generi-component';
 import { InformazioniDatabase } from '../informazioni-database/informazioni-database';
-import { AggiungiLibro } from '../aggiungi-libro/aggiungi-libro';
+import { AggiungiLibro } from '../libri-component/aggiungi-libro/aggiungi-libro';
 import { LoginComponent } from '../login-component/login-component';
 import { authGuard } from '../auth-guard';
+import { ModificaLibro } from '../libri-component/modifica-libro/modifica-libro';
 
 export const routes: Routes = [
   {
@@ -37,6 +38,17 @@ export const routes: Routes = [
       {
         path: 'mostracatalogo',
         component: MostraCatalogo
+      },
+      {
+        path: 'modificalibro/:id',
+        component: ModificaLibro
+      },
+      // Due modi per accedere alla modifica libro: se non passo l'id,
+      // Il costruttore di modifica lancia Swal.
+      // Altrimenti, chiama getByIsbn in base all'id nella url (sopra)
+      {
+        path: 'modificalibro',
+        component: ModificaLibro
       }
     ]
   },

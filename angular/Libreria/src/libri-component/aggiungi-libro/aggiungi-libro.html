@@ -1,0 +1,37 @@
+<section>
+  <!-- Login form per prendere il token Jwt -->
+  <!-- RICORDA: IMPORTARE REACTIVEFORMSMODULE NELLE IMPORTS DEL COMPONENT, PER POTER PRENDERE formGroup. -->
+  <form [formGroup]="libroForm" (submit)="aggiungiLibro()">
+    <h1>Inserimento Libro</h1>
+    <label for="isbn">Isbn</label>
+    <input type="number" formControlName="isbn" required />
+
+    <label for="titolo">Titolo</label>
+    <input type="text" formControlName="titolo" required />
+
+    <label for="anno">Anno</label>
+    <input type="date" formControlName="anno" required />
+
+    <label for="genere">Genere</label>
+    <input type="text" formControlName="genere" required />
+
+    <label for="prezzo">Prezzo</label>
+    <input type="number" formControlName="prezzo" required />
+
+    <label for="autori">Autori</label>
+    <!-- Dato che voglio poter aggiungere piu' autori, mi aspetto di creare una option tante volte quanti autori vuole inserire il client. -->
+    @for (numero of numeroAutori; track numero) {
+      <!-- La select è il SINGOLO menu a tendina. -->
+      <select>
+        @for (autore of autoriService.listaAutori(); track autore.idAutore) {
+          <!-- Per ogni autore, inserisco l'opzione ALL'INTERNO DELLA SELECT -->
+          <option [ngValue]="autore" (change)="aggiungiAutore()">{{ autore.nome }} {{ autore.cognome }}</option>
+        }
+      </select>
+    }
+
+
+    <button type="button" (click)="aumenta()">+</button>
+    <button type="submit">Invio</button>
+  </form>
+</section>
