@@ -2,9 +2,9 @@
 
 # Libreria
 
-Applicazione Spring Boot per la gestione di una biblioteca. Il progetto modella libri, autori, generi, nazionalità, copie e case editrici tramite JPA e mette a disposizione API REST per consultare autori, libri e copie e per inserire autori e libri.
+Applicazione per la gestione di una biblioteca composta da un backend Spring Boot e da un frontend Angular. Il progetto modella libri, autori, generi, nazionalità, copie, case editrici e utenti tramite JPA e mette a disposizione API REST protette da autenticazione JWT.
 
-> Gli endpoint descritti in questo documento sono esclusivamente quelli implementati nei controller presenti nel progetto. Le copie sono consultabili tramite API; case editrici, prestiti, utenti e dipendenti sono rappresentati nel dump SQL, ma non hanno controller REST dedicati.
+> Gli endpoint descritti in questo documento sono quelli implementati nei controller presenti nel progetto. Prestiti, vendite, dipendenti e condizioni sono presenti nel dump SQL, ma non hanno ancora entity o controller REST dedicati.
 
 ## Schema del database
 
@@ -17,38 +17,57 @@ Applicazione Spring Boot per la gestione di una biblioteca. Il progetto modella 
 - **Spring Web MVC**, per gli endpoint REST
 - **Spring Data JPA**, per il mapping object-relational e i repository
 - **Hibernate**, come implementazione JPA
+- **Spring Security**, per la protezione delle API
+- **JJWT 0.12.5**, per generare e verificare i token JWT
+- **Spring Validation**, per validare i request body
 - **MySQL**, database relazionale
 - **Maven**, gestione del progetto e delle dipendenze
 - **SpringDoc OpenAPI 3.2.0**, documentazione OpenAPI e interfaccia Swagger UI
 - **Spring Boot DevTools**, disponibile a runtime per lo sviluppo
+- **Angular 21**, per l'interfaccia web
+- **TypeScript, RxJS e Angular Reactive Forms**
+- **SweetAlert2**, per notifiche e dialog lato frontend
 
 ## Struttura del progetto
 
-Il codice applicativo si trova in `src/main/java/com/example/libreria`:
+Il codice applicativo si trova in `src/main/java/com/example/libreria`, mentre il frontend si trova in `angular/Libreria`:
 
 ```text
 com.example.libreria
 ├── LibreriaApplication.java
+├── config/
+│   └── SpringSecurityConfig.java
 ├── controller/
+│   ├── AuthController.java
+│   ├── AutenticatiController.java
 │   ├── AutoreController.java
+│   ├── CasaEditriceController.java
 │   ├── CopiaController.java
+│   ├── GenereController.java
 │   └── LibroController.java
 ├── dto/
+├── exception/
 ├── model/
 ├── repository/
+├── security/
+│   └── JwtAuthenticationFilter.java
 ├── service/
 └── utility/
     └── Mapper.java
 ```
 
+Il frontend Angular contiene componenti per login, dashboard, navigazione, catalogo, inserimento e modifica dei libri, oltre ai servizi per comunicare con il backend.
+
 ### Responsabilità dei componenti
 
 - **Controller**: espongono gli endpoint HTTP e delegano le operazioni ai service.
 - **Service**: contengono la logica applicativa. Verificano le relazioni richieste, recuperano i dati associati tramite repository, salvano le entity e convertono il risultato in DTO.
-- **Repository**: interfacce Spring Data JPA basate su `JpaRepository`. Sono presenti repository per autori, libri, generi, nazionalità, case editrici e copie.
+- **Repository**: interfacce Spring Data JPA basate su `JpaRepository`, con query per libri, autori, generi, nazionalità, case editrici, copie e utenti.
 - **Entity/Model**: classi annotate con `@Entity` che rappresentano le tabelle gestite dal mapping JPA.
 - **DTO**: oggetti usati per trasferire dati verso il client evitando di esporre direttamente le entity e impedendo ricorsioni nelle relazioni.
 - **Mapper**: `utility.Mapper` converte entity e DTO. Nei DTO dei libri sono inclusi gli autori, mentre `AutoreDTO` non include la collezione dei libri.
+- **Security**: `SpringSecurityConfig` configura CORS, sessioni stateless, BCrypt e autorizzazioni; `JwtAuthenticationFilter` verifica il token Bearer.
+- **Exception handler**: `GlobalExceptionHandler` converte errori di validazione, risorse non trovate e conflitti in risposte JSON uniformi.
 
 ## Modello applicativo e relazioni
 
@@ -62,6 +81,7 @@ com.example.libreria
 | `Nazionalita` | `Nazionalita` | `id_nazionalita`, `nome` | una nazionalità può essere associata a molti autori |
 | `Copia` | `Copie` | `idCopia`, `numero_copie` | appartiene a un `Libro` e a una `CasaEditrice` |
 | `CasaEditrice` | `CasaEditrice` | `id_casaeditrice`, `nome` | può essere associata a molte copie |
+| `Utente` | `Utenti` | `idUtente`, `email`, `nome`, `cognome`, `password` | account utilizzato per l'autenticazione |
 
 ### Relazioni JPA
 
@@ -77,97 +97,122 @@ La relazione molti-a-molti tra libri e autori è utilizzata da entrambi i lati n
 
 L’applicazione usa come base URL `http://localhost:8080`. La porta `9090` è presente solo come configurazione commentata in `application.properties`, quindi il valore attivo predefinito è quello di Spring Boot.
 
-### Elenco autori
+Tutti gli endpoint, esclusi `/autenticazione/**`, richiedono l'header:
 
 ```http
-GET /autori/all
+Authorization: Bearer <token-jwt>
 ```
 
-Non richiede parametri né body. Restituisce una lista di `AutoreDTO`.
+### Autenticazione
 
-Esempio di risposta:
-
-```json
-[
-  {
-    "idAutore": 7,
-    "nome": "Italo",
-    "cognome": "Calvino",
-    "data": "1923-10-15",
-    "nazionalitaDTO": {
-      "id_nazionalita": 1,
-      "nome": "Italiana"
-    }
-  }
-]
-```
-
-### Inserimento autore
+#### Registrazione
 
 ```http
-POST /autori/addAutore
+POST /autenticazione/register
+Content-Type: application/json
 ```
-
-Parametri richiesti dal metodo del controller:
-
-| Parametro | Tipo | Descrizione |
-|---|---|---|
-| `nome` | `String` | nome dell’autore |
-| `cognome` | `String` | cognome dell’autore |
-| `data` | `LocalDate` | data associata all’autore, nel formato `yyyy-MM-dd` |
-| `nazionalita` | `String` | nome di una nazionalità già presente nel database |
-
-Il metodo non dichiara `@RequestParam` e non usa `@RequestBody`: i valori sono quindi passati come parametri della richiesta secondo il binding di Spring MVC.
-
-Esempio:
-
-```bash
-curl -X POST "http://localhost:8080/autori/addAutore?nome=Primo&cognome=Levi&data=1919-07-31&nazionalita=Italiana"
-```
-
-Esempio di risposta:
 
 ```json
 {
-  "idAutore": 11,
-  "nome": "Primo",
-  "cognome": "Levi",
-  "data": "1919-07-31",
-  "nazionalita": {
-    "id_nazionalita": 1,
-    "nome": "Italiana"
-  }
+  "email": "mario@example.com",
+  "nome": "Mario",
+  "cognome": "Rossi",
+  "password": "password"
 }
 ```
 
-La nazionalità deve esistere. In caso di errore nel service, l’implementazione attuale stampa lo stack trace e restituisce `null`.
+La password viene cifrata con BCrypt. Se l'email è già presente viene restituito `409 Conflict`. In caso di successo la risposta contiene un token JWT:
 
-### Inserimento libro
+```json
+{
+  "token": "<jwt>"
+}
+```
+
+#### Login
 
 ```http
-POST /libri/addLibro
+POST /autenticazione/login
+Content-Type: application/json
 ```
 
-Parametri del metodo:
-
-| Parametro | Tipo | Descrizione |
-|---|---|---|
-| `isbn` | `Integer` | identificativo ISBN del libro |
-| `titolo` | `String` | titolo del libro |
-| `data` | `LocalDate` | data/anno del libro, nel formato `yyyy-MM-dd` |
-| `prezzo` | `Integer` | prezzo del libro |
-| `genere` | `String` | nome di un genere già presente nel database |
-| body | `Set<Integer>` | insieme degli `idAutore` da associare al libro |
-
-Il body è l’unico parametro dichiarato con `@RequestBody`; gli altri valori sono parametri della richiesta.
-
-Esempio:
-
-```bash
-curl -X POST "http://localhost:8080/libri/addLibro?isbn=100000021&titolo=Nuovo%20libro&data=2026-01-15&prezzo=18&genere=Romanzo" ^
-  -H "Content-Type: application/json" ^
-  -d "[7,8]"
+```json
+{
+  "username": "mario@example.com",
+  "password": "password"
+}
 ```
+
+Il campo `username` contiene l'email dell'utente. Il token ha una durata di 15 minuti.
+
+#### Profilo autenticato di prova
+
+```http
+GET /autenticati/profilo
+```
+
+Restituisce `Wow! Sei autenticato!!!!` quando il JWT è valido.
+
+### Autori
+
+```http
+GET    /autori
+GET    /autori/num
+GET    /autori/{id}
+GET    /autori/{nome}/{cognome}
+POST   /autori
+PUT    /autori/{idAutore}
+DELETE /autori/{idAutore}
+```
+
+`GET /autori` restituisce una lista di `AutoreDTO`; `/autori/num` restituisce il numero degli autori. L'inserimento e la modifica ricevono un `AutoreRequest`:
+
+```json
+{
+  "nome": "Italo",
+  "cognome": "Calvino",
+  "data": "1923-10-15",
+  "nazionalita": "Italiana"
+}
+```
+
+La nazionalità viene cercata senza distinzione tra maiuscole e minuscole e, se necessario, inserita.
+
+### Libri
+
+```http
+GET    /libri
+GET    /libri/{isbn}
+GET    /libri/num
+GET    /libri/getallbytitle/{titolo}
+GET    /libri/getbytitle/{titolo}
+GET    /libri/getbyautore/{id}
+GET    /libri/getbyautori?ids=1&ids=2
+GET    /libri/getbygenere/{genere}
+GET    /libri/getbyanno/{anno}
+GET    /libri/getbyprezzo/{prezzo}
+GET    /libri/getbyprezzomaggiore/{prezzo}
+POST   /libri
+PUT    /libri
+DELETE /libri/{isbn}
+```
+
+`GET /libri` restituisce tutti i libri come `LibroDTO`. Le ricerche per titolo sono rispettivamente parziale (`getallbytitle`) ed esatta (`getbytitle`), entrambe senza distinzione tra maiuscole e minuscole. `getbyautori` accetta più parametri `ids` e restituisce i libri scritti da almeno uno degli autori indicati; `getbyanno` restituisce i libri fino all'anno richiesto; i due endpoint sul prezzo filtrano per valore esatto o maggiore/uguale.
+
+Per inserimento e modifica il body è un `LibroRequest`:
+
+```json
+{
+  "isbn": 100000021,
+  "titolo": "Nuovo libro",
+  "data": "2026-01-15",
+  "prezzo": 18,
+  "genere": "Romanzo",
+  "autoriIDs": [7, 8]
+}
+```
+
+Il genere viene creato automaticamente se non esiste; tutti gli autori indicati devono esistere. Un ISBN già presente produce `409 Conflict`. La cancellazione rimuove anche i collegamenti in `Libri_Autori` e le copie associate.
 
 Esempio di risposta:
 
@@ -176,6 +221,7 @@ Esempio di risposta:
   "isbn": 100000021,
   "titolo": "Nuovo libro",
   "anno": "2026-01-15",
+  "prezzo": 18,
   "genere": {
     "idGenere": 3,
     "nome": "Romanzo"
@@ -195,70 +241,127 @@ Esempio di risposta:
 }
 ```
 
-Il service verifica che tutti gli ID autore ricevuti esistano e che il genere indicato sia presente. Se una verifica fallisce, l’implementazione attuale stampa lo stack trace e restituisce `null`.
-
-### Elenco libri in formato DTO
-
-```http
-GET /libri/allDTO
-```
-
-Non richiede parametri né body. Restituisce tutti i libri convertiti in `LibroDTO`.
-
-Esempio di risposta:
-
-```json
-[
-  {
-    "isbn": 100000001,
-    "titolo": "Il Signore degli Anelli",
-    "anno": "1954-07-29",
-    "genere": {
-      "idGenere": 1,
-      "nome": "Fantasy"
-    },
-    "autori": [
-      {
-        "idAutore": 1,
-        "nome": "J.R.R.",
-        "cognome": "Tolkien",
-        "data": "1892-01-03",
-        "nazionalita": {
-          "id_nazionalita": 2,
-          "nome": "Inglese"
-        }
-      }
-    ]
-  }
-]
-```
-
-L’endpoint `/libri/all` è presente solo come codice commentato e non è quindi disponibile.
-
-### Ricerca libri per titolo
-
-```http
-GET /libri/getbytitle/{titolo}
-```
-
-Restituisce una lista di `LibroDTO` con i titoli che contengono il valore specificato, senza distinguere tra maiuscole e minuscole. Non richiede body.
-
-Esempio:
-
-```bash
-curl "http://localhost:8080/libri/getbytitle/signore"
-```
-
 ### Consultazione copie
 
 ```http
-GET /copie/all
-GET /copie/allbynumcopie/{num_copie}
+GET    /copie
+GET    /copie/num
+GET    /copie/allbynumcopie/{num_copie}
+GET    /copie/allbycasaeditrice/{id}
+GET    /copie/getbyisbn/{isbn}
+GET    /copie/disponibili
+GET    /copie/esaurite
+POST   /copie
+PUT    /copie/{idCopia}
+DELETE /copie/{idCopia}
 ```
 
-Il primo endpoint restituisce tutte le copie come lista di `CopiaDTO`; il secondo filtra per il valore esatto di `numero_copie` e restituisce la stessa struttura. Nessuno dei due richiede un body.
+Il primo endpoint restituisce tutte le copie come lista di `CopiaDTO`; gli altri filtri consentono di cercare per quantità, casa editrice, ISBN, disponibilità o esaurimento. La risposta contiene l'identificativo, il libro (`LibroDTO`), la casa editrice e il numero di copie.
 
-La risposta di `CopiaDTO` contiene l’identificativo, il libro (`libroDTO`), la casa editrice e il numero di copie. Il libro annidato ha la struttura di `LibroDTO`, inclusa la lista `autori`.
+Per inserimento e modifica:
+
+```json
+{
+  "isbn": 100000021,
+  "casaEditrice": "Einaudi",
+  "numeroCopie": 4
+}
+```
+
+Il libro deve esistere; la casa editrice viene creata automaticamente se non è già presente.
+
+### Generi
+
+```http
+GET    /generi
+GET    /generi/num
+GET    /generi/{id}
+POST   /generi
+PUT    /generi/{id}?nuovoNome=Fantascienza
+DELETE /generi/{id}
+```
+
+Il body di inserimento è:
+
+```json
+{
+  "nome": "Fantascienza"
+}
+```
+
+La cancellazione rimuove prima le associazioni del genere con i libri.
+
+### Case editrici
+
+```http
+GET /case
+GET /case/num
+```
+
+Le case editrici sono consultabili e conteggiabili. Non esiste un endpoint dedicato per crearle: vengono inserite automaticamente quando si aggiunge una copia con una casa editrice nuova.
+
+### Errori e validazione
+
+Le request annotate con `@Valid` controllano i campi obbligatori. Gli errori gestiti da `GlobalExceptionHandler` hanno questa struttura:
+
+```json
+{
+  "stato": 404,
+  "errore": "Not Found",
+  "messaggio": "Libro non trovato."
+}
+```
+
+Sono utilizzati principalmente `400 Bad Request` per dati non validi, `401 Unauthorized` per JWT assente o non valido, `404 Not Found` per risorse mancanti e `409 Conflict` per libri o utenti già esistenti.
+
+## Frontend Angular
+
+Il frontend si trova in `angular/Libreria` ed è disponibile su `http://localhost:4200`.
+
+### Funzionalità
+
+- login e logout con JWT;
+- salvataggio del token in `localStorage`;
+- guardia sulle rotte protette;
+- interceptor che aggiunge il token alle richieste e reindirizza al login dopo una risposta `401`;
+- dashboard con il numero di libri, autori, copie, generi e case editrici;
+- catalogo libri con ISBN, titolo, data, genere, prezzo e autori;
+- inserimento libro con selezione di più autori;
+- modifica libro tramite ISBN nella URL o tramite dialog SweetAlert;
+- layout con header e sidebar di navigazione.
+
+### Rotte
+
+| Rotta | Componente | Descrizione |
+|---|---|---|
+| `/login` | `LoginComponent` | login/logout |
+| `/` | `Home` | dashboard e azioni rapide, protetta |
+| `/libri/mostracatalogo` | `MostraCatalogo` | catalogo libri, protetta |
+| `/libri/addLibro` | `AggiungiLibro` | inserimento libro, protetta |
+| `/libri/modificalibro/:id` | `ModificaLibro` | modifica tramite ISBN, protetta |
+| `/libri/modificalibro` | `ModificaLibro` | richiesta ISBN tramite dialog, protetta |
+| `/autori` | `AutoriComponent` | pagina predisposta |
+| `/generi` | `GeneriComponent` | pagina predisposta |
+| `/copie` | `CopieComponent` | pagina predisposta |
+| `/case` | `CaseEditriciComponent` | pagina predisposta |
+
+Le pagine di autori, generi, copie e case editrici sono attualmente placeholder. Anche le azioni rapide per aggiungere copie/generi/case editrici e cercare libri sono predisposte nell'interfaccia, ma non tutte hanno ancora una rotta dedicata.
+
+### Avvio
+
+```bash
+cd angular/Libreria
+npm install
+npm start
+```
+
+Build di produzione:
+
+```bash
+npm run build
+```
+
+Il progetto Angular usa SSR, ma il rendering delle rotte è configurato in modalità client perché l'autenticazione legge il token da `localStorage`.
 
 ## Database
 
@@ -271,7 +374,7 @@ La configurazione predefinita utilizza:
 - utente configurato: `root`
 - schema JPA: `validate`
 
-`spring.jpa.hibernate.ddl-auto=validate` indica che Hibernate verifica la compatibilità dello schema esistente senza crearlo o modificarlo automaticamente. Il file `sql/Dump20261104.sql` contiene lo schema e i dati di esempio del database.
+`spring.jpa.hibernate.ddl-auto=validate` indica che Hibernate verifica la compatibilità dello schema esistente senza crearlo o modificarlo automaticamente. La password del database deve essere configurata localmente. Il file `sql/Dump20261104.sql` contiene lo schema e i dati di esempio del database.
 
 ### Tabelle principali del dump
 
@@ -282,8 +385,9 @@ La configurazione predefinita utilizza:
 - `Nazionalita`: elenco delle nazionalità.
 - `Copie`: quantità di copie per libro e casa editrice.
 - `CasaEditrice`: case editrici.
+- `Utenti`: account utilizzati per l'autenticazione.
 
-Il dump contiene inoltre `Condizione`, `Prestiti`, `Utenti`, `Dipendenti` e `Vendite`. Queste tabelle hanno relazioni SQL con il resto dello schema, ma non sono mappate da entity presenti nel codice Java e non sono esposte dagli endpoint attuali.
+Il dump contiene inoltre `Condizione`, `Prestiti`, `Dipendenti` e `Vendite`. Queste tabelle hanno relazioni SQL con il resto dello schema, ma non sono mappate da entity presenti nel codice Java e non sono esposte dagli endpoint attuali.
 
 ### Relazioni SQL
 
@@ -301,3 +405,20 @@ Dipendenti  1 ─── N Vendite
 ```
 
 Le ultime quattro relazioni appartengono allo schema SQL del dump, ma non sono gestite dal modello applicativo corrente.
+
+### Avvio del backend
+
+Dalla root del repository:
+
+```bash
+mvnw.cmd spring-boot:run
+```
+
+Oppure:
+
+```bash
+mvnw.cmd clean package
+java -jar target/libreria-0.0.1-SNAPSHOT.jar
+```
+
+Swagger UI è disponibile all'indirizzo `http://localhost:8080/swagger-ui.html`, mentre la specifica OpenAPI è disponibile su `http://localhost:8080/v3/api-docs`.
