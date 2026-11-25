@@ -2,6 +2,7 @@ package com.example.libreria.controller;
 
 import com.example.libreria.dto.CopiaDTO;
 import com.example.libreria.dto.LibroDTO;
+import com.example.libreria.dto.StringDTO;
 import com.example.libreria.dto.request.CopiaRequest;
 import com.example.libreria.exception.CasaEditriceNotFound;
 import com.example.libreria.exception.CopiaNotFoundException;
@@ -75,9 +76,9 @@ public class CopiaController {
 
     // DELETE
     @DeleteMapping("/{isbn}")
-    public ResponseEntity<String> deleteCopia(@PathVariable Integer isbn){
+    public ResponseEntity<StringDTO> deleteCopia(@PathVariable Integer isbn){
         copiaService.deleteCopia(isbn);
-        return ResponseEntity.ok("Copia eliminata correttamente.");
+        return ResponseEntity.ok(new StringDTO("Copia eliminata correttamente."));
     }
 
 }

@@ -95,3 +95,20 @@ p {
   font-size: 14px;
   font-weight: 600;
 }
+.autori-selezionati {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.autore-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 14px;
+  border-radius: 20px;
+  background-color: #e8eef8;
+  color: #263b5e;
+  font-size: 14px;
+  font-weight: 500;
+}

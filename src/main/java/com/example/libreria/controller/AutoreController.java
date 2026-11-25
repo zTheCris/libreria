@@ -1,6 +1,7 @@
 package com.example.libreria.controller;
 
 import com.example.libreria.dto.AutoreDTO;
+import com.example.libreria.dto.StringDTO;
 import com.example.libreria.dto.request.AutoreRequest;
 import com.example.libreria.exception.AutoreNotFoundException;
 import com.example.libreria.exception.NazionalitaNotFoundException;
@@ -56,9 +57,9 @@ public class AutoreController {
 
     // DELETE
     @DeleteMapping("/{idAutore}")
-    public ResponseEntity<String> deleteAutore(@PathVariable Integer idAutore) {
+    public ResponseEntity<StringDTO> deleteAutore(@PathVariable Integer idAutore) {
         autoreService.deleteByIdAutore(idAutore);
-        return ResponseEntity.ok("Autore rimosso correttamente.");
+        return ResponseEntity.ok(new StringDTO("Autore rimosso correttamente."));
     }
 }
 

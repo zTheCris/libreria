@@ -1,7 +1,8 @@
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import Swal  from 'sweetalert2';
 import { LoginService } from './../login-service';
 import { JwtToken } from './../jwt-token';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, DestroyRef } from '@angular/core';
 import { FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
@@ -15,11 +16,13 @@ import { timer } from 'rxjs';
 export class LoginComponent implements OnInit{
   loginService = inject(LoginService);
   router = inject(Router);
+  destroyRef = inject(DestroyRef);
 
   profileForm = new FormGroup({
     email: new FormControl(''),
     password: new FormControl(''),
   });
+
   // Chiama il service login
   login() {
     this.loginService.login(this.profileForm.value.email!,this.profileForm.value.password!).subscribe({
@@ -42,6 +45,20 @@ export class LoginComponent implements OnInit{
     if(!this.loginService.isTokenExpired()){
       Swal.fire({title:"Sei già autenticato!",icon:'info',})
     }
+    // Provo a chiamare il DB
+    this.loginService.ping()
+    .pipe(takeUntilDestroyed(this.destroyRef))
+    .subscribe({
+      next: (res) => {
+          // Se va tutto bene, non mando niente (oppure loggo)
+          console.log("Risposta dal server: "+ res);
+      },
+      error: (err:HttpErrorResponse) => {
+        if(err.status===0)
+          Swal.fire({title:"Errore durante la comunicazione con il server. Contattare assistenza.",icon:'error'})
+
+      },
+    })
     // if(this.loginService.getToken()!=null && this.loginService.isTokenExpired()){
     //   Swal.fire({title:"Autenticazione scaduta.",icon:'error'})
     // }

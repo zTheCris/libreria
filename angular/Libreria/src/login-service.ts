@@ -1,3 +1,4 @@
+import { StringResponse } from './string-response';
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -84,6 +85,9 @@ export class LoginService {
     }
 
     this.jwt.set(null);
+  }
+  ping(): Observable<StringResponse>{
+    return this.http.get<StringResponse>("http://localhost:8080/autenticati/ping");
   }
 
 }

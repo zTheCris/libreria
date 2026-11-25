@@ -1,3 +1,12 @@
+
+<div class="ricerca">
+  <input
+  #ricerca
+  type="text"
+   placeholder="Cerca un libro..."
+  (keyup.enter)="cerca(ricerca.value)"
+  >
+</div>
 <table>
   <thead>
     <tr>
@@ -7,10 +16,12 @@
       <th>Genere</th>
       <th>Prezzo</th>
       <th>Autori</th>
+      <th>Modifica</th>
+      <th>Elimina</th>
     </tr>
   </thead>
   <tbody>
-    @for (libro of libriService.listaLibri(); track libro.isbn) {
+    @for (libro of listaFiltrata(); track libro.isbn) {
       <tr>
         <td>{{ libro?.isbn }}</td>
         <td>{{ libro?.titolo }}</td>
@@ -28,6 +39,13 @@
               </div>
             }
           </div>
+        </td>
+        <!-- Modifica -->
+        <td>
+          <button type="button" class="btn-modifica"(click)="modifica(libro.isbn)">Modifica</button>
+        </td>
+        <td>
+          <button type="button" class="btn-elimina" (click)="elimina(libro.isbn)">Elimina</button>
         </td>
       </tr>
     }

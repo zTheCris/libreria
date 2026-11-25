@@ -18,6 +18,10 @@ public class AuthController {
         this.authService = authService;
 
     }
+    @GetMapping("/test")
+    public ResponseEntity<String> prova(){
+        return ResponseEntity.ok("Prova! Sono penetrabile!");
+    }
     @PostMapping("/login")
     public ResponseEntity<AuthDTO> login(@RequestBody UtenteRequest utenteRequest){
         return ResponseEntity.ok(new AuthDTO(authService.autenticazione(utenteRequest)));

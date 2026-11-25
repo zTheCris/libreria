@@ -1,0 +1,167 @@
+
+:host {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 30px 15px;
+  background-color: #f4f6f9;
+  font-family: Arial, sans-serif;
+  box-sizing: border-box;
+}
+
+section {
+  width: 100%;
+  max-width: 420px;
+  padding: 35px;
+  background-color: white;
+  border-radius: 14px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
+}
+
+h1 {
+  margin: 0 0 28px;
+  text-align: center;
+  color: #263445;
+  font-size: 28px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+label {
+  color: #394b5e;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+input,
+select {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #d5dce5;
+  border-radius: 8px;
+  font-size: 15px;
+  box-sizing: border-box;
+  outline: none;
+  background-color: white;
+  color: #263445;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input:focus,
+select:focus {
+  border-color: #3978d4;
+  box-shadow: 0 0 0 3px rgba(57, 120, 212, 0.12);
+}
+
+/* Pulsanti */
+button {
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+/* Pulsante invio */
+button[type="submit"] {
+  margin-top: 12px;
+  background-color: #3978d4;
+  color: white;
+  font-size: 15px;
+}
+
+button[type="submit"]:hover {
+  background-color: #2864ba;
+}
+
+/* Contenitore aggiunta autore */
+.aggiungi-autore {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.aggiungi-autore img {
+  width: 45px;
+  height: auto;
+}
+
+.aggiungi-autore button {
+  flex: 1;
+  background-color: #edf0f4;
+  color: #394b5e;
+}
+
+.aggiungi-autore button:hover {
+  background-color: #dfe4eb;
+}
+
+/* Autori selezionati */
+.autori-selezionati {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+/* Chip autore */
+.autore-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 14px;
+  border-radius: 20px;
+  background-color: #e8eef8;
+  color: #263b5e;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Pulsante rimozione autore */
+button.rimuovi {
+  padding: 5px 9px;
+  margin-left: -5px;
+  border-radius: 50%;
+  background-color: #fee2e2;
+  color: #dc2626;
+  font-size: 12px;
+}
+
+button.rimuovi:hover {
+  background-color: #fecaca;
+}
+
+/* Messaggi */
+p {
+  margin: 10px 0 0;
+  padding: 12px;
+  text-align: center;
+  color: #247a45;
+  background-color: #e8f6ed;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  section {
+    padding: 25px 20px;
+  }
+
+  h1 {
+    font-size: 24px;
+  }
+}

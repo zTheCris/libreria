@@ -64,3 +64,41 @@ tbody tr:last-child td {
     min-width: 700px;
   }
 }
+/* Stile generale dei pulsanti */
+button {
+  padding: 9px 16px;
+  border: none;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+  white-space: nowrap;
+}
+
+/* Pulsante modifica */
+.btn-modifica {
+  background-color: #2563eb;
+  color: white;
+}
+
+.btn-modifica:hover {
+  background-color: #1d4ed8;
+  transform: translateY(-2px);
+}
+
+/* Pulsante elimina */
+.btn-elimina {
+  background-color: #dc2626;
+  color: white;
+}
+
+.btn-elimina:hover {
+  background-color: #b91c1c;
+  transform: translateY(-2px);
+}
+
+/* Effetto quando vengono cliccati */
+button:active {
+  transform: scale(0.96);
+}

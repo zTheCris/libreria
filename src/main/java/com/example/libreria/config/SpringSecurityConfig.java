@@ -72,7 +72,7 @@ public class SpringSecurityConfig {
                     .requestMatchers("/autenticazione/**")
                     // Dato che l'autenticazione deve essere accessibile a tutti, definisco che il traffico su quell'endpoint è permesso...
                     .permitAll()
-                    //... su tutte le richieste...
+                    //... per qualsiasi richiesta
                     .anyRequest()
                     //... SOLO se autenticate.
                     .authenticated());
@@ -148,10 +148,6 @@ public class SpringSecurityConfig {
         daoAuthenticationProviderRet.setPasswordEncoder(passwordEncoder);
         return daoAuthenticationProviderRet;
     }
-
-    
-
-
 
     /*
     Grazie a Spring, possiamo fare le injection dei service passandoli come parametri della funzione. Funziona come la Constructor Injection,

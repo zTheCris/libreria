@@ -39,7 +39,31 @@
       }
     </li>
     <li class="autori">
-      <a [routerLink]="['/autori']" [routerLinkActive]="['active']">Autori</a>
+      <a
+      [routerLink]="['/autori']"
+      [routerLinkActive]="['active']"
+      (click)="selezionaElemento('autori')">
+      Autori
+      </a>
+      @if (elementoSelected() === 'autori') {
+        <!-- Sottomenu -->
+        <ul class="sottomenu">
+          <li class="visualizza_catalogo">
+            <a [routerLink]="['/autori/mostraautori']">Mostra autori</a>
+          </li>
+          <li class="aggiungi_autore">
+            <a [routerLink]="['/autori/addAutore']" [routerLinkActive]="['active']">Aggiungi autore</a>
+          </li>
+          <li class="modifica_autore">
+            <a [routerLink]="['/autori/modificaautore']"
+            [routerLinkActive]="['active']">Modifica autore</a>
+
+          </li>
+          <li class="elimina_autore">
+            <a>Elimina autore</a>
+          </li>
+        </ul>
+      }
     </li>
     <li class="copie">
       <a [routerLink]="['/copie']" [routerLinkActive]="['active']">Copie</a>

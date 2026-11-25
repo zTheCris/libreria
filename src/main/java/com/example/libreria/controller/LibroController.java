@@ -1,6 +1,7 @@
 package com.example.libreria.controller;
 
 import com.example.libreria.dto.LibroDTO;
+import com.example.libreria.dto.StringDTO;
 import com.example.libreria.dto.request.LibroRequest;
 import com.example.libreria.exception.AutoreNotFoundException;
 import com.example.libreria.exception.GenereNotFoundException;
@@ -116,7 +117,7 @@ public class LibroController {
 
     // PUT
     // modify by isbn
-    @PutMapping()
+    @PutMapping
     public ResponseEntity<LibroDTO> modificaLibro(@Valid @RequestBody LibroRequest libroRequest) {
        return ResponseEntity.ok(libroService.modificaLibro(libroRequest));
     }
@@ -124,8 +125,8 @@ public class LibroController {
     // DELETE
     // delete By Isbn
     @DeleteMapping("/{isbn}")
-    public ResponseEntity<String> deleteLibro(@PathVariable Integer isbn){
+    public ResponseEntity<StringDTO> deleteLibro(@PathVariable Integer isbn){
         libroService.deleteLibro(isbn);
-        return ResponseEntity.ok("Libro cancellato");
+        return ResponseEntity.ok(new StringDTO("Libro cancellato."));
     }
 }

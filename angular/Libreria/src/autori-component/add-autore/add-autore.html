@@ -1,0 +1,18 @@
+<section>
+  <form [formGroup]="formAutori" (submit)="aggiungiAutore()">
+    <h1>Inserimento autore</h1>
+    <label for="nome">Nome</label>
+    <input type="text" formControlName="nome">
+
+    <label for="cognome">Cognome</label>
+    <input type="text" formControlName="cognome">
+
+    <label for="data">Data di nascita</label>
+    <input type="date" formControlName="data">
+
+    <label for="nazionalita">Nazionalita</label>
+    <input type="text" formControlName="nazionalita">
+
+    <button type="submit">Invio</button>
+  </form>
+</section>

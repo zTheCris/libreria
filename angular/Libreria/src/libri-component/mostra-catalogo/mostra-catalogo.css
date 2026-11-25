@@ -1,0 +1,158 @@
+
+/* Contenitore principale */
+:host {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  padding: 20px;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+  background-color: #f4f6f9;
+  min-height: 100vh;
+}
+
+/* Barra di ricerca */
+.ricerca {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 24px;
+}
+
+.ricerca input {
+  width: 100%;
+  max-width: 420px;
+  padding: 14px 18px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 16px;
+  outline: none;
+  background-color: white;
+  color: #263445;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.ricerca input:focus {
+  border-color: #3978d4;
+  box-shadow: 0 0 0 3px rgba(57, 120, 212, 0.12);
+}
+
+.ricerca input::placeholder {
+  color: #94a3b8;
+}
+
+/* Tabella */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 3px 12px rgba(15, 23, 42, 0.06);
+}
+
+/* Intestazione */
+thead {
+  background: #1e40af;
+  color: white;
+}
+
+th {
+  padding: 17px;
+  text-align: left;
+  font-size: 15px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* Celle */
+td {
+  padding: 16px 17px;
+  border-bottom: 1px solid #dbe2ea;
+  color: #1e293b;
+  font-size: 15px;
+  font-weight: 500;
+  vertical-align: middle;
+}
+
+/* Righe */
+tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+tbody tr:hover {
+  background: #eff6ff;
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Autori */
+.autori {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.autore {
+  display: block;
+  color: #334155;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Stile generale pulsanti */
+button {
+  padding: 9px 16px;
+  border: none;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+  white-space: nowrap;
+}
+
+/* Pulsante modifica */
+.btn-modifica {
+  background-color: #2563eb;
+  color: white;
+}
+
+.btn-modifica:hover {
+  background-color: #1d4ed8;
+  transform: translateY(-2px);
+}
+
+/* Pulsante elimina */
+.btn-elimina {
+  background-color: #dc2626;
+  color: white;
+}
+
+.btn-elimina:hover {
+  background-color: #b91c1c;
+  transform: translateY(-2px);
+}
+
+/* Effetto click */
+button:active {
+  transform: scale(0.96);
+}
+
+/* Responsive */
+@media (max-width: 700px) {
+  :host {
+    padding: 12px;
+  }
+
+  table {
+    min-width: 850px;
+  }
+
+  .ricerca input {
+    max-width: 100%;
+  }
+}

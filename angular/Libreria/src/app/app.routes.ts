@@ -1,4 +1,5 @@
-import { MostraCatalogo } from './../mostra-catalogo/mostra-catalogo';
+import { MostraAutori } from './../autori-component/mostra-autori/mostra-autori';
+import { MostraCatalogo } from '../libri-component/mostra-catalogo/mostra-catalogo';
 import { Home } from './../home/home';
 import { CaseEditriciComponent } from './../case-editrici-component/case-editrici-component';
 import { CopieComponent } from './../copie-component/copie-component';
@@ -11,6 +12,7 @@ import { AggiungiLibro } from '../libri-component/aggiungi-libro/aggiungi-libro'
 import { LoginComponent } from '../login-component/login-component';
 import { authGuard } from '../auth-guard';
 import { ModificaLibro } from '../libri-component/modifica-libro/modifica-libro';
+import { AddAutore } from '../autori-component/add-autore/add-autore';
 
 export const routes: Routes = [
   {
@@ -55,7 +57,24 @@ export const routes: Routes = [
 
   {
     path: "autori",
-    component: AutoriComponent
+    component: AutoriComponent,
+    canActivate: [authGuard],
+    children: [
+      {
+        path:'',
+        // Stesso comportamento di Libro
+        redirectTo: 'mostraautori',
+        pathMatch: 'full'
+      },
+      {
+        path: 'mostraautori',
+        component: MostraAutori
+      },
+      {
+        path:'addAutore',
+        component: AddAutore
+      }
+    ]
   },
 
   {

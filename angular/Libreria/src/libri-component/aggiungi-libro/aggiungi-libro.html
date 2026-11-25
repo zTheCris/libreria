@@ -19,19 +19,30 @@
     <input type="number" formControlName="prezzo" required />
 
     <label for="autori">Autori</label>
-    <!-- Dato che voglio poter aggiungere piu' autori, mi aspetto di creare una option tante volte quanti autori vuole inserire il client. -->
-    @for (numero of numeroAutori; track numero) {
-      <!-- La select è il SINGOLO menu a tendina. -->
-      <select>
-        @for (autore of autoriService.listaAutori(); track autore.idAutore) {
-          <!-- Per ogni autore, inserisco l'opzione ALL'INTERNO DELLA SELECT -->
-          <option [ngValue]="autore" (change)="aggiungiAutore()">{{ autore.nome }} {{ autore.cognome }}</option>
+    <!-- La select è il SINGOLO menu a tendina. -->
+    <select formControlName="autore" (change)="aggiungiAutore()">
+      <option [ngValue]="null" disabled>Seleziona un autore</option>
+      @for (autore of autoriFiltrata(); track autore.idAutore) {
+        <!-- Per ogni autore, inserisco l'opzione ALL'INTERNO DELLA SELECT -->
+        <option [ngValue]="autore">{{ autore.nome }} {{ autore.cognome }}</option>
+      }
+    </select>
+    <!-- Bottone per l'eventuale aggiunta autore se non presente. -->
+    <div class="aggiungi-autore">
+      <img src="https://www.svgrepo.com/download/246563/add-user-add.svg" alt="Aggiungi autore" />
+      <button type="button" [routerLink]="['/autori/addLibri']">Aggiungi autore</button>
+    </div>
+    @if (autoriSelezionati.length > 0) {
+      <div class="autori-selezionati">
+        <!-- Mostro gli autori selezionati  -->
+        @for (autore of autoriSelezionati; track $index) {
+          <span class="autore-chip"> {{ autore.nome }} {{ autore.cognome }} </span>
+          <!-- Il for mi tiene traccia dell'autore quindi ogni bottone si ricorda a quale autore è associato -->
+          <button type="button" class="rimuovi" (click)="rimuoviAutore(autore)">X</button>
         }
-      </select>
+      </div>
     }
 
-
-    <button type="button" (click)="aumenta()">+</button>
     <button type="submit">Invio</button>
   </form>
 </section>

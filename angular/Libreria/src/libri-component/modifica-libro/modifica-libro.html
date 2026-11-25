@@ -1,10 +1,9 @@
 <section>
-  <!-- Login form per prendere il token Jwt -->
-  <!-- RICORDA: IMPORTARE REACTIVEFORMSMODULE NELLE IMPORTS DEL COMPONENT, PER POTER PRENDERE formGroup. -->
   <form [formGroup]="libroForm" (submit)="aggiungiLibro()">
-    <h1>Inserimento Libro</h1>
-    <label for="isbn">Isbn</label>
-    <input type="number" formControlName="isbn" [value]="libro()?.isbn">
+    <h1>Modifica Libro</h1>
+
+    <label for="isbn">ISBN</label>
+    <input type="number" formControlName="isbn" required />
 
     <label for="titolo">Titolo</label>
     <input type="text" formControlName="titolo" required />
@@ -19,19 +18,34 @@
     <input type="number" formControlName="prezzo" required />
 
     <label for="autori">Autori</label>
-    <!-- Dato che voglio poter aggiungere piu' autori, mi aspetto di creare una option tante volte quanti autori vuole inserire il client. -->
-    @for (numero of numeroAutori; track numero) {
-      <!-- La select è il SINGOLO menu a tendina. -->
-      <select [formControlName]="'autore'+numero">
-        @for (autore of autoriService.listaAutori(); track autore.idAutore) {
-          <!-- Per ogni autore, inserisco l'opzione ALL'INTERNO DELLA SELECT -->
-          <option [ngValue]="autore" (change)="aggiungiAutore()">{{ autore.nome }} {{ autore.cognome }}</option>
+
+    <select formControlName="autore" (change)="aggiungiAutore()">
+      <option [ngValue]="null">Seleziona un autore</option>
+
+      @for (autore of autoriFiltrata(); track autore.idAutore) {
+        <option [ngValue]="autore">
+          {{ autore.nome }} {{ autore.cognome }}
+        </option>
+      }
+    </select>
+
+    @if (autoriSelezionati.length > 0) {
+      <div class="autori-selezionati">
+        @for (autore of autoriSelezionati; track autore.idAutore) {
+          <span class="autore-chip">
+            {{ autore.nome }} {{ autore.cognome }}
+          </span>
+
+          <button
+            type="button"
+            class="rimuovi"
+            (click)="rimuoviAutore(autore)">
+            X
+          </button>
         }
-      </select>
+      </div>
     }
 
-
-    <button type="button" (click)="aumenta()">+</button>
-    <button type="submit">Invio</button>
+    <button type="submit">Salva modifiche</button>
   </form>
 </section>

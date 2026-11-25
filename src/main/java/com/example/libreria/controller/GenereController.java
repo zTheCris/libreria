@@ -1,6 +1,7 @@
 package com.example.libreria.controller;
 
 import com.example.libreria.dto.GenereDTO;
+import com.example.libreria.dto.StringDTO;
 import com.example.libreria.dto.request.GenereRequest;
 import com.example.libreria.exception.GenereNotFoundException;
 import com.example.libreria.service.GenereService;
@@ -42,8 +43,8 @@ public class GenereController {
         return ResponseEntity.ok(genereService.modificaGenere(id,nuovoNome));
     }
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> eliminaGenere(@PathVariable Integer id){
+    public ResponseEntity<StringDTO> eliminaGenere(@PathVariable Integer id){
         genereService.deleteGenere(id);
-        return ResponseEntity.ok("Genere eliminato");
+        return ResponseEntity.ok(new StringDTO("Genere eliminato"));
     }
 }

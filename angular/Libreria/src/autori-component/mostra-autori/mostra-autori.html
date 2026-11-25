@@ -1,0 +1,34 @@
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Nome</th>
+      <th>Cognome</th>
+      <th>Anno di nascita</th>
+      <th>Nazionalita</th>
+      <th>Modifica</th>
+      <th>Elimina</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (autore of autoriService.listaAutori(); track $index) {
+      <tr>
+        <td>{{ autore.idAutore }}</td>
+        <td>{{ autore.nome }}</td>
+        <td>{{ autore.cognome }}</td>
+        <td>{{ autore.data }}</td>
+        <td>{{ autore.nazionalita.nome }}</td>
+        <td>
+          <button type="button" class="btn-modifica" (click)="modifica(autore.idAutore)">
+            Modifica
+          </button>
+        </td>
+        <td>
+          <button type="button" class="btn-elimina" (click)="elimina(autore.idAutore)">
+            Elimina
+          </button>
+        </td>
+      </tr>
+    }
+  </tbody>
+</table>
