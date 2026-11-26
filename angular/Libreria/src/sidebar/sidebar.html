@@ -8,6 +8,7 @@
         [routerLink]="['/']"
         [routerLinkActive]="['active']"
         [routerLinkActiveOptions]="{ exact: true }"
+        (click)="selezionaElemento('')"
         >Home</a
       >
     </li>
@@ -32,9 +33,6 @@
             <a [routerLink]="['/libri/modificalibro']" [routerLinkActive]="['active']">Modifica libro</a>
 
           </li>
-          <li class="elimina_libro">
-            <a>Elimina libro</a>
-          </li>
         </ul>
       }
     </li>
@@ -58,9 +56,6 @@
             <a [routerLink]="['/autori/modificaautore']"
             [routerLinkActive]="['active']">Modifica autore</a>
 
-          </li>
-          <li class="elimina_autore">
-            <a>Elimina autore</a>
           </li>
         </ul>
       }

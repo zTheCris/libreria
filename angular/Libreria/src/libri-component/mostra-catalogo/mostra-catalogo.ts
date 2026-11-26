@@ -14,24 +14,27 @@ import { Libro } from '../../libro';
   styleUrl: './mostra-catalogo.css',
 })
 export class MostraCatalogo {
+  libriService = inject(LibriService);
+  destroyRef = inject(DestroyRef);
+  router = inject(Router);
+
   listaFiltrata = signal<Libro[] | null>(null);
   cerca(query: string) {
     if(!query){
       this.listaFiltrata.set(this.libriService.listaLibri());
     }
-    // La ricerca chiamerà il database per vedere quali titoli hanno quel titolo
+    // La ricerca chiamerà il database per vedere quali libri hanno quel titolo
     this.libriService.getByTitolo(query).subscribe({
       next: (res) => {
         this.listaFiltrata.set(res);
       }
     })
   }
+
   modifica(id: number) {
     this.router.navigate(['/libri/modificalibro/' + id]);
   }
-  libriService = inject(LibriService);
-  destroyRef = inject(DestroyRef);
-  router = inject(Router);
+
 
   elimina(id: number) {
     Swal.fire({

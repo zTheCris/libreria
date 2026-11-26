@@ -1,0 +1,47 @@
+<!--  Ricerca -->
+<div class="ricerca">
+  <input
+    #ricerca
+    type="text"
+    placeholder="Cerca copia per libro..."
+    (keyup.enter)="cerca(ricerca.value)"
+  />
+</div>
+<!-- Tabella -->
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Libro</th>
+      <th>Casa Editrice</th>
+      <th>Numero copie</th>
+      <th>Modifica</th>
+      <th>Elimina</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (copia of copieService.listaCopie(); track $index) {
+      <tr>
+        <td>{{ copia.idCopia }}</td>
+        <td>
+          <a [routerLink]="['/libri/id', copia.libro.isbn]">
+            {{ copia.libro.titolo }}
+          </a>
+        </td>
+
+        <td>{{ copia.casaEditrice.nome }}</td>
+        <td>{{ copia.numeroCopie }}</td>
+        <td>
+          <button type="button" class="btn-modifica" (click)="modifica(copia.idCopia)">
+            Modifica
+          </button>
+        </td>
+        <td>
+          <button type="button" class="btn-elimina" (click)="elimina(copia.idCopia)">
+            Elimina
+          </button>
+        </td>
+      </tr>
+    }
+  </tbody>
+</table>

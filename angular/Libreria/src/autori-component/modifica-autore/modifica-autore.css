@@ -1,0 +1,97 @@
+:host {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f4f6f9;
+  font-family: Arial, sans-serif;
+}
+
+section {
+  width: 100%;
+  max-width: 380px;
+  padding: 35px;
+  background-color: white;
+  border-radius: 14px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
+}
+
+h1 {
+  margin: 0 0 28px;
+  text-align: center;
+  color: #263445;
+  font-size: 28px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+label {
+  color: #394b5e;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #d5dce5;
+  border-radius: 8px;
+  font-size: 15px;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input:focus {
+  border-color: #3978d4;
+  box-shadow: 0 0 0 3px rgba(57, 120, 212, 0.12);
+}
+
+button {
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+button[type="submit"] {
+  margin-top: 12px;
+  background-color: #3978d4;
+  color: white;
+}
+
+button[type="submit"]:hover {
+  background-color: #2864ba;
+}
+
+button[type="button"] {
+  background-color: #edf0f4;
+  color: #394b5e;
+}
+
+button[type="button"]:hover {
+  background-color: #dfe4eb;
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+p {
+  margin: 10px 0 0;
+  padding: 12px;
+  text-align: center;
+  color: #247a45;
+  background-color: #e8f6ed;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+}

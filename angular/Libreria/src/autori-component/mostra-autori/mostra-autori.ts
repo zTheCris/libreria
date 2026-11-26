@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
@@ -14,6 +14,23 @@ import { StringResponse } from '../../string-response';
   styleUrl: './mostra-autori.css',
 })
 export class MostraAutori implements OnInit {
+  autoriService = inject(AutoriService);
+  destroyRef = inject(DestroyRef);
+  router = inject(Router);
+  listaFiltrata = signal<Autore[] | null>([]);
+
+
+  cerca(query: string) {
+   if(!query){
+      this.listaFiltrata.set(this.autoriService.listaAutori());
+    }
+    // La ricerca chiamerà il database per vedere quali autori hanno quel nome
+    this.autoriService.getByNome(query).subscribe({
+      next: (res) => {
+        this.listaFiltrata.set(res);
+      }
+    })
+  }
   modifica(id: number) {
     // Lo rimando sul component ModificaLibro
     this.router.navigate(['/autori/modifica/' + id]);
@@ -54,9 +71,7 @@ export class MostraAutori implements OnInit {
       }
     });
   }
-  autoriService = inject(AutoriService);
-  destroyRef = inject(DestroyRef);
-  router = inject(Router);
+
   ngOnInit() {
     this.autoriService
       .getAutori()
@@ -64,6 +79,7 @@ export class MostraAutori implements OnInit {
       .subscribe({
         next: (res: Autore[]) => {
           this.autoriService.listaAutori.set(res);
+          this.listaFiltrata.set(res);
         },
         error: (err: HttpErrorResponse) => {
           Swal.fire({ title: '' });

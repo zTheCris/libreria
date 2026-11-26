@@ -95,6 +95,17 @@ public class AutoreService {
                         .orElseThrow(() -> new AutoreNotFoundException("Autore non trovato."))
         );
     }
+    public List<AutoreDTO> getByNome(String nome) {
+        List<Autore> risposta = autoreRepository.findAllByNomeContainingIgnoreCase(nome);
+        List<AutoreDTO> autoriDTO = new ArrayList<>();
+        for (Autore autore: risposta)
+            autoriDTO.add(mapper.convertAutoreToAutoreDTO(autore));
+        return autoriDTO;
+    }
+    public Long getNumAutori() {
+        return autoreRepository.count();
+    }
+
 
     /**
      * Inserisce un nuovo autore nel database, associandogli la nazionalità specificata.
@@ -169,7 +180,5 @@ public class AutoreService {
         return nazionalitaRepository.save(new Nazionalita(nazionalita));
     }
 
-    public Long getNumAutori() {
-        return autoreRepository.count();
-    }
+
 }

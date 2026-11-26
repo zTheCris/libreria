@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { Copia } from './copia';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
@@ -8,7 +8,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class CopieService {
   http = inject(HttpClient);
-
+  listaCopie = signal<Copia[] | null>([]);
 
   getAll(): Observable<Copia[]> {
     return this.http.get<Copia[]>("http://localhost:8080/copie");

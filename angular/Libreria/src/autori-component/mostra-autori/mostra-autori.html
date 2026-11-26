@@ -1,3 +1,12 @@
+<div class="ricerca">
+  <input
+  #ricerca
+  type="text"
+   placeholder="Cerca un autore..."
+  (keyup.enter)="cerca(ricerca.value)"
+  >
+</div>
+
 <table>
   <thead>
     <tr>
@@ -11,7 +20,7 @@
     </tr>
   </thead>
   <tbody>
-    @for (autore of autoriService.listaAutori(); track $index) {
+    @for (autore of listaFiltrata(); track $index) {
       <tr>
         <td>{{ autore.idAutore }}</td>
         <td>{{ autore.nome }}</td>

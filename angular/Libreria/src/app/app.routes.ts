@@ -1,3 +1,4 @@
+import { DettagliLibro } from './../libri-component/dettagli-libro/dettagli-libro';
 import { MostraAutori } from './../autori-component/mostra-autori/mostra-autori';
 import { MostraCatalogo } from '../libri-component/mostra-catalogo/mostra-catalogo';
 import { Home } from './../home/home';
@@ -13,6 +14,8 @@ import { LoginComponent } from '../login-component/login-component';
 import { authGuard } from '../auth-guard';
 import { ModificaLibro } from '../libri-component/modifica-libro/modifica-libro';
 import { AddAutore } from '../autori-component/add-autore/add-autore';
+import { ModificaAutore } from '../autori-component/modifica-autore/modifica-autore';
+import { MostraCopie } from '../copie-component/mostra-copie/mostra-copie';
 
 export const routes: Routes = [
   {
@@ -32,6 +35,10 @@ export const routes: Routes = [
         redirectTo: 'mostracatalogo',
         // Per dire che deve essere ESATTAMENTE /libri/mostracatalogo, lo definisco con pathMatch: full
         pathMatch: 'full'
+      },
+      {
+        path:'id/:id',
+        component: DettagliLibro
       },
       {
         path: 'addLibro',
@@ -73,18 +80,35 @@ export const routes: Routes = [
       {
         path:'addAutore',
         component: AddAutore
+      },
+      {
+        path: 'modificaautore',
+        component: ModificaAutore
       }
     ]
   },
 
   {
     path: "generi",
-    component: GeneriComponent
+    component: GeneriComponent,
+    canActivate: [authGuard]
   },
 
   {
     path: "copie",
-    component: CopieComponent
+    component: CopieComponent,
+    canActivate: [authGuard],
+    children: [
+      {
+        path: '',
+        redirectTo: 'mostracopie',
+        pathMatch: 'full'
+      },
+      {
+        path: 'mostracopie',
+        component: MostraCopie
+      }
+    ]
   },
 
   {

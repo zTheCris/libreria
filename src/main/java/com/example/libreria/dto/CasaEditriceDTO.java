@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Size;
 public class CasaEditriceDTO {
     private Integer id_casaeditrice;
 
-    @NotBlank(message = "Il nome della casa editrice non può essere vuoto.")
+//    @NotBlank(message = "Il nome della casa editrice non può essere vuoto.")
     @Size(max = 255 ,message = "Il nome della casa editrice non può superare 255 caratteri."  )
     private String nome;
 

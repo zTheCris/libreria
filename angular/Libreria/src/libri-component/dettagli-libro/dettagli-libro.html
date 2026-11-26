@@ -1,0 +1,39 @@
+
+  <section class="listing">
+    <!-- Se l'isbn è valido e esiste nel database di questo servizio, mostra la copertina. -->
+    <img
+      class="listing-photo"
+      [src]="'https://covers.openlibrary.org/b/isbn/' + libro()?.isbn + '.jpg'"
+      alt="Copertina di {{ libro()?.titolo }}"
+    />
+
+    <h2 class="listing-heading">
+      {{ libro()?.titolo }}
+    </h2>
+
+    <p class="listing-location">
+      ISBN: {{ libro()?.isbn }}
+    </p>
+
+    <p>
+      Anno: {{ libro()?.anno }}
+    </p>
+
+    <p>
+      Genere: {{ libro()?.genere?.nome }}
+    </p>
+
+    <p>
+      Prezzo: {{ libro()?.prezzo }} €
+    </p>
+    <h3>Autori:</h3>
+    <div class="autori">
+      @for (autore of libro()?.autori; track autore.idAutore) {
+        <span>
+          {{ autore.nome }} {{ autore.cognome }}
+        </span>
+      }
+    </div>
+
+  </section>
+

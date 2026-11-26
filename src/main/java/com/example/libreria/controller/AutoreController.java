@@ -33,10 +33,17 @@ public class AutoreController {
     public ResponseEntity<Long> getNumLibri(){
         return ResponseEntity.ok(autoreService.getNumAutori());
     }
+
     @GetMapping("/{nome}/{cognome}")
     public ResponseEntity<List<AutoreDTO>> getAllByNomeCognome(@PathVariable String nome,@PathVariable String cognome){
         return ResponseEntity.ok(autoreService.getByNomeCognome(nome,cognome));
     }
+
+    @GetMapping("/nome/{nome}")
+    public ResponseEntity<List<AutoreDTO>> getAllByNome(@PathVariable String nome){
+        return ResponseEntity.ok(autoreService.getByNome(nome));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<AutoreDTO> getById(@PathVariable Integer id){
         return ResponseEntity.ok(autoreService.getById(id));

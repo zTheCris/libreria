@@ -141,7 +141,6 @@ export class ModificaLibro {
   }
 
   constructor() {
-
     // Carico prima la lista degli autori.
     this.autoriService.getAutori().subscribe({
       next: (res) => {
