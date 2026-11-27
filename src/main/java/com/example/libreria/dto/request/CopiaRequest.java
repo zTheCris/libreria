@@ -1,18 +1,20 @@
 package com.example.libreria.dto.request;
 
-import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 
 public class CopiaRequest {
     @NotNull(message ="L'ISBN non può essere vuoto")
+    @Positive(message = "L'ISBN non può essere minore di 0.")
     private Integer isbn;
 
     @NotNull(message ="Il numero delle copie non può essere vuoto.")
+    @PositiveOrZero(message = "Il numero delle copie non può essere minore di 0.")
     private Integer numeroCopie;
 
     @NotBlank(message =  "La casa editrice non può essere vuota.")
-    @NotNull(message = "Casa editrice null")
     private String casaEditrice;
 
     public CopiaRequest(Integer isbn, String casaEditrice, Integer numeroCopie) {

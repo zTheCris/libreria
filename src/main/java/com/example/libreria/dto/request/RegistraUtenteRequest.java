@@ -1,8 +1,10 @@
 package com.example.libreria.dto.request;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
 public class RegistraUtenteRequest {
+    @Email(message = "Lo username deve essere un'email valida. Riprovare.")
     @NotBlank(message =  "L'email non può essere vuota")
     private String email;
     @NotBlank(message =  "Il nome non può essere vuoto")

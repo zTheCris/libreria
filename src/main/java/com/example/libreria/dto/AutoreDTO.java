@@ -1,27 +1,13 @@
 package com.example.libreria.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-
 import java.time.LocalDate;
 
 public class AutoreDTO {
-    // Uso i validation sui singoli campi
-
     private Integer idAutore;
-
-    @NotBlank(message = "Il nome dell'autore non può essere vuoto.")
-    @Size(max = 255 ,message = "Il nome dell'autore non può superare 255 caratteri."  )
     private String nome;
-    @NotBlank(message = "Il cognome dell'autore non può essere vuoto.")
-    @Size(max = 255 ,message = "Il nome dell'autore non può superare 255 caratteri."  )
     private String cognome;
-    @NotNull(message = "La data non può essere vuota.")
     private LocalDate data;
-
     private NazionalitaDTO nazionalita;
-
 
     public String getCognome() {
         return cognome;
@@ -50,7 +36,7 @@ public class AutoreDTO {
     public AutoreDTO() {
     }
 
-    public AutoreDTO(Integer idAutore, String nome,String cognome, LocalDate data) {
+    public AutoreDTO(Integer idAutore, String nome, String cognome, LocalDate data) {
         this.idAutore = idAutore;
         this.nome = nome;
         this.cognome = cognome;
@@ -72,6 +58,5 @@ public class AutoreDTO {
     public void setNome(String nome) {
         this.nome = nome;
     }
-
 
 }

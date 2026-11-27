@@ -34,7 +34,7 @@ public class CasaEditriceController {
     public ResponseEntity<CasaEditriceDTO> modificaCasa(@PathVariable Integer id,@Valid @RequestBody CasaEditriceRequest casaEditriceRequest){
         return ResponseEntity.ok(casaEditriceService.modificaCasa(id,casaEditriceRequest));
     }
-    @DeleteMapping("/id")
+    @DeleteMapping("/{id}")
     public ResponseEntity<StringDTO> deleteCasa(@PathVariable Integer id){
         casaEditriceService.delete(id);
         return ResponseEntity.ok(new StringDTO("Casa editrice eliminata."));

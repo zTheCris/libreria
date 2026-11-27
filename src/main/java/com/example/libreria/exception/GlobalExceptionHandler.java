@@ -2,6 +2,7 @@ package com.example.libreria.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -52,6 +53,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<Map<String,Object>> ValidazioneTipi(MethodArgumentTypeMismatchException e){
         return buildResponse(HttpStatus.BAD_REQUEST,e.getMessage());
+    }
+    // Gestore per la formattazione JSON/se la richiesta è stata fatta male
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<Map<String,Object>> ValidazioneHTTP(HttpMessageNotReadableException e){
+        return buildResponse(HttpStatus.BAD_REQUEST, "Formattazione JSON errata. Assicurati di aver inserito tutti i campi correttamente.");
     }
 
     @ExceptionHandler(LibroNotFoundException.class)

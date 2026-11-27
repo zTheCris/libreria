@@ -7,16 +7,16 @@ import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 
 public class AutoreRequest {
-    @NotBlank(message = "Il nome dell'autore non può essere vuoto. Riprova")
+    @NotBlank(message = "Il nome dell'autore non può essere vuoto.")
     @Size(max =255, message =  "Il nome dell'autore non può avere più di 255 caratteri.")
     private String nome;
-    @NotBlank(message = "Il nome dell'autore non può essere vuoto. Riprova")
-    @Size(max =255, message =  "Il nome dell'autore non può avere più di 255 caratteri.")
+    @NotBlank(message = "Il cognome dell'autore non può essere vuoto.")
+    @Size(max =255, message =  "Il cognome dell'autore non può avere più di 255 caratteri.")
     private String cognome;
-    @NotBlank(message = "Il nome dell'autore non può essere vuoto. Riprova")
-    @Size(max =255, message =  "Il nome dell'autore non può avere più di 255 caratteri.")
+    @NotBlank(message = "La nazionalita dell'autore non può essere vuota.")
+    @Size(max =255, message =  "La nazionalita dell'autore  non può avere più di 255 caratteri.")
     private String nazionalita;
-    @NotNull(message =  "La data non può essere vuota. Riprova.")
+    @NotNull(message =  "La data non è stata inserita.")
     private LocalDate data;
 
     public AutoreRequest() {

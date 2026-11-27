@@ -10,10 +10,9 @@ import com.example.libreria.repository.AutoreRepository;
 import com.example.libreria.repository.NazionalitaRepository;
 import com.example.libreria.utility.Mapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Gestisce le operazioni relative agli autori, consentendo il recupero,
@@ -95,11 +94,12 @@ public class AutoreService {
      * @param autoreRequest dati dell'autore che il client desidera inserire.
      * @return autore salvato nel database, convertito nel rispettivo DTO.
      */
+    @Transactional
     public AutoreDTO addAutore(AutoreRequest autoreRequest) {
         // Prima di tutto devo cercare se la nazionalità che il Client mi ha mandato esite.
         Nazionalita nazionalitaObj = nazionalitaRepository
                 .findByNomeIgnoreCase(autoreRequest.getNazionalita())
-                .orElseGet(() -> addNazionalita(autoreRequest.getNazionalita()));
+                .orElseGet(() -> nazionalitaRepository.save(new Nazionalita(autoreRequest.getNazionalita())));
 
         // A questo punto,creo l'autore
         Autore autore = new Autore(
@@ -122,11 +122,12 @@ public class AutoreService {
      * @return autore modificato nel database, convertito nel rispettivo DTO.
      * @throws AutoreNotFoundException se non esiste un autore con l'identificativo specificato.
      */
+    @Transactional
     public AutoreDTO modificaAutore(Integer idAutore, AutoreRequest autoreRequest) {
         Autore autore = autoreRepository.findById(idAutore)
                 .orElseThrow(() -> new AutoreNotFoundException("Autore non trovato."));
 
-        Nazionalita nazionalitaObj = addNazionalita(autoreRequest.getNazionalita());
+        Nazionalita nazionalitaObj = nazionalitaRepository.save(new Nazionalita(autoreRequest.getNazionalita()));
 
         // A questo punto,aggiorno l'autore
         autore.setNome(autoreRequest.getNome());
@@ -143,6 +144,7 @@ public class AutoreService {
      * @param idAutore identificativo dell'autore da eliminare.
      * @throws AutoreNotFoundException se non esiste un autore con l'identificativo specificato.
      */
+    @Transactional
     public void deleteByIdAutore(Integer idAutore) {
         Autore autore = autoreRepository.findById(idAutore)
                 .orElseThrow(() -> new AutoreNotFoundException("Autore non trovato"));
@@ -150,16 +152,7 @@ public class AutoreService {
         autoreRepository.delete(autore);
     }
 
-    /**
-     * Recupera una nazionalità tramite il suo nome oppure la inserisce nel database
-     * se non è già presente.
-     *
-     * @param nazionalita nome della nazionalità da ricercare o inserire.
-     * @return oggetto {@code Nazionalita} trovato oppure appena salvato nel database.
-     */
-    private Nazionalita addNazionalita(String nazionalita) {
-        return nazionalitaRepository.save(new Nazionalita(nazionalita));
-    }
+
 
 
 }

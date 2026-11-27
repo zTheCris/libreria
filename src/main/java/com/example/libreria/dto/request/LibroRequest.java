@@ -1,32 +1,34 @@
 package com.example.libreria.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
 public class LibroRequest {
-    @NotNull(message = "L'ISBN non è stato inserito. Riprovare ")
+    @NotNull(message = "L'ISBN non è stato inserito. Riprovare")
+    @Positive(message = "L'ISBN non può essere minore di 0.")
     private Integer isbn;
     
-    @NotNull(message = "Il prezzo non è stato inserito. Riprovare ")
+    @NotNull(message = "Il prezzo non è stato inserito.")
+    @Positive(message = "Il prezzo non può essere minore di 0.")
     private Integer prezzo;
 
-    @NotNull(message = "Il titolo non è stato inserito. Riprovare ")
-    @NotBlank(message = "Il titolo non è stato inserito. Riprovare ")
+    @NotBlank(message = "Il titolo non è stato inserito.")
     private String titolo;
 
-    @NotNull(message = "Il genere non è stato inserito. Riprovare ")
-    @NotBlank(message = "Il genere non è stato inserito. Riprovare ")
+    @NotBlank(message = "Il genere non è stato inserito.")
     private String genere;
 
-    @NotNull(message = "La data non è stata inserita. Riprovare ")
-
+    @NotNull(message = "La data non è stata inserita.")
     private LocalDate data;
 
-
+    @NotEmpty(message = "Gli ID degli autori devono essere presenti.")
+    @NotNull(message = "Gli ID degli autori non sono stati inseriti. ")
     private Set<Integer> autoriIDs = new HashSet<>();
 
     public LibroRequest(Integer isbn, Integer prezzo, String titolo, String genere, LocalDate data, Set<Integer> autoriIDs) {

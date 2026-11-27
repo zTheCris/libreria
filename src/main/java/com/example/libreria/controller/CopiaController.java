@@ -1,17 +1,10 @@
 package com.example.libreria.controller;
 
 import com.example.libreria.dto.CopiaDTO;
-import com.example.libreria.dto.LibroDTO;
 import com.example.libreria.dto.StringDTO;
 import com.example.libreria.dto.request.CopiaRequest;
-import com.example.libreria.exception.CasaEditriceNotFound;
-import com.example.libreria.exception.CopiaNotFoundException;
-import com.example.libreria.exception.LibroNotFoundException;
-import com.example.libreria.model.Copia;
 import com.example.libreria.service.CopiaService;
 import jakarta.validation.Valid;
-import org.apache.coyote.Response;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -69,14 +62,14 @@ public class CopiaController {
     }
 
     // PUT
-    @PutMapping("/{isbn}")
-    public ResponseEntity<CopiaDTO> modificaCopia(@PathVariable Integer isbn,@Valid @RequestBody CopiaRequest copiaRequest){
+    @PutMapping("/{id}")
+    public ResponseEntity<CopiaDTO> modificaCopia(@PathVariable Integer id,@Valid @RequestBody CopiaRequest copiaRequest){
         // Posso usare lo stesso servizio poichè la save quando vede che la copia già esiste nel DB ne fa una UPDATE.
-        return ResponseEntity.ok(copiaService.modificaCopia(isbn,copiaRequest));
+        return ResponseEntity.ok(copiaService.modificaCopia(id,copiaRequest));
     }
 
     // DELETE
-    @DeleteMapping("/{isbn}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<StringDTO> deleteCopia(@PathVariable Integer isbn){
         copiaService.deleteCopia(isbn);
         return ResponseEntity.ok(new StringDTO("Copia eliminata correttamente."));
