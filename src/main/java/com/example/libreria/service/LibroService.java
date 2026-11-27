@@ -14,15 +14,12 @@ import com.example.libreria.repository.GenereRepository;
 import com.example.libreria.repository.LibroRepository;
 
 import com.example.libreria.utility.Mapper;
-import org.hibernate.tool.schema.internal.exec.ScriptTargetOutputToFile;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class LibroService {
@@ -62,7 +59,7 @@ public class LibroService {
         return libriDTOres;
     }
 
-    public Long getNumLibri(){
+    public Long getNumLibri() {
         return libroRepository.count();
     }
 
@@ -93,10 +90,7 @@ public class LibroService {
         List<Libro> rispostaDB = libroRepository.findByTitoloContainingIgnoreCase(titolo);
         // Dato che questo metodo mi restituisce solo un array vuoto se il titolo non c'è nel db, la devo gestire io.
         if (rispostaDB.isEmpty()) throw new LibroNotFoundException("Libro non trovato.");
-        List<LibroDTO> libriDTOres = new ArrayList<>();
-        for (Libro libro : rispostaDB)
-            libriDTOres.add(mapper.convertLibroToLibroDTO(libro));
-        return libriDTOres;
+        return rispostaDB.stream().map(mapper::convertLibroToLibroDTO).toList();
 
     }
 
@@ -122,8 +116,8 @@ public class LibroService {
      * @throws AutoreNotFoundException se l'autore non esiste nel Database.
      */
 
-    public List<LibroDTO> getByAutori(Set<Integer> autoriIDS) {
-
+    public List<LibroDTO> getByAutori(String autori) {
+        Set<Integer> autoriIDS = getIntegerSet(autori);
         if (autoriIDS.isEmpty()) throw new IllegalArgumentException("Non sono stati passati autori. Riprovare");
 
         Set<Autore> autoriDB = new HashSet<>(autoreRepository.findAllById(autoriIDS));
@@ -133,21 +127,16 @@ public class LibroService {
             // Qualche autore o nessun autore non è stato trovato.
             throw new AutoreNotFoundException("Uno o più autori inseriti non sono nel Database. Riprovare");
 
-        /*
-        Il problema qui sta che nella entity io ho definito gli autori come Set.
-        Dato che una Set non permette duplicati, la query che devo fare per farmi restituire dal DB
-        Una lista di Autori senza duplicati, devo usare la method query con la DISTINCT.
-         */
+            /*
+            Il problema qui sta che nella entity io ho definito gli autori come Set.
+            Dato che una Set non permette duplicati, la query che devo fare per farmi restituire dal DB
+            Una lista di Autori senza duplicati, devo usare la method query con la DISTINCT.
+             */
         List<Libro> rispostaDB = libroRepository.findDistinctByAutoriIn(autoriDB);
-
-        // Lo converto in DTO
-        List<LibroDTO> libriDTO = new ArrayList<>();
-
-        for (Libro libro : rispostaDB)
-            libriDTO.add(mapper.convertLibroToLibroDTO(libro));
-
-        return libriDTO;
+        return rispostaDB.stream().map(mapper::convertLibroToLibroDTO).toList();
     }
+
+
 
     public List<LibroDTO> getByGenere(String genere) {
         // Ricavo i libri.
@@ -261,14 +250,14 @@ public class LibroService {
     @Transactional
     public LibroDTO modificaLibro(LibroRequest libroRequest) {
         // Vedo se trovo il libro.
-        libroRepository.findById(libroRequest.getIsbn()).orElseThrow(() -> new LibroNotFoundException("Libro non trovato."));
+        Libro libro = libroRepository.findById(libroRequest.getIsbn()).orElseThrow(() -> new LibroNotFoundException("Libro non trovato."));
 
         // Vedo se trovo il genere che mi ha passato il Client
         Genere genereObj = genereRepository.findByNomeIgnoreCase(libroRequest.getGenere())
                 // Optional ha un metodo oltre alla orElseThrow che invece di lanciare un eccezione, esegue qualcosa.
                 .orElseGet(() -> genereRepository.save(new Genere(libroRequest.getGenere())));
         // Ho tutto, posso creare l'oggetto.
-        Libro libro = new Libro(libroRequest.getIsbn(), libroRequest.getTitolo(), libroRequest.getData(), libroRequest.getPrezzo(), genereObj);
+        libro.setGenere(genereObj);
 
         // Setto gli autori
         List<Autore> autori = autoreRepository.findAllById(libroRequest.getAutoriIDs());
@@ -326,4 +315,27 @@ public class LibroService {
 
      */
 
+    /*
+    ========================================
+                METODI PRIVATI
+    ========================================
+     */
+
+    /**
+     * Metodo utilizzato per poter supportare il passaggio di ID di autori direttamente da URL. Utilizzato nel metodo della ricerca
+     * @param stringaDaOperare la stringa su cui ricavare il Set di interi
+     * @return il Set contenente gli ID degli autori
+     */
+    private Set<Integer> getIntegerSet(String stringaDaOperare) {
+        // Faccio le validazioni, per vedere se effettivamente mi è stato mandato qualcosa di valido
+        if (stringaDaOperare.isBlank()){
+            throw new IllegalArgumentException("Hai inviato un valore vuoto.");
+        }
+
+        try{
+            return Arrays.stream(stringaDaOperare.split(",")).map(Integer::parseInt).collect(Collectors.toSet());
+        } catch (NumberFormatException e){
+            throw new IllegalArgumentException("Gli ID forniti non sono validi, assicurarsi di aver passato correttamente dei numeri.");
+        }
+    }
 }

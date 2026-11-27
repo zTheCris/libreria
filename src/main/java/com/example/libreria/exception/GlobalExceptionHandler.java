@@ -69,5 +69,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String,Object>> utenteAlreadyExists(UtenteAlreadyExistsException e){
         return buildResponse(HttpStatus.CONFLICT,e.getMessage());
     }
+    @ExceptionHandler(CasaEditriceAlreadyExists.class)
+    public ResponseEntity<Map<String,Object>> casaEditriceAlreadyExists(CasaEditriceAlreadyExists e){
+        return buildResponse(HttpStatus.CONFLICT, e.getMessage());
+    }
 
 }

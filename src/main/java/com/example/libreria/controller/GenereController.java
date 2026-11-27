@@ -5,6 +5,7 @@ import com.example.libreria.dto.StringDTO;
 import com.example.libreria.dto.request.GenereRequest;
 import com.example.libreria.exception.GenereNotFoundException;
 import com.example.libreria.service.GenereService;
+import jakarta.validation.Valid;
 import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +36,7 @@ public class GenereController {
        return ResponseEntity.ok(genereService.getById(id));
     }
     @PostMapping
-    public ResponseEntity<GenereDTO> addGenere(@RequestBody GenereRequest genereRequest){
+    public ResponseEntity<GenereDTO> addGenere(@Valid @RequestBody GenereRequest genereRequest){
        return ResponseEntity.ok(genereService.addGenere(genereRequest));
     }
     @PutMapping("/{id}")

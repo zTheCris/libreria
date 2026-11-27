@@ -1,9 +1,17 @@
 package com.example.libreria.service;
 
 import com.example.libreria.dto.CasaEditriceDTO;
+import com.example.libreria.dto.CopiaDTO;
+import com.example.libreria.dto.request.CasaEditriceRequest;
+import com.example.libreria.exception.CasaEditriceAlreadyExists;
+import com.example.libreria.exception.CasaEditriceNotFound;
 import com.example.libreria.model.CasaEditrice;
+import com.example.libreria.model.Copia;
 import com.example.libreria.repository.CasaEditriceRepository;
+import com.example.libreria.repository.CopiaRepository;
 import com.example.libreria.utility.Mapper;
+import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,18 +20,45 @@ import java.util.List;
 public class CasaEditriceService {
     private final CasaEditriceRepository casaEditriceRepository;
     private final Mapper mapper;
-    public CasaEditriceService(CasaEditriceRepository casaEditriceRepository, Mapper mapper) {
+    private final CopiaRepository copiaRepository;
+
+    public CasaEditriceService(CasaEditriceRepository casaEditriceRepository, Mapper mapper, CopiaRepository copiaRepository) {
         this.casaEditriceRepository = casaEditriceRepository;
         this.mapper = mapper;
+        this.copiaRepository = copiaRepository;
     }
     // Provo a farlo con le stream cosi da non ripetere le ripetizioni precedenti.
     public List<CasaEditriceDTO> getAll(){
         return casaEditriceRepository.findAll()
                 .stream()
-                .map(casaEditrice->mapper.convertCasaEditriceToCasaEditriceDTO(casaEditrice))
+                .map(mapper::convertCasaEditriceToCasaEditriceDTO)
                 .toList();
     }
     public Long getNumCase(){
         return casaEditriceRepository.count();
+    }
+
+    @Transactional
+    public CasaEditriceDTO addCasa(CasaEditriceRequest casaEditriceRequest) {
+        if(casaEditriceRepository.existsByNomeIgnoreCase(casaEditriceRequest.getNome()))
+            throw new CasaEditriceAlreadyExists("La casa editrice già esiste.");
+        return mapper.convertCasaEditriceToCasaEditriceDTO(casaEditriceRepository.save(new CasaEditrice(casaEditriceRequest.getNome())));
+    }
+    @Transactional
+    public CasaEditriceDTO modificaCasa(Integer id,CasaEditriceRequest casaEditriceRequest) {
+        CasaEditrice casaEditrice = casaEditriceRepository.findById(id).orElseThrow(() -> new CasaEditriceNotFound("Casa editrice non trovata."));
+        casaEditrice.setNome(casaEditriceRequest.getNome());
+        return mapper.convertCasaEditriceToCasaEditriceDTO(casaEditriceRepository.save(casaEditrice));
+    }
+
+    @Transactional
+    public boolean delete(Integer id) {
+        // Mi ricavo la casa editrice perché se devo cancellarla, devo settare a null tutte i record di Copie dove è presente la casa editrice.
+        CasaEditrice casaEditrice = casaEditriceRepository.findById(id).orElseThrow(()-> new CasaEditriceNotFound("Casa editrice non trovata."));
+        List<Copia> copieConCasa = copiaRepository.findAllByCasaEditrice(casaEditrice);
+        // Per ogni Copia, setto la casa editrice a null. Per scrivere una riga di codice in meno uso il forEach degli Iterables, poichè una Collection implementa Iterable..
+        copieConCasa.forEach(copia -> copia.setCasaEditrice(null));
+        copiaRepository.saveAll(copieConCasa);
+        return true;
     }
 }

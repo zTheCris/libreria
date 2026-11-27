@@ -15,8 +15,8 @@ public class JwtService {
 
     private final SecretKey secretKey = Keys.hmacShaKeyFor("LaMiaPasswordSuperSicuraServonoPiuCaratteriNeMettoAltri".getBytes());
     // Corrisponde a 15 minuti. In millisecondi, quindi 15*60*1000 = 900000
-    private final Integer SCADENZA_TOKEN = 900000;
-
+    private final Integer SCADENZA_TOKEN = 86400000;
+    // 24 ORE: 86400000
 
     public String generaToken(Authentication authentication){
         return Jwts.builder()

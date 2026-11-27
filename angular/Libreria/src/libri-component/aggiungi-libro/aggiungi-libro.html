@@ -27,11 +27,13 @@
         <option [ngValue]="autore">{{ autore.nome }} {{ autore.cognome }}</option>
       }
     </select>
+    <h6>L'autore non è nel database?</h6>
     <!-- Bottone per l'eventuale aggiunta autore se non presente. -->
     <div class="aggiungi-autore">
       <img src="https://www.svgrepo.com/download/246563/add-user-add.svg" alt="Aggiungi autore" />
-      <button type="button" [routerLink]="['/autori/addLibri']">Aggiungi autore</button>
+      <button type="button" [routerLink]="['/autori/addAutore']">Aggiungi autore</button>
     </div>
+
     @if (autoriSelezionati.length > 0) {
       <div class="autori-selezionati">
         <!-- Mostro gli autori selezionati  -->

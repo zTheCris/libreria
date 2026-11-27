@@ -1,12 +1,12 @@
 package com.example.libreria.controller;
 
 import com.example.libreria.dto.CasaEditriceDTO;
+import com.example.libreria.dto.StringDTO;
+import com.example.libreria.dto.request.CasaEditriceRequest;
 import com.example.libreria.service.CasaEditriceService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -25,5 +25,18 @@ public class CasaEditriceController {
     @GetMapping("/num")
     public ResponseEntity<Long> getNumCase(){
         return ResponseEntity.ok(casaEditriceService.getNumCase());
+    }
+    @PostMapping
+    public ResponseEntity<CasaEditriceDTO> addCasa(@Valid @RequestBody CasaEditriceRequest casaEditriceRequest){
+        return ResponseEntity.ok(casaEditriceService.addCasa(casaEditriceRequest));
+    }
+    @PutMapping("/{id}")
+    public ResponseEntity<CasaEditriceDTO> modificaCasa(@PathVariable Integer id,@Valid @RequestBody CasaEditriceRequest casaEditriceRequest){
+        return ResponseEntity.ok(casaEditriceService.modificaCasa(id,casaEditriceRequest));
+    }
+    @DeleteMapping("/id")
+    public ResponseEntity<StringDTO> deleteCasa(@PathVariable Integer id){
+        casaEditriceService.delete(id);
+        return ResponseEntity.ok(new StringDTO("Casa editrice eliminata."));
     }
 }

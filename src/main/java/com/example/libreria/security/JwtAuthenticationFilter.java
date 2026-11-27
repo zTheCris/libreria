@@ -39,7 +39,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // getHeader vuole sapere su quale stringa vuole operare, la stringa compketa inizia con Authentication ..."
         String authHeader = request.getHeader("Authorization");
         // Ora devo vedere se la stringa inizia con Bearer .
-        if (authHeader == null || !authHeader.startsWith("Bearer ")){
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             // Dato che l'autorizzazione non è valida, passo la responsabiltà al chain successivo.
             filterChain.doFilter(request, response);
             return;
@@ -49,44 +49,40 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         final String jwtDaHeader = authHeader.substring(7);
         // Ora verifico se il JWT è valido, prima di continuare.
-        if(jwtService.validaToken(jwtDaHeader)) {
+        if (jwtService.validaToken(jwtDaHeader)) {
 
             // Estraggo lo Username usando il metodo nel service Jwt
             final String usernameDaHeader = jwtService.estraiUsername(jwtDaHeader);
 
             // Adesso devo controllare se lo username è stato convalidato! Allo stesso tempo, controllo se l'utente non è stato autenticato.
 
-            if (usernameDaHeader!=null && SecurityContextHolder.getContext().getAuthentication() == null){
+            if (usernameDaHeader != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 // Se siamo qui dentro, vuol dire che il service ha estratto l'utente e l'utente non è stato ancora autenticato.
                 // Quindi, autentichiamo l'utente come abbiamo fatto in SpringSecurityConfig.
                 // PRIMA PERO: verifichiamo il token.
 
 
-                    UserDetails userDetails = miouserDetailsService.loadUserByUsername(usernameDaHeader);
-                    UsernamePasswordAuthenticationToken tokenAutorizzato = new UsernamePasswordAuthenticationToken(
-                            usernameDaHeader,
-                            null,
-                            userDetails.getAuthorities()
-                    );
+                UserDetails userDetails = miouserDetailsService.loadUserByUsername(usernameDaHeader);
+                UsernamePasswordAuthenticationToken tokenAutorizzato = new UsernamePasswordAuthenticationToken(
+                        usernameDaHeader,
+                        null,
+                        userDetails.getAuthorities()
+                );
 
-                    // Se ho fatto tutto e ho creato il tokenAutorizzato, dico a Spring Security che è autorizzato, e passo al chain successivo
-                    SecurityContextHolder.getContext().setAuthentication(tokenAutorizzato);
-
+                // Se ho fatto tutto e ho creato il tokenAutorizzato, dico a Spring Security che è autorizzato, e passo al chain successivo
+                SecurityContextHolder.getContext().setAuthentication(tokenAutorizzato);
 
 
             }
             // Passo la responsabilità al chain successivo.
-            filterChain.doFilter(request,response);
+            filterChain.doFilter(request, response);
 
-        }
-        else{
+        } else {
             // Se entra qui, il valida token ha restituito fasle. Qui manderò il 401 tramite l'oggetto HttpResponse della Servlet.
-            response.sendError(HttpStatus.UNAUTHORIZED.value(),"Il token non è valido.");
+            response.sendError(HttpStatus.UNAUTHORIZED.value(), "Il token non è valido.");
 
         }
     }
-
-
 
 
 }

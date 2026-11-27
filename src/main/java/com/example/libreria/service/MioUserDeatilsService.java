@@ -17,6 +17,7 @@ public class MioUserDeatilsService implements UserDetailsService {
     private final UtenteRepository utenteRepository;
     private final PasswordEncoder passwordEncoder;
 
+    
     public MioUserDeatilsService(UtenteRepository utenteRepository, PasswordEncoder passwordEncoder) {
         this.utenteRepository = utenteRepository;
         this.passwordEncoder = passwordEncoder;

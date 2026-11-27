@@ -9,6 +9,7 @@ import com.example.libreria.exception.CopiaNotFoundException;
 import com.example.libreria.exception.LibroNotFoundException;
 import com.example.libreria.model.Copia;
 import com.example.libreria.service.CopiaService;
+import jakarta.validation.Valid;
 import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -63,13 +64,13 @@ public class CopiaController {
 
     // POST
     @PostMapping
-    public ResponseEntity<CopiaDTO> addCopia(@RequestBody CopiaRequest copiaRequest){
+    public ResponseEntity<CopiaDTO> addCopia(@Valid @RequestBody CopiaRequest copiaRequest){
       return ResponseEntity.ok(copiaService.addCopia(copiaRequest));
     }
 
     // PUT
     @PutMapping("/{isbn}")
-    public ResponseEntity<CopiaDTO> modificaCopia(@PathVariable Integer isbn,@RequestBody CopiaRequest copiaRequest){
+    public ResponseEntity<CopiaDTO> modificaCopia(@PathVariable Integer isbn,@Valid @RequestBody CopiaRequest copiaRequest){
         // Posso usare lo stesso servizio poichè la save quando vede che la copia già esiste nel DB ne fa una UPDATE.
         return ResponseEntity.ok(copiaService.modificaCopia(isbn,copiaRequest));
     }

@@ -66,16 +66,14 @@ public class LibroController {
 
     // libro by title
     @GetMapping("/getbytitle/{titolo}")
-    public ResponseEntity<LibroDTO> getByTitoloEsatto(@PathVariable String titolo){
+    public ResponseEntity<LibroDTO> getByTitoloEsatto(@Valid @PathVariable String titolo){
         return ResponseEntity.ok(libroService.getByTitoloEsatto(titolo));
     }
     @GetMapping("/getbyautore/{id}")
     public ResponseEntity<List<LibroDTO>> getByAutore(@PathVariable Integer id){
         // Per non creare lo stesso metodo due volte, uso il metodo getByAutori con un Set di un intero.
-        Set<Integer> autoriIDs = new HashSet<>();
-        autoriIDs.add(id);
         // Dato che è solo uno, passo un set a un parametro
-        return ResponseEntity.ok(libroService.getByAutori(autoriIDs));
+        return ResponseEntity.ok(libroService.getByAutori(id.toString()));
     }
 
     @GetMapping("/getbyprezzo/{prezzo}")
@@ -88,13 +86,11 @@ public class LibroController {
     }
 
     /**
-     * Per poter usare il metodo, usare i query params in Postman. Chiamarli tutti con lo stesso nome
-     * @param ids gli id passati tramite query parameters.
+     * Per poter usare l'endpoint, passare gli id degli autori separati da una virgola
      */
-    @GetMapping("/getbyautori")
-    public ResponseEntity<List<LibroDTO>> getByAutori(@RequestParam Set<Integer> ids){
-        // Dato che è solo uno, passo un set a un parametro
-        return ResponseEntity.ok(libroService.getByAutori(ids));
+    @GetMapping("/getbyautori/{autori}")
+    public ResponseEntity<List<LibroDTO>> getByAutori(@PathVariable String autori){
+        return ResponseEntity.ok(libroService.getByAutori(autori));
     }
 
     @GetMapping("/getbygenere/{genere}")
