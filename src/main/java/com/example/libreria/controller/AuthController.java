@@ -5,6 +5,7 @@ import com.example.libreria.dto.RegistraUtenteDTO;
 import com.example.libreria.dto.request.RegistraUtenteRequest;
 import com.example.libreria.dto.request.UtenteRequest;
 import com.example.libreria.service.AuthService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,12 +24,12 @@ public class AuthController {
         return ResponseEntity.ok("Prova! Sono penetrabile!");
     }
     @PostMapping("/login")
-    public ResponseEntity<AuthDTO> login(@RequestBody UtenteRequest utenteRequest){
+    public ResponseEntity<AuthDTO> login(@Valid @RequestBody UtenteRequest utenteRequest){
         return ResponseEntity.ok(new AuthDTO(authService.autenticazione(utenteRequest)));
     }
 
     @PostMapping("/register")
-    public ResponseEntity<AuthDTO> register(@RequestBody RegistraUtenteRequest registraUtenteRequest){
+    public ResponseEntity<AuthDTO> register(@Valid @RequestBody RegistraUtenteRequest registraUtenteRequest){
         return ResponseEntity.ok(new AuthDTO(authService.register(registraUtenteRequest)));
     }
 }

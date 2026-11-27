@@ -6,6 +6,7 @@ import com.example.libreria.dto.request.AutoreRequest;
 import com.example.libreria.exception.AutoreNotFoundException;
 import com.example.libreria.exception.NazionalitaNotFoundException;
 import com.example.libreria.service.AutoreService;
+import jakarta.validation.Valid;
 import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -52,13 +53,13 @@ public class AutoreController {
 
     // POST
     @PostMapping
-    public ResponseEntity<AutoreDTO> addAutore(@RequestBody AutoreRequest autoreRequest) {
+    public ResponseEntity<AutoreDTO> addAutore(@Valid @RequestBody AutoreRequest autoreRequest) {
         return ResponseEntity.ok(autoreService.addAutore(autoreRequest));
     }
 
     // PUT
     @PutMapping("/{idAutore}")
-    public ResponseEntity<AutoreDTO> modificaAutore(@PathVariable Integer idAutore, @RequestBody AutoreRequest autoreRequest) {
+    public ResponseEntity<AutoreDTO> modificaAutore(@PathVariable Integer idAutore, @Valid @RequestBody AutoreRequest autoreRequest) {
         return ResponseEntity.ok(autoreService.modificaAutore(idAutore, autoreRequest));
     }
 

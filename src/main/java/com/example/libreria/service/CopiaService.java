@@ -15,7 +15,6 @@ import com.example.libreria.utility.Mapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -43,31 +42,26 @@ public class CopiaService {
      * @return la lista dele copie nel Database, convertite in DTO.
      */
     public List<CopiaDTO> getAll() {
-        List<Copia> rispostaDB = copiaRepository.findAll();
-        List<CopiaDTO> copieDTOret = new ArrayList<>();
-        for (Copia copia : rispostaDB)
-            copieDTOret.add(mapper.convertCopiaToCopieDTO(copia));
-        return copieDTOret;
+      return copiaRepository.findAll().stream().map(mapper::convertCopiaToCopieDTO).toList();
     }
 
     /**
-     * Restituisce tutte le copie che hanno un numero di copie esatto.
+     * Restituisce tutte le copie che hanno un numero di copie ESATTO.
      *
      * @param numeroCopie il filtro per la ricerca delle copie.
      * @return la lista delle copie nel Database filtrate per {@code numeroCopie}, convertite in DTO.
      */
     public List<CopiaDTO> getAllByNumeroCopie(Integer numeroCopie) {
+        // Dato che devo fare un controllo sulle Copie, me lo salvo in una variabile prima di mandare la risposta al Controller.
         List<Copia> rispostaDB = copiaRepository.findByNumeroCopie(numeroCopie);
         if (rispostaDB.isEmpty())
             throw new CopiaNotFoundException("Non sono presenti Copie con numero di copie " + numeroCopie);
-        List<CopiaDTO> copieDTOret = new ArrayList<>();
-        for (Copia copia : rispostaDB)
-            copieDTOret.add(mapper.convertCopiaToCopieDTO(copia));
-        return copieDTOret;
+        return rispostaDB.stream().map(mapper::convertCopiaToCopieDTO).toList();
     }
 
     /**
      * Restituisce tutte le copie esaurite. Riutilizzo il metodo {@code getAllByNumeroCopie()} con parametro 0.
+     *
      * @return la lista di tutte le copie esaurite, convertite in DTO.
      */
     public List<CopiaDTO> getByNumeroCopieEsaurite() {
@@ -78,6 +72,7 @@ public class CopiaService {
 
     /**
      * Restituisce tutte le copie con almeno 1 copia ({@code numeroCopie}).
+     *
      * @return la lista di tutte le copie dei libri disponibili, convertite in DTO..
      */
     public List<CopiaDTO> getByNumeroCopieDisponibili() {
@@ -89,38 +84,30 @@ public class CopiaService {
                 // Converto in lista
                 .toList();
         if (rispostaDB.isEmpty()) throw new CopiaNotFoundException("Non ci sono copie disponibili");
-        List<CopiaDTO> copieDTOret = new ArrayList<>();
-        for (Copia copia : rispostaDB)
-            copieDTOret.add(mapper.convertCopiaToCopieDTO(copia));
-        return copieDTOret;
-
+        return rispostaDB.stream().map(mapper::convertCopiaToCopieDTO).toList();
     }
 
     /**
      * Restituisce tutte le copie scritte da una certa casa editrice.
+     *
      * @param id l'id della casa editrice da ricercare.
      * @return le copie di una certa casa editrice.
      */
     public List<CopiaDTO> getAllByCasaEditrice(Integer id) {
         CasaEditrice casaEditrice = casaEditriceRepository.findById(id).orElseThrow(() -> new CasaEditriceNotFound("Casa editrice non trovata"));
-        List<Copia> rispostaDB = copiaRepository.findAllByCasaEditrice(casaEditrice);
-        List<CopiaDTO> copieDTOret = new ArrayList<>();
-        for (Copia copia : rispostaDB)
-            copieDTOret.add(mapper.convertCopiaToCopieDTO(copia));
-        return copieDTOret;
+        return copiaRepository.findAllByCasaEditrice(casaEditrice).stream().map(mapper::convertCopiaToCopieDTO).toList();
     }
 
     /**
      * Ritorna tutte le copie di un libro.
+     *
      * @param isbn l'ISBN del libro
      * @return la lista delle copie del libro, convertite in DTO.
      */
     public List<CopiaDTO> getByIsbn(Integer isbn) {
+        // Ricavo il libro, se non ho trovato il libro mando un eccezione.
         Libro libro = libroRepository.findById(isbn).orElseThrow(() -> new LibroNotFoundException("Libro non trovato."));
-        List<CopiaDTO> copieDTO = new ArrayList<>();
-        for (Copia copia : copiaRepository.findAllByLibro(libro))
-            copieDTO.add(mapper.convertCopiaToCopieDTO(copia));
-        return copieDTO;
+        return copiaRepository.findAllByLibro(libro).stream().map(mapper::convertCopiaToCopieDTO).toList();
     }
 
 
@@ -167,7 +154,7 @@ public class CopiaService {
                 .orElseGet(
                         () -> addCasaEditrice(copiaRequest.getCasaEditrice())
                 );
-        // Ora creo la copia
+        // Ora modifico la copia
         copia.setNumeroCopie(copiaRequest.getNumeroCopie());
         copia.setLibro(libro);
         copia.setCasaEditrice(casaEditrice);
@@ -179,12 +166,12 @@ public class CopiaService {
      *
      * @param idCopia l'id della Copia.
      */
-
+    @Transactional
     public void deleteCopia(Integer idCopia) {
         copiaRepository.deleteById(idCopia);
     }
 
-    //Metodi
+    //Metodi privati
     private CasaEditrice addCasaEditrice(String casaEditrice) {
         return casaEditriceRepository.save(new CasaEditrice(casaEditrice));
     }
@@ -193,3 +180,4 @@ public class CopiaService {
         return copiaRepository.count();
     }
 }
+

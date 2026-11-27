@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Gestisce le operazioni relative agli autori, consentendo il recupero,
@@ -49,16 +50,8 @@ public class AutoreService {
      *         lista vuota se non sono presenti autori.
      */
     public List<AutoreDTO> getAll() {
-        // Ritorno tutti i libri in un DTO
-        List<Autore> autoriDB = autoreRepository.findAll();
-
-        // Adesso converto ogni autore in AutoreDTO.
-        List<AutoreDTO> autoriDTO = new ArrayList<>();
-
-        for (Autore autore : autoriDB)
-            autoriDTO.add(mapper.convertAutoreToAutoreDTO(autore));
-
-        return autoriDTO;
+        // Ritorno tutti i libri in un DTO. Utilizzo gli Streams per poter eseguire operazioni sulle Collections.
+        return autoreRepository.findAll().stream().map(mapper::convertAutoreToAutoreDTO).toList();
     }
 
     /**
@@ -71,15 +64,7 @@ public class AutoreService {
      *         lista vuota se non vengono trovati risultati.
      */
     public List<AutoreDTO> getByNomeCognome(String nome, String cognome) {
-        List<Autore> autoriDB =
-                autoreRepository.findAllByNomeAndCognomeIgnoreCase(nome, cognome);
-
-        List<AutoreDTO> autoriDTO = new ArrayList<>();
-
-        for (Autore autore : autoriDB)
-            autoriDTO.add(mapper.convertAutoreToAutoreDTO(autore));
-
-        return autoriDTO;
+        return autoreRepository.findAllByNomeAndCognomeIgnoreCase(nome,cognome).stream().map(mapper::convertAutoreToAutoreDTO).toList();
     }
 
     /**
@@ -96,11 +81,7 @@ public class AutoreService {
         );
     }
     public List<AutoreDTO> getByNome(String nome) {
-        List<Autore> risposta = autoreRepository.findAllByNomeContainingIgnoreCase(nome);
-        List<AutoreDTO> autoriDTO = new ArrayList<>();
-        for (Autore autore: risposta)
-            autoriDTO.add(mapper.convertAutoreToAutoreDTO(autore));
-        return autoriDTO;
+        return autoreRepository.findAllByNomeContainingIgnoreCase(nome).stream().map(mapper::convertAutoreToAutoreDTO).toList();
     }
     public Long getNumAutori() {
         return autoreRepository.count();
@@ -165,7 +146,7 @@ public class AutoreService {
     public void deleteByIdAutore(Integer idAutore) {
         Autore autore = autoreRepository.findById(idAutore)
                 .orElseThrow(() -> new AutoreNotFoundException("Autore non trovato"));
-
+        // Hibernate farà automaticamente la DELETE anche dalla tabella Libri_Autori.
         autoreRepository.delete(autore);
     }
 
