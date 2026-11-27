@@ -3,6 +3,7 @@ package com.example.libreria.service;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -11,9 +12,15 @@ import java.util.Date;
 
 @Service
 public class JwtService {
-    // Qui dentro generiamo il token JWT.
 
-    private final SecretKey secretKey = Keys.hmacShaKeyFor("LaMiaPasswordSuperSicuraServonoPiuCaratteriNeMettoAltri".getBytes());
+    private final SecretKey secretKey;
+    // La chiave va a leggerla dall'application.properties che è collegato al .env
+    public JwtService(@Value("${jwt.secret}")String chiaveDaEnv) {
+        secretKey = Keys.hmacShaKeyFor(chiaveDaEnv.getBytes());
+    }
+// Qui dentro generiamo il token JWT.
+
+
     // Corrisponde a 15 minuti. In millisecondi, quindi 15*60*1000 = 900000
     private final Integer SCADENZA_TOKEN = 86400000;
     // 24 ORE: 86400000

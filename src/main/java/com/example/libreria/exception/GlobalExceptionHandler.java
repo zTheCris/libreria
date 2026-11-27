@@ -41,7 +41,7 @@ public class GlobalExceptionHandler {
      * @return risposta HTTP 400 (Bad Request) con il messaggio di errore
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String,Object>> ValidazioneArgomenti(MethodArgumentNotValidException e){
+    public ResponseEntity<Map<String,Object>> validazioneArgomenti(MethodArgumentNotValidException e){
         // Il messaggio di errore contiene una stringa lunghissima. Le validation
         return buildResponse(HttpStatus.BAD_REQUEST,e.getBindingResult()
                 .getAllErrors()
@@ -51,37 +51,37 @@ public class GlobalExceptionHandler {
     }
     // Invece per i tipi di conversione, posso usare il
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<Map<String,Object>> ValidazioneTipi(MethodArgumentTypeMismatchException e){
+    public ResponseEntity<Map<String,Object>> validazioneTipi(MethodArgumentTypeMismatchException e){
         return buildResponse(HttpStatus.BAD_REQUEST,e.getMessage());
     }
     // Gestore per la formattazione JSON/se la richiesta è stata fatta male
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<Map<String,Object>> ValidazioneHTTP(HttpMessageNotReadableException e){
+    public ResponseEntity<Map<String,Object>> validazioneHTTP(HttpMessageNotReadableException e){
         return buildResponse(HttpStatus.BAD_REQUEST, "Formattazione JSON errata. Assicurati di aver inserito tutti i campi correttamente.");
     }
 
     @ExceptionHandler(LibroNotFoundException.class)
-    public ResponseEntity<Map<String,Object>> LibroNotFound(LibroNotFoundException e){
+    public ResponseEntity<Map<String,Object>> libroNotFound(LibroNotFoundException e){
         return buildResponse(HttpStatus.NOT_FOUND,e.getMessage());
     }
     @ExceptionHandler(AutoreNotFoundException.class)
-    public  ResponseEntity<Map<String,Object>> AutoreNotFound(AutoreNotFoundException e){
+    public  ResponseEntity<Map<String,Object>> autoreNotFound(AutoreNotFoundException e){
         return buildResponse(HttpStatus.NOT_FOUND,e.getMessage());
     }
     @ExceptionHandler(GenereNotFoundException.class)
-    public  ResponseEntity<Map<String,Object>> GenereNotFound(GenereNotFoundException e){
+    public  ResponseEntity<Map<String,Object>> genereNotFound(GenereNotFoundException e){
         return buildResponse(HttpStatus.NOT_FOUND,e.getMessage());
     }
     @ExceptionHandler(CopiaNotFoundException.class)
-    public  ResponseEntity<Map<String,Object>> CopiaNotFound(CopiaNotFoundException e){
+    public  ResponseEntity<Map<String,Object>> copiaNotFound(CopiaNotFoundException e){
         return buildResponse(HttpStatus.NOT_FOUND,e.getMessage());
     }
     @ExceptionHandler(CasaEditriceNotFound.class)
-    public ResponseEntity<Map<String,Object>> CasaEditriceNotFound(CasaEditriceNotFound e){
+    public ResponseEntity<Map<String,Object>> casaEditriceNotFound(CasaEditriceNotFound e){
         return buildResponse(HttpStatus.NOT_FOUND,e.getMessage());
     }
     @ExceptionHandler(NazionalitaNotFoundException.class)
-    public ResponseEntity<Map<String,Object>> NazionalitaNotFound(NazionalitaNotFoundException e){
+    public ResponseEntity<Map<String,Object>> nazionalitaNotFound(NazionalitaNotFoundException e){
         return buildResponse(HttpStatus.NOT_FOUND,e.getMessage());
     }
     @ExceptionHandler(UtenteNotFoundException.class)
@@ -91,7 +91,7 @@ public class GlobalExceptionHandler {
 
     // Handler per entià già esistenti
     @ExceptionHandler(LibroAlreadyExistsException.class)
-    public ResponseEntity<Map<String,Object>> LibroAlreayExists(LibroAlreadyExistsException e){
+    public ResponseEntity<Map<String,Object>> libroAlreayExists(LibroAlreadyExistsException e){
         return buildResponse(HttpStatus.CONFLICT,e.getMessage());
     }
     @ExceptionHandler(UtenteAlreadyExistsException.class)
