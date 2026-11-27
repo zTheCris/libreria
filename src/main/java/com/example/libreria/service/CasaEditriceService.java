@@ -56,9 +56,11 @@ public class CasaEditriceService {
         // Mi ricavo la casa editrice perché se devo cancellarla, devo settare a null tutte i record di Copie dove è presente la casa editrice.
         CasaEditrice casaEditrice = casaEditriceRepository.findById(id).orElseThrow(()-> new CasaEditriceNotFound("Casa editrice non trovata."));
         List<Copia> copieConCasa = copiaRepository.findAllByCasaEditrice(casaEditrice);
-        // Per ogni Copia, setto la casa editrice a null. Per scrivere una riga di codice in meno uso il forEach degli Iterables, poichè una Collection implementa Iterable..
+        // Per ogni Copia, setto la casa editrice a null.
+        // Per scrivere una riga di codice in meno uso il metodo forEach degli Iterables, poichè una Collection implementa Iterables.
         copieConCasa.forEach(copia -> copia.setCasaEditrice(null));
-        copiaRepository.saveAll(copieConCasa);
+        // Grazie ad Hibernate, non serve nemmeno fare la saveAll perché basta che eseguo il Setter della classe e lui esegue una INSERT
+        casaEditriceRepository.delete(casaEditrice);
         return true;
     }
 }
