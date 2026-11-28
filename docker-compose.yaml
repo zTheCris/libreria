@@ -1,0 +1,43 @@
+services:
+  db:
+    image: mysql:latest
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: Biblioteca
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p\"$$MYSQL_ROOT_PASSWORD\" --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: ./backend
+    container_name: spring-backend
+    restart: always
+    environment:
+      DB_URL: jdbc:mysql://db:3306/Biblioteca
+      DB_USERNAME: root
+      DB_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+  frontend:
+    build: ./frontend
+    container_name: angular-frontend
+    restart: always
+    ports:
+      - "4200:4000"
+    depends_on:
+      - backend
+volumes:
+  mysql_data:
+    external: true
+    name: 90e5159a3c6bd9166651cf05f7ff76be21f5be4ac2897ee6186b6c645bad1374
