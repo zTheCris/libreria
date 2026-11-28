@@ -20,7 +20,7 @@
     </tr>
   </thead>
   <tbody>
-    @for (copia of copieService.listaCopie(); track $index) {
+    @for (copia of listaFiltrata(); track $index) {
       <tr>
         <td>{{ copia.idCopia }}</td>
         <td>

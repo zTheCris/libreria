@@ -10,7 +10,7 @@ public class CasaEditrice {
     @Column(name = "id_casaeditrice")
     private Integer id_casaeditrice;
     // Nullable =  false indica che il campo è NOT NULL.
-    @Column(name="nome", nullable = false)
+    @Column(name="nome", nullable = false,unique = true)
     private String nome;
 
     public CasaEditrice() {

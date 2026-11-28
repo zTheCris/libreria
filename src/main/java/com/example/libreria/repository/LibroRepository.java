@@ -37,4 +37,6 @@ public interface LibroRepository extends JpaRepository<Libro, Integer> {
     List<Libro> findAllByPrezzo(Integer prezzo);
 
     List<Libro> findAllByPrezzoGreaterThanEqual(Integer prezzo);
+
+    List<Libro> findAllByGenere(Genere genere);
 }

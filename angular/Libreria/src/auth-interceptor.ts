@@ -20,21 +20,30 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     // Dato che le richieste HTTP sono immutabili, dobbiamo crearne una nuova con Header impostato.
     const nuovaRichiesta = req.clone({
       setHeaders: {
-        Authorization: `Bearer ${loginService.getToken()}`
-      }
+        Authorization: `Bearer ${loginService.getToken()}`,
+      },
     });
     // console.log(req.headers)
-    return next(nuovaRichiesta);
+    return next(nuovaRichiesta).pipe(
+      catchError((err) => {
+        if (err.status === 401) {
+          loginService.logout();
+          router.navigate(['/login']);
+        }
+
+        return throwError(() => err);
+      }),
+    );
   }
 
   return next(req).pipe(
-     catchError((err) => {
+    catchError((err) => {
       if (err.status === 401) {
         loginService.logout();
         router.navigate(['/login']);
       }
 
       return throwError(() => err);
-    }
-  ));
+    }),
+  );
 };

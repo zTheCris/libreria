@@ -30,9 +30,9 @@ public class AutoreService {
      * Inizializza il servizio attraverso l'iniezione delle dipendenze necessarie
      * per la gestione degli autori e delle relative nazionalità.
      *
-     * @param autoreRepository repository per l'accesso ai dati degli autori.
+     * @param autoreRepository      repository per l'accesso ai dati degli autori.
      * @param nazionalitaRepository repository per l'accesso ai dati delle nazionalità.
-     * @param mapper componente utilizzato per convertire le entità nei rispettivi DTO.
+     * @param mapper                componente utilizzato per convertire le entità nei rispettivi DTO.
      */
     public AutoreService(AutoreRepository autoreRepository,
                          NazionalitaRepository nazionalitaRepository,
@@ -46,7 +46,7 @@ public class AutoreService {
      * Recupera tutti gli autori presenti nel database.
      *
      * @return lista di tutti gli autori convertiti nei rispettivi DTO,
-     *         lista vuota se non sono presenti autori.
+     * lista vuota se non sono presenti autori.
      */
     public List<AutoreDTO> getAll() {
         // Ritorno tutti i libri in un DTO. Utilizzo gli Streams per poter eseguire operazioni sulle Collections.
@@ -57,13 +57,13 @@ public class AutoreService {
      * Recupera tutti gli autori che corrispondono al nome e al cognome specificati.
      * La ricerca non distingue tra lettere maiuscole e minuscole nel cognome.
      *
-     * @param nome nome dell'autore da ricercare.
+     * @param nome    nome dell'autore da ricercare.
      * @param cognome cognome dell'autore da ricercare.
      * @return lista degli autori corrispondenti alla ricerca,
-     *         lista vuota se non vengono trovati risultati.
+     * lista vuota se non vengono trovati risultati.
      */
     public List<AutoreDTO> getByNomeCognome(String nome, String cognome) {
-        return autoreRepository.findAllByNomeAndCognomeIgnoreCase(nome,cognome).stream().map(mapper::convertAutoreToAutoreDTO).toList();
+        return autoreRepository.findAllByNomeAndCognomeIgnoreCase(nome, cognome).stream().map(mapper::convertAutoreToAutoreDTO).toList();
     }
 
     /**
@@ -79,9 +79,11 @@ public class AutoreService {
                         .orElseThrow(() -> new AutoreNotFoundException("Autore non trovato."))
         );
     }
+
     public List<AutoreDTO> getByNome(String nome) {
         return autoreRepository.findAllByNomeContainingIgnoreCase(nome).stream().map(mapper::convertAutoreToAutoreDTO).toList();
     }
+
     public Long getNumAutori() {
         return autoreRepository.count();
     }
@@ -117,7 +119,7 @@ public class AutoreService {
      * Modifica i dati di un autore già presente nel database,
      * aggiornandone anche la nazionalità.
      *
-     * @param idAutore identificativo dell'autore da modificare.
+     * @param idAutore      identificativo dell'autore da modificare.
      * @param autoreRequest nuovi dati dell'autore.
      * @return autore modificato nel database, convertito nel rispettivo DTO.
      * @throws AutoreNotFoundException se non esiste un autore con l'identificativo specificato.
@@ -126,8 +128,9 @@ public class AutoreService {
     public AutoreDTO modificaAutore(Integer idAutore, AutoreRequest autoreRequest) {
         Autore autore = autoreRepository.findById(idAutore)
                 .orElseThrow(() -> new AutoreNotFoundException("Autore non trovato."));
-
-        Nazionalita nazionalitaObj = nazionalitaRepository.save(new Nazionalita(autoreRequest.getNazionalita()));
+        // Cerco la nazionalita nel database. Se non la trovo, la creo.
+        Nazionalita nazionalitaObj = nazionalitaRepository.findByNomeIgnoreCase(autoreRequest.getNazionalita())
+                .orElseGet(() -> nazionalitaRepository.save(new Nazionalita(autoreRequest.getNazionalita())));
 
         // A questo punto,aggiorno l'autore
         autore.setNome(autoreRequest.getNome());
@@ -153,6 +156,5 @@ public class AutoreService {
     }
 
 
-
-
 }
+

@@ -3,15 +3,16 @@ package com.example.libreria.service;
 
 import com.example.libreria.dto.GenereDTO;
 import com.example.libreria.dto.request.GenereRequest;
+import com.example.libreria.exception.GenereAlreadyExistsException;
 import com.example.libreria.exception.GenereNotFoundException;
 import com.example.libreria.model.Genere;
+import com.example.libreria.model.Libro;
 import com.example.libreria.repository.GenereRepository;
 import com.example.libreria.repository.LibroRepository;
 import com.example.libreria.utility.Mapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -49,18 +50,7 @@ public class GenereService {
      * @throws GenereNotFoundException se non sono presenti generi nel database.
      */
     public List<GenereDTO> getAll() {
-        List<Genere> rispostaDB = genereRepository.findAll();
-
-        if (rispostaDB.isEmpty())
-            throw new GenereNotFoundException("Non ci sono generi.");
-
-        List<GenereDTO> generiDTOret = new ArrayList<>();
-
-        for (Genere genere : rispostaDB) {
-            generiDTOret.add(mapper.convertGenereToGenereDTO(genere));
-        }
-
-        return generiDTOret;
+        return genereRepository.findAll().stream().map(mapper::convertGenereToGenereDTO).toList();
     }
 
     /**
@@ -70,9 +60,9 @@ public class GenereService {
      * @return genere salvato nel database, convertito nel rispettivo DTO.
      */
     public GenereDTO addGenere(GenereRequest genereRequest) {
-        return mapper.convertGenereToGenereDTO(
-                genereRepository.save(new Genere(genereRequest.getNome()))
-        );
+        if(genereRepository.findByNomeIgnoreCase(genereRequest.getNome()).isPresent())
+            throw new GenereAlreadyExistsException("Il genere già esiste.");
+        return mapper.convertGenereToGenereDTO(genereRepository.save(new Genere(genereRequest.getNome())));
     }
 
     /**
@@ -119,11 +109,11 @@ public class GenereService {
      */
     @Transactional
     public void deleteGenere(Integer id) {
-        // Il genere spunta piu volte in Libro, quindi devo eliminare prima il Genere in Libro.
-        Genere genere = genereRepository.findById(id)
-                .orElseThrow(() -> new GenereNotFoundException("Genere non trovato"));
-
-        libroRepository.deleteByGenere(genere);
+        // Mi prendo il genere per vedere se esiste
+        Genere genere = genereRepository.findById(id).orElseThrow(()-> new GenereNotFoundException("Il genere non esiste."));
+        // Nel database il genere nel libro può essere null, quindi semplicemente su tutti i libri che hanno il genere che voglio eliminare, lo setto a null
+        libroRepository.findAllByGenere(genere).forEach(libro -> libro.setGenere(null));
+        // Sarà hibernate a fare la UPDATE su Libri
 
         // Ora cancello il Genere.
         genereRepository.delete(genere);

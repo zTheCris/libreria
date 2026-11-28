@@ -69,7 +69,7 @@ public class SpringSecurityConfig {
 
             http.authorizeHttpRequests(auth -> auth
                     // Definisco su quali endpoint voglio usare l'autenticazione.
-                    .requestMatchers("/autenticazione/**")
+                    .requestMatchers("/autenticazione/**","/swagger-ui/**","/v3/api-docs/**", "/swagger-ui.html")
                     // Dato che l'autenticazione deve essere accessibile a tutti, definisco che il traffico su quell'endpoint è permesso...
                     .permitAll()
                     //... per qualsiasi richiesta

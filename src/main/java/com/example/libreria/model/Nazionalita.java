@@ -12,7 +12,7 @@ public class Nazionalita {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_nazionalita")
     private Integer idNazionalita;
-    @Column(name = "nome")
+    @Column(name = "nome",unique = true)
     private String nome;
 
     public Nazionalita() {

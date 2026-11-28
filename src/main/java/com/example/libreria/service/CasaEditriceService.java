@@ -1,7 +1,6 @@
 package com.example.libreria.service;
 
 import com.example.libreria.dto.CasaEditriceDTO;
-import com.example.libreria.dto.CopiaDTO;
 import com.example.libreria.dto.request.CasaEditriceRequest;
 import com.example.libreria.exception.CasaEditriceAlreadyExists;
 import com.example.libreria.exception.CasaEditriceNotFound;
@@ -11,7 +10,6 @@ import com.example.libreria.repository.CasaEditriceRepository;
 import com.example.libreria.repository.CopiaRepository;
 import com.example.libreria.utility.Mapper;
 import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,20 +25,25 @@ public class CasaEditriceService {
         this.mapper = mapper;
         this.copiaRepository = copiaRepository;
     }
-    // Provo a farlo con le stream cosi da non ripetere le ripetizioni precedenti.
+    // Provo a farlo con le stream cosi da non ripetere il codice.
     public List<CasaEditriceDTO> getAll(){
         return casaEditriceRepository.findAll()
                 .stream()
                 .map(mapper::convertCasaEditriceToCasaEditriceDTO)
                 .toList();
     }
+    public CasaEditriceDTO getByNome(String nome){
+        return mapper.convertCasaEditriceToCasaEditriceDTO(casaEditriceRepository.findByNomeIgnoreCase(nome)
+                .orElseThrow(()-> new CasaEditriceNotFound("Casa editrice non trovata.")));
+    }
+
     public Long getNumCase(){
         return casaEditriceRepository.count();
     }
 
     @Transactional
     public CasaEditriceDTO addCasa(CasaEditriceRequest casaEditriceRequest) {
-        if(casaEditriceRepository.existsByNomeIgnoreCase(casaEditriceRequest.getNome()))
+        if(casaEditriceRepository.findByNomeIgnoreCase(casaEditriceRequest.getNome()).isPresent())
             throw new CasaEditriceAlreadyExists("La casa editrice già esiste.");
         return mapper.convertCasaEditriceToCasaEditriceDTO(casaEditriceRepository.save(new CasaEditrice(casaEditriceRequest.getNome())));
     }

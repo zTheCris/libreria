@@ -26,6 +26,10 @@ public class CasaEditriceController {
     public ResponseEntity<Long> getNumCase(){
         return ResponseEntity.ok(casaEditriceService.getNumCase());
     }
+    @GetMapping("{nome}")
+    public ResponseEntity<CasaEditriceDTO> getByNome(@PathVariable String nome){
+        return ResponseEntity.ok(casaEditriceService.getByNome(nome));
+    }
     @PostMapping
     public ResponseEntity<CasaEditriceDTO> addCasa(@Valid @RequestBody CasaEditriceRequest casaEditriceRequest){
         return ResponseEntity.ok(casaEditriceService.addCasa(casaEditriceRequest));

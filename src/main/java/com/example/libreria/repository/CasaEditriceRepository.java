@@ -8,5 +8,5 @@ import java.util.Optional;
 public interface CasaEditriceRepository extends JpaRepository<CasaEditrice, Integer> {
     Optional<CasaEditrice> findByNomeIgnoreCase(String casaEditrice);
 
-    boolean existsByNomeIgnoreCase(String nome);
+    boolean existsByNomeEqualsIgnoreCase(String nome);
 }

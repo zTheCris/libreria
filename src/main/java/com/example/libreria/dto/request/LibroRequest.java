@@ -91,3 +91,4 @@ public class LibroRequest {
         this.autoriIDs = autoriIDs;
     }
 }
+

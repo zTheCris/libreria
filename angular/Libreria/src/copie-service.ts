@@ -13,4 +13,7 @@ export class CopieService {
   getAll(): Observable<Copia[]> {
     return this.http.get<Copia[]>("http://localhost:8080/copie");
   }
+  getCopiaByLibro(titolo:string):Observable<Copia[]>{
+    return this.http.get<Copia[]>("http://localhost:8080/copie/getbytitololibro/"+titolo)
+  }
 }

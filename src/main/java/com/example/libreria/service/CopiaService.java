@@ -179,5 +179,11 @@ public class CopiaService {
     public Long getNumCopie() {
         return copiaRepository.count();
     }
+
+    public List<CopiaDTO> getByTitoloLibro(String titolo) {
+        // Devo ricavarmi i libri che contengono quel titolo
+        List<Libro> libriConTitolo = libroRepository.findByTitoloContainingIgnoreCase(titolo);
+        return copiaRepository.findAllByLibroIn(libriConTitolo).stream().map(mapper::convertCopiaToCopieDTO).toList();
+    }
 }
 

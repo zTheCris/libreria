@@ -56,11 +56,13 @@ public class Mapper {
     }
 
     public GenereDTO convertGenereToGenereDTO(Genere genere) {
-        if(genere==null)
-            throw new IllegalArgumentException("Il genere passato è vuoto.");
         GenereDTO genereDTOret = new GenereDTO();
-        genereDTOret.setIdGenere(genere.getIdGenere());
-        genereDTOret.setNome(genere.getNome());
+        try {
+            genereDTOret.setIdGenere(genere.getIdGenere());
+            genereDTOret.setNome(genere.getNome());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         return genereDTOret;
     }
 
@@ -68,21 +70,28 @@ public class Mapper {
 
     public AutoreDTO convertAutoreToAutoreDTO(Autore autore) {
         AutoreDTO autoreDTOret = new AutoreDTO();
-        autoreDTOret.setIdAutore(autore.getIdAutore());
-        autoreDTOret.setNome(autore.getNome());
-        autoreDTOret.setCognome(autore.getCognome());
-        autoreDTOret.setData(autore.getData());
-        autoreDTOret.setNazionalita(convertNazionalitaToNazionalitaDTO(autore.getNazionalita()));
-
+        try {
+            autoreDTOret.setIdAutore(autore.getIdAutore());
+            autoreDTOret.setNome(autore.getNome());
+            autoreDTOret.setCognome(autore.getCognome());
+            autoreDTOret.setData(autore.getData());
+            autoreDTOret.setNazionalita(convertNazionalitaToNazionalitaDTO(autore.getNazionalita()));
+        } catch (NullPointerException e) {
+            return autoreDTOret;
+        }
         return autoreDTOret;
     }
 
     public Autore convertAutoreDTOToAutore(AutoreDTO autoreDTO) {
         Autore autoreRet = new Autore();
-        autoreRet.setNome(autoreDTO.getNome());
-        autoreRet.setCognome(autoreDTO.getCognome());
-        autoreRet.setData(autoreDTO.getData());
-        autoreRet.setNazionalita(convertNazionalitaDTOToNazionalita(autoreDTO.getNazionalita()));
+        try {
+            autoreRet.setNome(autoreDTO.getNome());
+            autoreRet.setCognome(autoreDTO.getCognome());
+            autoreRet.setData(autoreDTO.getData());
+            autoreRet.setNazionalita(convertNazionalitaDTOToNazionalita(autoreDTO.getNazionalita()));
+        } catch (NullPointerException e) {
+            return autoreRet;
+        }
         // PER L'INSERIMENTO DI LIBRI AUTORI, SE NE OCCUPA IL SERVICE.
         return autoreRet;
     }
@@ -98,16 +107,26 @@ public class Mapper {
 
     public NazionalitaDTO convertNazionalitaToNazionalitaDTO(Nazionalita nazionalita) {
         NazionalitaDTO nazionalitaDTOret = new NazionalitaDTO();
-        nazionalitaDTOret.setIdNazionalita(nazionalita.getIdNazionalita()   );
-        nazionalitaDTOret.setNome(nazionalita.getNome());
+        try {
+            nazionalitaDTOret.setIdNazionalita(nazionalita.getIdNazionalita());
+            nazionalitaDTOret.setNome(nazionalita.getNome());
+        } catch (NullPointerException e) {
+            return nazionalitaDTOret;
+        }
         return nazionalitaDTOret;
     }
 
     // CasaEditrice
     public CasaEditriceDTO convertCasaEditriceToCasaEditriceDTO(CasaEditrice casaEditrice) {
         CasaEditriceDTO casaEditriceDTOret = new CasaEditriceDTO();
-        casaEditriceDTOret.setId_casaeditrice(casaEditrice.getId_casaeditrice());
-        casaEditriceDTOret.setNome(casaEditrice.getNome());
+        // Dato che è possibile che abbia un campo vuoto,
+        try{
+            casaEditriceDTOret.setId_casaeditrice(casaEditrice.getId_casaeditrice());
+            casaEditriceDTOret.setNome(casaEditrice.getNome());
+        }
+        catch(NullPointerException e){
+            return casaEditriceDTOret;
+        }
         return casaEditriceDTOret;
     }
 

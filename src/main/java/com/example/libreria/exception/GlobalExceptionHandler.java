@@ -3,6 +3,7 @@ package com.example.libreria.exception;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -15,7 +16,7 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     /**
-     * Il metodo serve per costruire la risposta associando l'errore al messaggio stringa
+     * Il metodo serve per costruire la risposta JSON associando lo stato HTTP al messaggio dell'eccezione.
      * @return
      */
     private ResponseEntity<Map<String, Object>> buildResponse(HttpStatus statoHTTP, String messaggio){
@@ -30,9 +31,9 @@ public class GlobalExceptionHandler {
     // Gestisco anche le Validation tramite l'eccezione MethodArgumentNotValidException
 
     /**
-     * Gestisce gli errori generati quando un DTO non supera la validazione (usando Validation).
+     * Gestisce gli errori generati quando un DTO non supera la validazione (usando {@code Validation}).
      *  <br>
-     * Tramite BindingResult recuperiamo tutti gli errori riscontrati.
+     * Tramite {@code BindingResult} della libreria {@code Bind} recuperiamo tutti gli errori riscontrati.
      * <br>
      * Con getDefaultMessage() estraiamo i messaggi personalizzati
      * definiti nelle annotazioni come @NotBlank, @NotNull ecc.
@@ -59,7 +60,20 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String,Object>> validazioneHTTP(HttpMessageNotReadableException e){
         return buildResponse(HttpStatus.BAD_REQUEST, "Formattazione JSON errata. Assicurati di aver inserito tutti i campi correttamente.");
     }
+    @ExceptionHandler(NullPointerException.class)
+    public ResponseEntity<Map<String,Object>> gestisciNullPointerException(NullPointerException e){
+        return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR,"Errore interno al server. Contattate amministratore.");
+    }
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<Map<String,Object>> gestisciMetodoNonSupportato(HttpRequestMethodNotSupportedException e){
+        return buildResponse(HttpStatus.BAD_REQUEST,e.getLocalizedMessage());
+    }
 
+    /*
+    =============================================================
+                        ECCEZIONI PERSONALIZZATE
+    =============================================================
+     */
     @ExceptionHandler(LibroNotFoundException.class)
     public ResponseEntity<Map<String,Object>> libroNotFound(LibroNotFoundException e){
         return buildResponse(HttpStatus.NOT_FOUND,e.getMessage());
